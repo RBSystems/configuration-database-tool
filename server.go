@@ -20,10 +20,10 @@ func main() {
 	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
-
 	secure.GET("/buildings", handlers.GetBuildings)
-
 	secure.GET("/buildings/:building/rooms", handlers.GetRoomsByBuilding)
+
+	secure.POST("/buildings/:building", handlers.AddBuilding)
 
 	server := http.Server{
 		Addr:           port,
