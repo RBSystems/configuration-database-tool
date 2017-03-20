@@ -7,9 +7,10 @@ import (
 	"github.com/labstack/echo"
 )
 
+//GetRoomsByBuilding monsters
 func GetRoomsByBuilding(context echo.Context) error {
 	building := context.Param("building")
-	rooms, err := dbo.GetRooms(building)
+	rooms, err := dbo.GetRoomsByBuilding(building)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
