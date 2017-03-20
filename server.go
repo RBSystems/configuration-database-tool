@@ -4,6 +4,9 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/authmiddleware"
+	"github.com/jessemillar/health"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func main() {
@@ -16,9 +19,6 @@ func main() {
 	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
-
-	secure.GET("/rooms", handlerGroup.GetAllRooms)
-	secure.GET("/rooms/buildings/:building", handlerGroup.GetRoomsByBuilding)
 
 	server := http.Server{
 		Addr:           port,
