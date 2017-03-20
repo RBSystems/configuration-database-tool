@@ -1,5 +1,5 @@
 package handlers
 
-func getAllRooms(building) {
+func getAllRooms() {
 
 }
