@@ -24,5 +24,19 @@ func AddBuilding(context echo.Context) error {
 	if building.Shortname != shortname && len(building.Shortname) > 0 {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and shortname must match")
 	}
-	dbo.AddBuilding(building)
+	building, err := dbo.AddBuilding(building)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, building)
+}
+
+func GetBuildingByShortname(context echo.Context) error {
+	shortname := context.Param("building")
+	building, err := dbo.GetBuildingByShortname(building)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	return context.JSON(http.StatusOK, building)
 }

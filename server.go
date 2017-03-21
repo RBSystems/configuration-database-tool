@@ -22,6 +22,7 @@ func main() {
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	secure.GET("/buildings", handlers.GetBuildings)
 	secure.GET("/buildings/:building/rooms", handlers.GetRoomsByBuilding)
+	secure.GET("/buildings/:building", handlers.GetBuildingByShortname)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 
