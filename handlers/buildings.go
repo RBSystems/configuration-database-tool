@@ -34,7 +34,7 @@ func AddBuilding(context echo.Context) error {
 
 func GetBuildingByShortname(context echo.Context) error {
 	shortname := context.Param("building")
-	building, err := dbo.GetBuildingByShortname(building)
+	building, err := dbo.GetBuildingByShortname(shortname)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
