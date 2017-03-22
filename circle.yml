@@ -1,0 +1,22 @@
+machine:
+    services:
+        - docker
+
+dependencies:
+    post:
+        - rm -r ~/.gradle || true
+
+test:
+    override:
+        - go test -v -race $(go list ./... | grep -v /vendor/)
+
+deployment:
+    production:
+        branch: master
+        commands:
+            - docker build -t byuoitav/configuration-database-tool:$CIRCLE_SHA1 .
+            - docker build -t byuoitav/configuration-database-tool:latest .
+            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            - docker push byuoitav/configuration-database-tool:$CIRCLE_SHA1
+            - docker push byuoitav/configuration-database-tool:latest
+            - ./deploy.sh $CIRCLE_PROJECT_REPONAME $CIRCLE_SHA1
