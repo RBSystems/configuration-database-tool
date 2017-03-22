@@ -25,6 +25,7 @@ func main() {
 	secure.GET("/buildings/:building", handlers.GetBuildingByShortname)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
+	secure.POST("/building/:building/rooms/:room", handlers.AddRoom)
 
 	server := http.Server{
 		Addr:           port,
