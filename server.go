@@ -23,6 +23,7 @@ func main() {
 	secure.GET("/buildings", handlers.GetBuildings)
 	secure.GET("/buildings/:building/rooms", handlers.GetRoomsByBuilding)
 	secure.GET("/buildings/:building", handlers.GetBuildingByShortname)
+	secure.GET("/buildings/:building/rooms/:room", handlers.GetRoomByBuildingAndName)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 	secure.POST("/building/:building/rooms/:room", handlers.AddRoom)
