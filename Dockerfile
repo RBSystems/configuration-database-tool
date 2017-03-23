@@ -9,6 +9,6 @@ WORKDIR /go/src/github.com/byuoitav/configuration-database-tool
 RUN go get -d -v
 RUN go install -v
 
-CMD ["/go/bin/av-api"]
+CMD ["/go/bin/configuration-database-tool"]
 
 EXPOSE 9999 
