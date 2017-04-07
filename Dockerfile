@@ -1,6 +1,6 @@
-FROM golang:1.7.1-alpine
+FROM golang:alpine
 
-RUN apk update && apk upgrade && apk add git
+RUN apk update && apk add git
 
 RUN mkdir -p /go/src/github.com/byuoitav
 ADD . /go/src/github.com/byuoitav/configuration-database-tool
@@ -11,4 +11,4 @@ RUN go install -v
 
 CMD ["/go/bin/configuration-database-tool"]
 
-EXPOSE 9999 
+EXPOSE 9999
