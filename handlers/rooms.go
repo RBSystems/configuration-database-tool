@@ -33,14 +33,17 @@ func GetRoomByBuildingAndName(context echo.Context) error {
 
 // AddRoom adds a room to the database
 func AddRoom(context echo.Context) error {
-	building := context.Param("building")
-	var roomToAdd accessors.Room
-	err := context.Bind(roomToAdd)
+	var room accessors.Room
+	err := context.Bind(&room)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	room, err := dbo.AddRoom(building, roomToAdd)
+	if context.Param("room") != room.Name {
+		return context.JSON(http.StatusBadRequest, "Endpoint and room name must match!")
+	}
+
+	room, err = dbo.AddRoom(context.Param("building"), room)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
