@@ -8,6 +8,19 @@ import (
 	"github.com/labstack/echo"
 )
 
+func GetDevicesByRoom(context echo.Context) error {
+
+	building := context.Param("building")
+	room := context.Param("room")
+
+	devices, err := dbo.GetDevicesByRoom(building, room)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, devices)
+}
+
 func AddPort(context echo.Context) error {
 
 	portName := context.Param("port")
