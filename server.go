@@ -23,9 +23,13 @@ func main() {
 	secure.GET("/buildings", handlers.GetBuildings)
 	secure.GET("/buildings/:building/rooms", handlers.GetRoomsByBuilding)
 	secure.GET("/buildings/:building", handlers.GetBuildingByShortname)
+	secure.GET("/buildings/:building/rooms/:room", handlers.GetRoomByBuildingAndName)
+	secure.GET("/buildings/:building/rooms/:room/devices", handlers.GetDevicesByRoom)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
+	secure.POST("/buildings/:building/rooms/:room", handlers.AddRoom)
 
+	secure.GET("/configuration", handlers.GetConfiguration)
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,
