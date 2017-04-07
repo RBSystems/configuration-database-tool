@@ -18,18 +18,15 @@ type Configuration struct {
 }
 
 func GetConfiguration(context echo.Context) error {
-
 	output, err := buildConfiguration()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	return context.JSON(http.StatusOK, output)
-
 }
 
 func buildConfiguration() (output Configuration, err error) {
-
 	output.DeviceTypes, err = dbo.GetDeviceTypes()
 	if err != nil {
 		return
