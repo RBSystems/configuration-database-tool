@@ -33,6 +33,7 @@ func main() {
 	secure.POST("/devices/ports/:port", handlers.AddPort)
 	secure.POST("/devices/types/:devicetype", handlers.AddDeviceType)
 	secure.POST("/devices/endpoints/:endpoint", handlers.AddEndpoint)
+	secure.POST("/devices/commands/:command", handlers.AddCommand)
 	secure.POST("/devices/powerstates/:powerstate", handlers.AddPowerState)
 	secure.POST("/devices/microservices/:microservice", handlers.AddMicroservice)
 	secure.POST("/devices/roledefinitions/:deviceroledefinition", handlers.AddRoleDefinition)
