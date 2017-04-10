@@ -25,11 +25,19 @@ func main() {
 	secure.GET("/buildings/:building", handlers.GetBuildingByShortname)
 	secure.GET("/buildings/:building/rooms/:room", handlers.GetRoomByBuildingAndName)
 	secure.GET("/buildings/:building/rooms/:room/devices", handlers.GetDevicesByRoom)
+	secure.GET("/configuration", handlers.GetConfiguration)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 	secure.POST("/buildings/:building/rooms/:room", handlers.AddRoom)
 
-	secure.GET("/configuration", handlers.GetConfiguration)
+	secure.POST("/devices/ports/:port", handlers.AddPort)
+	secure.POST("/devices/types/:devicetype", handlers.AddDeviceType)
+	secure.POST("/devices/endpoints/:endpoint", handlers.AddEndpoint)
+	secure.POST("/devices/commands/:command", handlers.AddCommand)
+	secure.POST("/devices/powerstates/:powerstate", handlers.AddPowerState)
+	secure.POST("/devices/microservices/:microservice", handlers.AddMicroservice)
+	secure.POST("/devices/roledefinitions/:deviceroledefinition", handlers.AddRoleDefinition)
+
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,

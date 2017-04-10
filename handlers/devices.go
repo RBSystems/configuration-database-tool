@@ -8,7 +8,6 @@ import (
 )
 
 func GetDevicesByRoom(context echo.Context) error {
-
 	building := context.Param("building")
 	room := context.Param("room")
 
