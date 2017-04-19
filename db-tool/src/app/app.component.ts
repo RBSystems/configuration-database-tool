@@ -8,4 +8,28 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 })
 export class AppComponent {
   title = 'app works!';
+  currBuilding: string; 
+  currRoom: string;
+  rooms = ROOMS;
+  buildings = BUILDINGS;
 }
+
+export class Building {
+	name: string;
+}
+
+export class Room {
+	name: string;
+}
+
+const BUILDINGS: Building[] = [
+	{ name: "ITB" },
+	{ name: "MSB" },
+	{ name: "TMCB" }
+];
+
+const ROOMS: Room[] = [
+	{ name: "1004" },
+	{ name: "1006" },
+	{ name: "1010" }
+];

@@ -1,12 +1,19 @@
 <div fxLayout="row">
 	<div fxFlex>
-		monsters
+		<select name="rooms" [(ngModel)]="currBuilding">
+			<option *ngFor="let building of buildings" [value]="building.name">
+				{{building.name}}
+			</option>
+		</select>
+		<p> {{currBuilding}} </p>
 	</div>
 	<div fxFlex>
-		strawberries
-	</div>
-	<div fxFlex>
-		pirates
+		<select name="rooms" [(ngModel)]="currRoom">
+			<option *ngFor="let room of rooms" [value]="room.name">
+				{{room.name}}
+			</option>	
+		</select>
+		<p> {{currRoom}} </p>
 	</div>
 </div>
 
