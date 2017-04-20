@@ -1,17 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { Http, Response } from '@angular/http';
+import {Observable} from 'rxjs/Rx';
+
+import { APIService } from './api.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [APIService]
 })
-export class AppComponent {
+
+export class AppComponent implements OnInit {
   title = 'app works!';
   currBuilding: string; 
   currRoom: string;
   rooms = ROOMS;
-  buildings = BUILDINGS;
+  buildings: string;
+
+  constructor(private api: APIService) {}
+
+  getBuildings(): Object {  	
+  	return this.api.getBuildings().subscribe(val => console.log(val)); 
+  }
+
+  ngOnInit(): void {
+ 	this.getBuildings();
+  }
 }
 
 export class Building {
