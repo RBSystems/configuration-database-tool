@@ -16,36 +16,21 @@ export class AppComponent implements OnInit {
   title = 'app works!';
   currBuilding: string; 
   currRoom: string;
-  rooms = ROOMS;
-  buildings: string;
+  rooms: Object;
+  buildings: Object;
 
   constructor(private api: APIService) {}
 
   getBuildings(): Object {  	
-  	return this.api.getBuildings().subscribe(val => console.log(val)); 
+  	return this.api.getBuildings().subscribe(val => this.buildings = val); 
+  }
+
+  getRooms(building: string): Object {
+  	return this.api.getRooms(building).subscribe(val => this.rooms = val);
   }
 
   ngOnInit(): void {
  	this.getBuildings();
+	this.getRooms('ITB');
   }
 }
-
-export class Building {
-	name: string;
-}
-
-export class Room {
-	name: string;
-}
-
-const BUILDINGS: Building[] = [
-	{ name: "ITB" },
-	{ name: "MSB" },
-	{ name: "TMCB" }
-];
-
-const ROOMS: Room[] = [
-	{ name: "1004" },
-	{ name: "1006" },
-	{ name: "1010" }
-];
