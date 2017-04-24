@@ -26,11 +26,11 @@ export class AppComponent implements OnInit {
   }
 
   getRooms(building: string): Object {
+	  console.log("called with " + building);
   	return this.api.getRooms(building).subscribe(val => this.rooms = val);
   }
 
   ngOnInit(): void {
  	this.getBuildings();
-	this.getRooms('ITB');
   }
 }

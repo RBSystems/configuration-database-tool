@@ -1,6 +1,6 @@
 <div fxLayout="row">
 	<div fxFlex>
-		<select name="buildings" [(ngModel)]="currBuilding">
+		<select name="buildings" (change)="getRooms($event.target.value)" [(ngModel)]="currBuilding">
 			<option *ngFor="let building of buildings" [value]="building.shortname">
 				{{building.name}}
 			</option>	
@@ -18,10 +18,5 @@
 	</div>
 </div>
 
-<p>Buildings</p>
-<pre>{{buildings | json}}</pre>
-
-<p>Rooms</p>
+<h1>Rooms</h1>
 <pre>{{rooms | json}}</pre>
-
-
