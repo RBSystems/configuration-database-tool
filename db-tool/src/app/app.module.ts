@@ -5,10 +5,12 @@ import { HttpModule } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppComponent } from './app.component';
+import { RoomSelectionComponent } from './room-selection.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+	RoomSelectionComponent
   ],
   imports: [
     BrowserModule,
