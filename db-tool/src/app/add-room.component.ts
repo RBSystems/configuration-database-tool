@@ -13,20 +13,40 @@ import { Room } from './objects';
 export class AddRoomComponent implements OnInit {
 	toadd: Room;
 	configurationID: number;
-	buildingID: number;
+
+	buildings: any; 
+	currBuilding: string;
+	RoomConfigs: any;
+	currConfig: string;
 
 	constructor(private api: APIService) {}
 
 	ngOnInit(): void {
+		this.api.getBuildings().subscribe(val => this.buildings = val);
+
 		this.toadd = {
 			name: "",
 			description: "",
+			building: {
+				id: null,
+				name: "",
+				shortname: "",
+				description: ""
+			},
 		    configurationID: null,
 			roomDesignation: ""	
 		}	
-	//	this.toadd.building.id = null;
 		this.configurationID = null;
-		this.buildingID = null;
+	}
+
+	setBuildingID(id: number) {
+		console.log("setting building id to " + id);
+		this.toadd.building.id = id;		
+	}
+
+	setConfigurationId(id: number){
+		console.log("setting config id to " + id);
+		this.toadd.configuration.id = id
 	}
 
 	postData() {

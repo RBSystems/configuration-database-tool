@@ -11,10 +11,10 @@ export class Room {
 	id?: number;
 	name: string;
 	description: string;
-	building?: Building;
+	building: Building;
 	devices?: Device[];
 	configurationID: number;
-	configuration?: RoomConfig;
+	configuration?: RoomConfiguration;
 	roomDesignation: string;
 }
 
@@ -32,7 +32,7 @@ export class Device {
 	responding: boolean;
 }
 
-export class RoomConfig {
+export class RoomConfiguration {
 	id: number;
 	name: string;
 	roomKey: string;

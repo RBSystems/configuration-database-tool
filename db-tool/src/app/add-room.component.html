@@ -8,7 +8,9 @@
 </div>
 <div>
 	<label>buildingID: </label>
-	<input [(ngModel)]="buildingID" placeholder="1"/>
+	<select name="buildings" (change)="setBuildingID($event.target.value)" [(ngModel)]="currBuilding">
+		<option *ngFor="let building of buildings" [value]="building.id">{{building.shortname}}</option>
+	</select>
 </div>
 <div>
 	<label>configurationID: </label>
