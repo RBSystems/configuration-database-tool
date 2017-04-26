@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Rx';
 
 import { APIService } from './api.service';
 
@@ -21,9 +22,20 @@ export class AddBuildingComponent implements OnInit {
 		};
 	}	
 
-	postData(): string {
-		
-		return "success!";	
+	postData() {
+		this.api.postData("/buildings/" + this.toadd.shortname, this.toadd)
+		.subscribe(
+			data => {
+				//refresh buildings
+				console.log("success");
+				return true;
+			},
+			error => {
+				console.error("failed to post data");
+				console.error(error.json());
+				return Observable.throw(error);
+			}
+		);
 	}
 }
 

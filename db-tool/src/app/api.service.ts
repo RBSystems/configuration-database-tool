@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
 import 'rxjs/add/operator/map';
@@ -28,5 +28,18 @@ export class APIService {
 	getConfig(): Observable<Object> {
 		return this.http.get(this.url + "/configuration")
 						.map(response => response.json());
+	}
+
+	postData(urlExtension: string, data: any) {
+	   	let postUrl = this.url + urlExtension; 	
+		let headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		let options = new RequestOptions({ headers: headers });
+		let body = JSON.stringify(data);
+
+		console.log("posting: \n" + body);
+		console.log("to " + postUrl);
+
+		return this.http.post(postUrl, body, options).map((res: Response) => res.json());
 	}
 }
