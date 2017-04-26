@@ -10,7 +10,7 @@ import { Building, Room, Device, RoomConfig } from './objects';
 	providers: [APIService]
 })
 
-export class DevicesComponent implements OnInit {
+export class RoomEditorComponent implements OnInit {
 	currBuilding: string;
 	currRoom: string;
 

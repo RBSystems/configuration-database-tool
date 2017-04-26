@@ -46,6 +46,6 @@ export class RoomSelectionComponent implements OnInit {
 			}
 		};
 
-		this.router.navigate(['/devices'], navigationExtras);
+		this.router.navigate(['/room-editor'], navigationExtras);
 	}
 }

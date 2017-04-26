@@ -1,0 +1,19 @@
+<div>
+	<label>name: </label>
+	<input [(ngModel)]="toadd.name" placeholder="Information Technology Building"/>
+</div>
+<div>
+	<label>shortname: </label>
+	<input [(ngModel)]="toadd.shortname" placeholder="ITB"/>
+</div>
+<div>
+	<label>description: </label>
+	<input [(ngModel)]="toadd.description" placeholder="BYU's IT Building"/>
+</div>
+<div>
+	<button type ="button" (click)="postData()">Post Data!</button>
+</div>
+
+
+<h4>post body</h4>
+<pre>{{toadd | json}}</pre>
