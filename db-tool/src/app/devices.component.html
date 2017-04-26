@@ -1,2 +1,23 @@
+<h3>Room Data</h3>
+<pre>
+"id": {{id}},
+"name": {{name}},
+"description": {{description}},
+"configurationID": {{configurationID}},
+"roomDesignation": {{roomDesignation}}
+</pre>
+
+<h3>Building</h3>
+<pre>{{ building | json }}</pre>
+
 <h3>Devices</h3>
 <pre>{{ devices | json }}</pre>
+
+<h3>Configuration</h3>
+<pre>{{ configuration | json }}</pre>
+
+
+<!--
+<h3>Raw Response</h3>
+<pre>{{ roomData | json }}</pre>
+-->

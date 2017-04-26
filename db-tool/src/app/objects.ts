@@ -12,9 +12,24 @@ export class Room {
 	name: string;
 	description: string;
 	building: Building;
+	devices: Device[];
 	configurationID: number;
 	configuration: RoomConfig;
 	roomDesignation: string;
+}
+
+export class Device {
+	id: number;
+	name: string;
+	address: string;
+	input: boolean;
+	output: boolean;
+	building: Building;
+	room: Room;
+	type: string;
+	power: string;
+	roles: string[];
+	responding: boolean;
 }
 
 export class RoomConfig {
