@@ -6,23 +6,27 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class APIService {
-	private configUrl = 'http://localhost:9999/configuration';
-	private buildingsUrl = 'http://localhost:9999/buildings/';
+	private url = 'http://localhost:9999';
 
 	constructor (private http: Http) {}
 
 	getBuildings(): Observable<Object> {
-		return this.http.get(this.buildingsUrl)
+		return this.http.get(this.url + "/buildings")
 						.map(response => response.json());
 	}	
 
 	getRooms(building: string): Observable<Object> {
-		return this.http.get(this.buildingsUrl + building + "/rooms/")
+		return this.http.get(this.url + "/buildings/" + building + "/rooms/")
+						.map(response => response.json());
+	}
+
+	getDevices(building: string, room: string): Observable<Object> {
+		return this.http.get(this.url + "/buildings/" + building + "/rooms/" + room)
 						.map(response => response.json());
 	}
 
 	getConfig(): Observable<Object> {
-		return this.http.get(this.configUrl)
+		return this.http.get(this.url + "/configuration")
 						.map(response => response.json());
 	}
 }

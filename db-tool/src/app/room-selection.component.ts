@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, NavigationExtras } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { Http, Response } from '@angular/http';
-import {Observable} from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 
-import { APIService } from './api.service'
+import { APIService } from './api.service';
+import { Building, Room } from './objects';
 
 @Component({
 	selector: 'room-selection',
@@ -13,8 +15,8 @@ import { APIService } from './api.service'
 })
 
 export class RoomSelectionComponent implements OnInit {
-	buildings: Object;
-	rooms: Object;
+	buildings: any;
+	rooms: any;
 	currBuilding: string;
 	currRoom: string;	
 
@@ -22,7 +24,10 @@ export class RoomSelectionComponent implements OnInit {
 		this.getBuildings();
 	}
 
-	constructor(private api: APIService) {}
+	constructor(
+		private api: APIService,
+	 	private router: Router
+	) {}
 
   	getBuildings(): Object {  	
 	  return this.api.getBuildings().subscribe(val => this.buildings = val); 
@@ -32,4 +37,15 @@ export class RoomSelectionComponent implements OnInit {
 		this.currRoom = null;
   		return this.api.getRooms(building).subscribe(val => this.rooms = val);
   	}
+
+	switchToDevices(building: string, room: string): void {
+		let navigationExtras: NavigationExtras = {
+			queryParams: {
+				"building": this.currBuilding,
+				"room": this.currRoom
+			}
+		};
+
+		this.router.navigate(['/devices'], navigationExtras);
+	}
 }

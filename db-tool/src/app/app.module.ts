@@ -8,13 +8,15 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { RoomSelectionComponent } from './room-selection.component';
 import { ConfigurationComponent } from './configuration.component';
+import { DevicesComponent } from './devices.component';
 import { APIService } from './api.service'
 
 @NgModule({
   declarations: [
     AppComponent,
 	RoomSelectionComponent,
-	ConfigurationComponent
+	ConfigurationComponent,
+	DevicesComponent
   ],
   imports: [
     BrowserModule,
@@ -34,6 +36,10 @@ import { APIService } from './api.service'
 		{
 			path: 'config',
 			component: ConfigurationComponent
+		},
+		{
+			path: 'devices',
+			component: DevicesComponent
 		}
 	])
   ],

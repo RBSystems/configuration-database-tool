@@ -9,7 +9,7 @@
 	</div>
 
 	<div fxFlex *ngIf="rooms">
-		<select name="rooms" [(ngModel)]="currRoom">
+		<select name="rooms" (change)="switchToDevices(currBuilding, $event.target.value)"[(ngModel)]="currRoom">
 			<option *ngFor="let room of rooms" [value]="room.name">
 				{{room.name}}
 			</option>	

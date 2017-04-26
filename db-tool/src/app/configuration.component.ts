@@ -1,7 +1,8 @@
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { APIService } from './api.service';
+import { Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition } from './objects';
 
 @Component({
 	selector: 'configuration',
@@ -13,12 +14,12 @@ import { APIService } from './api.service';
 export class ConfigurationComponent implements OnInit {
 	configuration: any;
 	devicetypes: DeviceType[];
-	powerstates: Object;
-	ports: Object;
-	commands: Object;
-	microservices: Object;
-	endpoints: Object;
-	deviceroledefinitions: Object;
+	powerstates: Powerstate[];
+	ports: Port[];
+	commands: Command[];
+	microservices: Microservice[];
+	endpoints: Endpoint[]; 
+	deviceroledefinitions: DeviceRoleDefinition;
 
 	ngOnInit(): void {
 		this.getConfig();	
@@ -37,61 +38,6 @@ export class ConfigurationComponent implements OnInit {
 								this.endpoints = this.configuration.Endpoints;
 								this.deviceroledefinitions = this.configuration.DeviceRoleDefinitions;
 							});	
-	//	this.DeviceTypes = JSON.parse(this.configuration.toString()).DeviceTypes;
 	}
 }
 
-export class Configuration {
-	DeviceTypes: DeviceType[];
-	PowerStates: PowerState[];
-	Ports: Port[];
-	Commands: Command[];
-	Microservices: Microservice[];
-	Endpoints: Endpoint[];
-	DeviceRoleDefinitions: DeviceRoleDefinition[];
-}
-
-export class DeviceType {
-	id: number;
-	name: string;
-	description: string;
-}
-
-export class PowerState {
-	id: number;
-	name: string;
-	description: string;
-}
-
-export class Port {
-	id: number;
-	name: string;
-	description: string;
-}
-
-export class Command {
-	id: number;
-	name: string;
-	description: string;
-	priority: number;
-}
-
-export class Microservice {
-	id: number;
-	name: string;
-	address: string;
-	description: string;
-}
-
-export class Endpoint {
-	id: number;
-	name: string;
-	path: string;
-	description: string;
-}
-
-export class DeviceRoleDefinition {
-	id: number;
-	name: string;
-	description: string;
-}
