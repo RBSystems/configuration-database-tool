@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
 
 export class Building {
-	id: number;
+	id?: number;
 	name: string;
 	shortname: string;
 	description: string;
 }
 
 export class Room {
-	id: number;
+	id?: number;
 	name: string;
 	description: string;
-	building: Building;
-	devices: Device[];
+	building?: Building;
+	devices?: Device[];
 	configurationID: number;
-	configuration: RoomConfig;
+	configuration?: RoomConfig;
 	roomDesignation: string;
 }
 

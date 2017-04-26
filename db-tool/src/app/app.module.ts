@@ -10,6 +10,7 @@ import { RoomSelectionComponent } from './room-selection.component';
 import { ConfigurationComponent } from './configuration.component';
 import { RoomEditorComponent } from './devices.component';
 import { AddBuildingComponent } from './add-building.component';
+import { AddRoomComponent } from './add-room.component';
 import { APIService } from './api.service'
 
 @NgModule({
@@ -18,7 +19,8 @@ import { APIService } from './api.service'
 	RoomSelectionComponent,
 	ConfigurationComponent,
 	RoomEditorComponent,
-	AddBuildingComponent
+	AddBuildingComponent,
+	AddRoomComponent
   ],
   imports: [
     BrowserModule,
@@ -46,6 +48,10 @@ import { APIService } from './api.service'
 		{
 			path: 'add-building',
 			component: AddBuildingComponent
+		},
+		{
+			path: 'add-room',
+			component: AddRoomComponent
 		}
 	])
   ],

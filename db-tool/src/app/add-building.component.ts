@@ -2,15 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 
 import { APIService } from './api.service';
+import { Building } from './objects';
 
 @Component({
 	selector: 'add-building',
 	templateUrl: './add-building.component.html',
-	providers: [],
+	providers: [APIService],
 })
 
 export class AddBuildingComponent implements OnInit {
-	toadd: toAdd; 
+	toadd: Building; 
 
 	constructor(private api: APIService) {}
 
@@ -24,23 +25,16 @@ export class AddBuildingComponent implements OnInit {
 
 	postData() {
 		this.api.postData("/buildings/" + this.toadd.shortname, this.toadd)
-		.subscribe(
+			.subscribe(
 			data => {
 				//refresh buildings
 				console.log("success");
 				return true;
-			},
-			error => {
+			}, error => {
 				console.error("failed to post data");
 				console.error(error.json());
 				return Observable.throw(error);
 			}
 		);
 	}
-}
-
-export class toAdd {
-	name: string;
-	shortname: string;
-	description: string;
 }

@@ -1,0 +1,23 @@
+<div>
+	<label>name: </label>
+	<input [(ngModel)]="toadd.name" placeholder="1106"/>
+</div>
+<div>
+	<label>description: </label>
+	<input [(ngModel)]="toadd.description" placeholder="AV Conference Room"/>
+</div>
+<div>
+	<label>buildingID: </label>
+	<input [(ngModel)]="buildingID" placeholder="1"/>
+</div>
+<div>
+	<label>configurationID: </label>
+	<input [(ngModel)]="configurationID" placeholder="2"/>
+</div>
+<div>
+	<button type ="button" (click)="postData()">Post Data!</button>
+</div>
+
+
+<h4>post body</h4>
+<pre>{{toadd | json}}</pre>
