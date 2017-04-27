@@ -1,0 +1,19 @@
+<div fxLayout="row">
+	<div fxFlex>
+		<select name="buildings" (change)="getRooms($event.target.value)" [(ngModel)]="currBuilding">
+			<option *ngFor="let building of buildings" [value]="building.shortname">
+				{{building.name}}
+			</option>	
+		</select>
+		<p> {{currBuilding}} </p>
+	</div>
+
+	<div fxFlex *ngIf="rooms">
+		<select name="rooms" (change)="switchToDevices(currBuilding, $event.target.value)"[(ngModel)]="currRoom">
+			<option *ngFor="let room of rooms" [value]="room.name">
+				{{room.name}}
+			</option>	
+		</select>
+		<p> {{currRoom}} </p>
+	</div>
+</div>

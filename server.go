@@ -26,6 +26,7 @@ func main() {
 	secure.GET("/buildings/:building/rooms/:room", handlers.GetRoomByBuildingAndName)
 	secure.GET("/buildings/:building/rooms/:room/devices", handlers.GetDevicesByRoom)
 	secure.GET("/configuration", handlers.GetConfiguration)
+	secure.GET("/roomconfigurations", handlers.GetRoomConfigurations)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 	secure.POST("/buildings/:building/rooms/:room", handlers.AddRoom)
