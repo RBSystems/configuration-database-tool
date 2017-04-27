@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Location } from '@angular/common';
 
 import { APIService } from './api.service';
 import { Building, Room, Device, RoomConfiguration } from './objects';
@@ -26,7 +27,8 @@ export class RoomEditorComponent implements OnInit {
 
 	constructor(
 		private api: APIService,
-		private route: ActivatedRoute 
+		private route: ActivatedRoute,
+		private location: Location
 	) {
 		this.route.queryParams.subscribe(params => {
 			this.currBuilding = params["building"];
@@ -35,6 +37,11 @@ export class RoomEditorComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		if(this.currBuilding == null || this.currRoom == null) {
+			alert("Please select a building and room first");
+			this.location.back();	
+			return;
+		}
 		this.getDevices();
 	}
 

@@ -3,14 +3,15 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { RouterModule } from '@angular/router';
 
-import { AppComponent } from './app.component';
 import { RoomSelectionComponent } from './room-selection.component';
 import { ConfigurationComponent } from './configuration.component';
 import { RoomEditorComponent } from './devices.component';
 import { AddBuildingComponent } from './add-building.component';
 import { AddRoomComponent } from './add-room.component';
+
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 import { APIService } from './api.service'
 
 @NgModule({
@@ -27,33 +28,7 @@ import { APIService } from './api.service'
     FormsModule,
 	HttpModule,
   	FlexLayoutModule,
-	RouterModule.forRoot([
-		{
-			path: '',
-			redirectTo: '/room-selection',
-			pathMatch: 'full'
-		},
-		{
-			path: 'room-selection',
-			component: RoomSelectionComponent
-		},
-		{
-			path: 'config',
-			component: ConfigurationComponent
-		},
-		{
-			path: 'room-editor',
-			component: RoomEditorComponent
-		},
-		{
-			path: 'add-building',
-			component: AddBuildingComponent
-		},
-		{
-			path: 'add-room',
-			component: AddRoomComponent
-		}
-	])
+	AppRoutingModule
   ],
   providers: [
 	  APIService
