@@ -7,7 +7,7 @@ import { Building, Room, Device, RoomConfiguration } from './objects';
 
 @Component({
 	selector:'devices',
-	templateUrl: './devices.component.html',
+	templateUrl: './room-editor.component.html',
 	providers: [APIService]
 })
 
