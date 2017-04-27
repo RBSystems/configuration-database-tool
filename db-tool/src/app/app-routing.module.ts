@@ -6,6 +6,7 @@ import { ConfigurationComponent } from './configuration.component';
 import { RoomEditorComponent } from './room-editor.component';
 import { AddBuildingComponent } from './add-building.component';
 import { AddRoomComponent } from './add-room.component';
+import { AddDeviceComponent } from './add-device.component';
 
 const routes: Routes = [
 	{ path: '', redirectTo: '/room-selection', pathMatch: 'full'},
@@ -13,7 +14,8 @@ const routes: Routes = [
 	{ path: 'config', component: ConfigurationComponent },
 	{ path: 'room-editor', component: RoomEditorComponent },
 	{ path: 'add-building', component: AddBuildingComponent },
-	{ path: 'add-room', component: AddRoomComponent }
+	{ path: 'add-room', component: AddRoomComponent },
+	{ path: 'add-device', component: AddDeviceComponent }
 ]
 
 @NgModule({

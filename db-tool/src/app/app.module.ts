@@ -9,6 +9,7 @@ import { ConfigurationComponent } from './configuration.component';
 import { RoomEditorComponent } from './room-editor.component';
 import { AddBuildingComponent } from './add-building.component';
 import { AddRoomComponent } from './add-room.component';
+import { AddDeviceComponent } from './add-device.component';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -21,7 +22,8 @@ import { APIService } from './api.service'
 	ConfigurationComponent,
 	RoomEditorComponent,
 	AddBuildingComponent,
-	AddRoomComponent
+	AddRoomComponent,
+	AddDeviceComponent
   ],
   imports: [
     BrowserModule,
