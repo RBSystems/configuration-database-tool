@@ -30,6 +30,11 @@ export class APIService {
 						.map(response => response.json());
 	}
 
+	getRoomConfigs(): Observable<Object> {
+		return this.http.get(this.url + "/roomconfigurations")
+						.map(response => response.json());
+	}
+
 	postData(urlExtension: string, data: any) {
 	   	let postUrl = this.url + urlExtension; 	
 		let headers = new Headers();

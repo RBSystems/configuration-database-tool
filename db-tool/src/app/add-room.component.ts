@@ -11,18 +11,23 @@ import { Room } from './objects';
 })
 
 export class AddRoomComponent implements OnInit {
+	//
+	// is there a table in the database with available roomDesignations?
+	// just hardcoded for now:) 
+	//
 	toadd: Room;
-	configurationID: number;
 
 	buildings: any; 
 	currBuilding: string;
-	RoomConfigs: any;
+	myCurrBuilding: string;
+	roomConfigs: any;
 	currConfig: string;
 
 	constructor(private api: APIService) {}
 
 	ngOnInit(): void {
 		this.api.getBuildings().subscribe(val => this.buildings = val);
+		this.api.getRoomConfigs().subscribe(val => this.roomConfigs = val);
 
 		this.toadd = {
 			name: "",
@@ -36,21 +41,28 @@ export class AddRoomComponent implements OnInit {
 		    configurationID: null,
 			roomDesignation: ""	
 		}	
-		this.configurationID = null;
+		this.toadd.roomDesignation = "production";
 	}
 
-	setBuildingID(id: number) {
-		console.log("setting building id to " + id);
-		this.toadd.building.id = id;		
+	setBuildingID(target: any) {
+		console.log("setting building id to " + target.value);
+		this.toadd.building.id = Number(target.value);
+		this.myCurrBuilding = target.options[target.selectedIndex].text;
+		console.log("myCurrBuilding = " + this.myCurrBuilding);
 	}
 
-	setConfigurationId(id: number){
+	setConfigurationID(id: number){
 		console.log("setting config id to " + id);
-		this.toadd.configuration.id = id
+		this.toadd.configurationID = Number(id);
+	}
+
+	setRoomDesignation(s: string) {
+		console.log("setting roomDesignation to " + s);
+		this.toadd.roomDesignation = s;
 	}
 
 	postData() {
-		this.api.postData("/buildings/" + this.toadd.building.shortname + "/rooms/" + this.toadd.name, this.toadd)
+		this.api.postData("/buildings/" + this.myCurrBuilding + "/rooms/" + this.toadd.name, this.toadd)
 		.subscribe(
 			data => {
 				//refresh rooms?

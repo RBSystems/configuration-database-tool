@@ -8,18 +8,29 @@
 </div>
 <div>
 	<label>buildingID: </label>
-	<select name="buildings" (change)="setBuildingID($event.target.value)" [(ngModel)]="currBuilding">
+	<select name="buildings" (change)="setBuildingID($event.target)" [(ngModel)]="currBuilding">
 		<option *ngFor="let building of buildings" [value]="building.id">{{building.shortname}}</option>
 	</select>
 </div>
 <div>
 	<label>configurationID: </label>
-	<input [(ngModel)]="configurationID" placeholder="2"/>
+	<select name="roomConfigs" (change)="setConfigurationID($event.target.value)" [(ngModel)]="currConfig">
+		<option *ngFor="let rc of roomConfigs" [value]="rc.id">{{rc.name}}</option>
+	</select>
+</div>
+<div>
+	<label>roomDesignation: </label>
+	<select name="roomDesignations" (change)="setRoomDesignation($event.target.value)">
+		<option>production</option>
+		<option>stage</option>
+		<option>dev</option>
+	</select>
 </div>
 <div>
 	<button type ="button" (click)="postData()">Post Data!</button>
 </div>
 
-
+<!--
 <h4>post body</h4>
 <pre>{{toadd | json}}</pre>
+-->

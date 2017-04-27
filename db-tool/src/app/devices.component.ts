@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 
 import { APIService } from './api.service';
-import { Building, Room, Device, RoomConfig } from './objects';
+import { Building, Room, Device, RoomConfiguration } from './objects';
 
 @Component({
 	selector:'devices',
@@ -21,7 +21,7 @@ export class RoomEditorComponent implements OnInit {
 	building: Building;
 	devices: Device[];
 	configurationID: number;
-	configuration: RoomConfig;
+	configuration: RoomConfiguration;
 	roomDesignation: string;
 
 	constructor(
