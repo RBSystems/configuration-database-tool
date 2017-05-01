@@ -1,3 +1,18 @@
+<!-- pop-ups -->
+<app-modal #ports>
+	<div class="app-modal-header">
+		header
+	</div>
+	<div class="app-modal-body">
+		input field
+		<input type="text">
+	</div>
+	<div class="app-modal-footer">
+		<button type="button" class="btn btn-default" (click)="ports.hide()">Close</button>
+	</div>
+</app-modal>
+
+<!--         -->
 <div>
 	<label>name: </label>
 	<input [(ngModel)]="toadd.name" placeholder="1106"/>
@@ -42,7 +57,7 @@
 </div>
 <div>
 	<label>ports: </label>
-	<button type="button" (click)="addPort()">add port</button>
+	<button type="button" (click)="ports.show()">add port</button>
 </div>
 <div>
 	<label>commands: </label>
