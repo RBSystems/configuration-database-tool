@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/av-api/dbo"
+	"github.com/byuoitav/configuration-database-microservice/accessors"
 	"github.com/labstack/echo"
 )
 
@@ -17,4 +18,26 @@ func GetDevicesByRoom(context echo.Context) error {
 	}
 
 	return context.JSON(http.StatusOK, devices)
+}
+
+func AddDevice(context echo.Context) error {
+	var device accessors.Device
+	err := context.Bind(&device)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	if context.Param("device") != device.Name {
+		return context.JSON(http.StatusBadRequest, "Endpoint and device name must match!")
+	}
+
+	device.Building.Shortname = context.Param("building")
+	device.Room.Name = context.Param("room")
+
+	device, err = dbo.AddDevice(device)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, device)
 }

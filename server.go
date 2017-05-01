@@ -30,6 +30,7 @@ func main() {
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 	secure.POST("/buildings/:building/rooms/:room", handlers.AddRoom)
+	secure.POST("buildings/:building/rooms/:room/devices/:device", handlers.AddDevice)
 
 	secure.POST("/devices/ports/:port", handlers.AddPort)
 	secure.POST("/devices/types/:devicetype", handlers.AddDeviceType)
