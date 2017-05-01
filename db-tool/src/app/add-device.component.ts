@@ -3,7 +3,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
 import { APIService } from './api.service';
-import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition } from './objects';
+import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition, PortConfig } from './objects';
 
 @Component({
 	selector: 'add-device',
@@ -16,14 +16,20 @@ export class AddDeviceComponent implements OnInit {
 
 	currBuilding: string;
 	currRoom: string;
-// configuration stuff
+	roomData: any;
+	devices: Device[];
+
+	// configuration stuff
 	configuration: any;
-	devicetypes: DeviceType[]; powerstates: Powerstate[];
-	ports: Port[];
+	devicetypes: DeviceType[]; 
+	powerstates: Powerstate[];
+	myPorts: Port[];
 	commands: Command[];
 	microservices: Microservice[];
 	endpoints: Endpoint[]; 
 	deviceroledefinitions: DeviceRoleDefinition;
+
+	port: PortConfig; // port to add
 
 	public bool = [
 		{value: true, display: "True"},
@@ -31,8 +37,7 @@ export class AddDeviceComponent implements OnInit {
 	];
 
 	constructor(
-		private api: APIService,
-		private route: ActivatedRoute,
+		private api: APIService, private route: ActivatedRoute,
 		private location: Location
 	) {
 		this.route.queryParams.subscribe(params => {
@@ -43,6 +48,8 @@ export class AddDeviceComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.getConfig();
+		this.getDevices();
+		this.resetPort();
 /*		if(this.currBuilding == null || this.currRoom == null) {
 			alert("Please select a building and room first");
 			this.location.back();
@@ -68,7 +75,7 @@ export class AddDeviceComponent implements OnInit {
 								this.configuration = val; 
 								this.devicetypes = this.configuration.DeviceTypes; 
 								this.powerstates = this.configuration.PowerStates;
-								this.ports = this.configuration.Ports;
+								this.myPorts = this.configuration.Ports;
 								this.commands = this.configuration.Commands;
 								this.microservices = this.configuration.Microservices;
 								this.endpoints = this.configuration.Endpoints;
@@ -76,8 +83,26 @@ export class AddDeviceComponent implements OnInit {
 							});	
 	}
 
+	getDevices(): Object {
+		this.roomData = null
+		return this.api.getDevices("DNB", "gui3").subscribe(val => {
+			this.roomData = val
+			this.devices = this.roomData.devices;
+			});	
+	}
+
 	addPort() {
-		console.log("opening add port dialog");	
+		this.toadd.ports.push(this.port);
+		this.resetPort();
+	}
+
+	resetPort() {
+		this.port = {
+			source: "",
+			name: "",
+			destination: "",
+			host: ""
+		}
 	}
 }
 
