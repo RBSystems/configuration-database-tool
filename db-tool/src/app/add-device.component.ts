@@ -2,14 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
-
 import { APIService } from './api.service';
-import { Device } from './objects';
+import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition } from './objects';
 
 @Component({
 	selector: 'add-device',
 	templateUrl: './add-device.component.html',
-	providers: [APIService],
+	providers: [APIService]
 })
 
 export class AddDeviceComponent implements OnInit {
@@ -17,8 +16,14 @@ export class AddDeviceComponent implements OnInit {
 
 	currBuilding: string;
 	currRoom: string;
-	currBuildingID: number;
-	currRoomID: number;
+// configuration stuff
+	configuration: any;
+	devicetypes: DeviceType[]; powerstates: Powerstate[];
+	ports: Port[];
+	commands: Command[];
+	microservices: Microservice[];
+	endpoints: Endpoint[]; 
+	deviceroledefinitions: DeviceRoleDefinition;
 
 	public bool = [
 		{value: true, display: "True"},
@@ -33,17 +38,11 @@ export class AddDeviceComponent implements OnInit {
 		this.route.queryParams.subscribe(params => {
 			this.currBuilding = params["building"];
 			this.currRoom = params["room"];
-			this.currBuildingID = params["bid"];
-			this.currRoomID= params["rid"];
 		})
 	}
 
 	ngOnInit(): void {
-		this.currBuilding = "DNB";
-		this.currRoom = "gui4";
-		this.currBuildingID = 5;
-		this.currRoomID = 37;
-
+		this.getConfig();
 /*		if(this.currBuilding == null || this.currRoom == null) {
 			alert("Please select a building and room first");
 			this.location.back();
@@ -56,17 +55,29 @@ export class AddDeviceComponent implements OnInit {
 			address: "",
 			input: null,
 			output: null,
-			building: {
-				id: this.currBuildingID,
-			},
-			room: {
-				id: this.currRoomID,
-			},
 			type: "",
 			power: "",
-			roles: [""],
-			responding: null 
+			roles: [], powerstates: [],
+			ports: [],
+			commands: []
 		}	
+	}
+
+	getConfig(): void {
+		this.api.getConfig().subscribe(val => { 
+								this.configuration = val; 
+								this.devicetypes = this.configuration.DeviceTypes; 
+								this.powerstates = this.configuration.PowerStates;
+								this.ports = this.configuration.Ports;
+								this.commands = this.configuration.Commands;
+								this.microservices = this.configuration.Microservices;
+								this.endpoints = this.configuration.Endpoints;
+								this.deviceroledefinitions = this.configuration.DeviceRoleDefinitions;
+							});	
+	}
+
+	addPort() {
+		console.log("opening add port dialog");	
 	}
 }
 

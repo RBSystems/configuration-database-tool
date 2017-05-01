@@ -24,13 +24,24 @@ export class Device {
 	address: string;
 	input: boolean;
 	output: boolean;
-	building: Building;
-	room: Room;
+	building?: Building;
+	room?: Room;
 	type: string;
 	power: string;
 	roles: string[];
-	responding: boolean;
+	powerstates?: string[];
+	ports?: PortConfig[];
+	commands?: string[];	
+	responding?: boolean;
 }
+
+export class PortConfig {
+	source: string;
+	name: string;
+	destination: string;
+	host: string;
+}
+
 
 export class RoomConfiguration {
 	id: number;
