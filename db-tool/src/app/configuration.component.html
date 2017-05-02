@@ -1,9 +1,168 @@
-<div fxLayout="row">
+<!-- Popups -->
+<app-modal #dtpopup>
+	<div class="app-modal-header">
+		DeviceTypes
+	</div>
+	<div class="app-modal-body">
+		<label>select a type to view</label>
+		<button *ngFor="let v of devicetypes" (click)="updateDT(v)">{{v.name}}</button>
+		<div *ngIf="selectedDT">
+			<hr>
+			<div><label>Name: {{selectedDT.name}}</label></div>
+			<div><label>Description: {{selectedDT.description}}</label></div>
+			<div><label>ID: {{selectedDT.id}}</label></div>
+		</div>
+	</div>
+	<div class="app-modal-footer">
+	</div>
+</app-modal>
+<app-modal #pspopup>
+	<div class="app-modal-header">
+		Powerstates
+	</div>
+	<div class="app-modal-body">
+		<label>select a powerstate to view</label>
+		<button *ngFor="let v of powerstates" (click)="updatePS(v)">{{v.name}}</button>
+		<div *ngIf="selectedPS">
+			<hr>
+			<div><label>Name: {{selectedPS.name}}</label></div>
+			<div><label>Description: {{selectedPS.description}}</label></div>
+			<div><label>ID: {{selectedPS.id}}</label></div>
+		</div>
+	</div>
+	<div class="app-modal-footer">
+	</div>
+</app-modal>
+<app-modal #ppopup>
+	<div class="app-modal-header">
+		Ports
+	</div>
+	<div class="app-modal-body">
+		<label>select a port to view</label>
+		<button *ngFor="let v of ports" (click)="updateP(v)">{{v.name}}</button>
+		<div *ngIf="selectedP">
+			<hr>
+			<div><label>Name: {{selectedP.name}}</label></div>
+			<div><label>Description: {{selectedP.description}}</label></div>
+			<div><label>ID: {{selectedP.id}}</label></div>
+		</div>
+	</div>
+	<div class="app-modal-footer">
+	</div>
+</app-modal>
+<app-modal #cpopup>
+	<div class="app-modal-header">
+		Commands
+	</div>
+	<div class="app-modal-body">
+		<label>select a command to view</label>
+		<button *ngFor="let v of commands" (click)="updateC(v)">{{v.name}}</button>
+		<div *ngIf="selectedC">
+			<hr>
+			<div><label>Name: {{selectedC.name}}</label></div>
+			<div><label>Description: {{selectedC.description}}</label></div>
+			<div><label>Priority: {{selectedC.priority}}</label></div>
+			<div><label>ID: {{selectedC.id}}</label></div>
+		</div>
+	</div>
+	<div class="app-modal-footer">
+	</div>
+</app-modal>
+<app-modal #mpopup>
+	<div class="app-modal-header">
+		Microservices
+	</div>
+	<div class="app-modal-body">
+		<label>select a microservice to view</label>
+		<button *ngFor="let v of microservices" (click)="updateM(v)">{{v.name}}</button>
+		<div *ngIf="selectedM">
+			<hr>
+			<div><label>Name: {{selectedM.name}}</label></div>
+			<div><label>Description: {{selectedM.description}}</label></div>
+			<div><label>Address: {{selectedM.address}}</label></div>
+			<div><label>ID: {{selectedM.id}}</label></div>
+		</div>
+	</div>
+	<div class="app-modal-footer">
+	</div>
+</app-modal>
+<app-modal #epopup>
+	<div class="app-modal-header">
+		Endpoints
+	</div>
+	<div class="app-modal-body">
+		<label>select a endpoint to view</label>
+		<button *ngFor="let v of endpoints" (click)="updateE(v)">{{v.name}}</button>
+		<div *ngIf="selectedE">
+			<hr>
+			<div><label>Name: {{selectedE.name}}</label></div>
+			<div><label>Description: {{selectedE.description}}</label></div>
+			<div><label>Path: {{selectedE.path}}</label></div>
+			<div><label>ID: {{selectedE.id}}</label></div>
+		</div>
+	</div>
+	<div class="app-modal-footer">
+	</div>
+</app-modal>
+<app-modal #drdpopup>
+	<div class="app-modal-header">
+		Device Role Definitions
+	</div>
+	<div class="app-modal-body">
+		<label>select a device role definition to view</label>
+		<button *ngFor="let v of deviceroledefinitions" (click)="updateDRD(v)">{{v.name}}</button>
+		<div *ngIf="selectedDRD">
+			<hr>
+			<div><label>Name: {{selectedDRD.name}}</label></div>
+			<div><label>Description: {{selectedDRD.description}}</label></div>
+			<div><label>ID: {{selectedDRD.id}}</label></div>
+		</div>
+	</div>
+	<div class="app-modal-footer">
+	</div>
+</app-modal>
+<!-- end popups -->
+<div class="row">
+	<div class="col-xs-2 left">
+		<ul class="nav nav-pills nav-stacked nav-tabs" role="tablist">
+			<li class="active"><a data-toggle="tab" [routerLink]="['./']" fragment="devicetypes">devicetypes</a></li>
+			<li><a data-toggle="tab" [routerLink]="['./']" fragment="powerstates">powerstates</a></li>
+			<li><a data-toggle="tab">ports</a></li>
+			<li><a data-toggle="tab">commands</a></li>
+			<li><a data-toggle="tab">microservices</a></li>
+			<li><a data-toggle="tab">endpoints</a></li>
+			<li><a data-toggle="tab">device role definitions</a></li>
+		</ul>
+	</div>
+	<div class="col-xs-8 col-md-10 content ">
+		<div class="tab-content ">
+			<div id="devicetypes " class="tab-pan fade in active ">
+				<h3>DeviceTypes</h3>
+			</div>
+			<div id="powerstates " class="tab-pan fade ">
+				<h3>Powerstates</h3>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 
+<div>
+	<button type="button " class="btn btn-default " (click)="dtpopup.show() ">devicetypes</button>
+	<button type="button " class="btn btn-default " (click)="pspopup.show() ">powerstates</button>
+	<button type="button " class="btn btn-default " (click)="ppopup.show() ">ports</button>
+	<button type="button " class="btn btn-default " (click)="cpopup.show() ">commands</button>
+	<button type="button " class="btn btn-default " (click)="mpopup.show() ">microservices</button>
+	<button type="button " class="btn btn-default " (click)="epopup.show() ">endpoints</button>
+	<button type="button " class="btn btn-default " (click)="drdpopup.show() ">device role definitions</button>
+</div>
+-->
+<!-- 
+<div fxLayout="row ">
 	<div fxFlex>
 		<h3>devicetypes</h3>
 		<table>
 			<th>Name</th><th>Description</th>
-			<tr *ngFor="let v of devicetypes">
+			<tr *ngFor="let v of devicetypes ">
 				<td>{{v.name}}</td>
 				<td>{{v.description}}</td>
 			</tr>
@@ -13,7 +172,7 @@
 		<h3>powerstates</h3>
 		<table>
 			<th>Name</th><th>Description</th>
-			<tr *ngFor="let v of powerstates">
+			<tr *ngFor="let v of powerstates ">
 				<td>{{v.name}}</td>
 				<td>{{v.description}}</td>
 			</tr>
@@ -23,7 +182,7 @@
 		<h3>ports</h3>
 		<table>
 			<th>Name</th><th>Description</th>
-			<tr *ngFor="let v of ports">
+			<tr *ngFor="let v of ports ">
 				<td>{{v.name}}</td>
 				<td>{{v.description}}</td>
 			</tr>
@@ -33,7 +192,7 @@
 		<h3>commands</h3>
 		<table>
 			<th>Name</th><th>Description</th>
-			<tr *ngFor="let v of commands">
+			<tr *ngFor="let v of commands ">
 				<td>{{v.name}}</td>
 				<td>{{v.description}}</td>
 			</tr>
@@ -43,7 +202,7 @@
 		<h3>microservices</h3>
 		<table>
 			<th>Name</th><th>Description</th>
-			<tr *ngFor="let v of microservices">
+			<tr *ngFor="let v of microservices ">
 				<td>{{v.name}}</td>
 				<td>{{v.description}}</td>
 			</tr>
@@ -53,7 +212,7 @@
 		<h3>endpoints</h3>
 		<table>
 			<th>Name</th><th>Description</th>
-			<tr *ngFor="let v of endpoints">
+			<tr *ngFor="let v of endpoints ">
 				<td>{{v.name}}</td>
 				<td>{{v.description}}</td>
 			</tr>
@@ -63,13 +222,14 @@
 		<h3>deviceroledefinitions</h3>
 		<table>
 			<th>Name</th><th>Description</th>
-			<tr *ngFor="let v of deviceroledefinitions">
+			<tr *ngFor="let v of deviceroledefinitions ">
 				<td>{{v.name}}</td>
 				<td>{{v.description}}</td>
 			</tr>
 		</table>
 	</div>
 <div>
+-->
 <!-- Test how json response and each variable looks
 
 <pre>{{configuration | json}}</pre> 
