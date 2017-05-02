@@ -1,5 +1,5 @@
 <!-- pop-ups -->
-<app-modal #ports>
+<app-modal #portmodal>
 	<div class="app-modal-header">
 		Add a port
 	</div>
@@ -13,7 +13,7 @@
 		<div>
 			<label>port: </label>
 			<select name="port-name" [(ngModel)]="port.name">			
-				<option *ngFor="let p of myPorts" [value]="p.name">{{p.name}}</option>
+				<option *ngFor="let p of ports" [value]="p.name">{{p.name}}</option>
 			</select>
 		</div>	
 		<div>
@@ -32,9 +32,13 @@
 		<pre>{{port | json}}</pre>
 	</div>
 	<div class="app-modal-footer">
-		<button type="button" class="btn btn-default" (click)="ports.hide(); resetPort()">Close</button>
-		<button type="button" class="btn btn-primary" (click)="addPort(); ports.hide()">Add</button>
+		<button type="button" class="btn btn-default" (click)="portmodal.hide(); resetPort()">Close</button>
+		<button type="button" class="btn btn-primary" (click)="addPort(); portmodal.hide()">Add</button>
 	</div>
+</app-modal>
+
+<app-modal #comamnd>
+
 </app-modal>
 
 <!-- end pop-ups -->
@@ -84,7 +88,7 @@
 </div>
 <div>
 	<label>ports: </label>
-	<button type="button" (click)="ports.show()">add port</button>
+	<button type="button" (click)="portmodal.show()">add port</button>
 </div>
 <div>
 	<label>commands: </label>

@@ -23,7 +23,7 @@ export class AddDeviceComponent implements OnInit {
 	configuration: any;
 	devicetypes: DeviceType[]; 
 	powerstates: Powerstate[];
-	myPorts: Port[];
+	ports: Port[];
 	commands: Command[];
 	microservices: Microservice[];
 	endpoints: Endpoint[]; 
@@ -64,7 +64,8 @@ export class AddDeviceComponent implements OnInit {
 			output: null,
 			type: "",
 			power: "",
-			roles: [], powerstates: [],
+			roles: [], 
+			powerstates: [],
 			ports: [],
 			commands: []
 		}	
@@ -75,7 +76,7 @@ export class AddDeviceComponent implements OnInit {
 								this.configuration = val; 
 								this.devicetypes = this.configuration.DeviceTypes; 
 								this.powerstates = this.configuration.PowerStates;
-								this.myPorts = this.configuration.Ports;
+								this.ports = this.configuration.Ports;
 								this.commands = this.configuration.Commands;
 								this.microservices = this.configuration.Microservices;
 								this.endpoints = this.configuration.Endpoints;
