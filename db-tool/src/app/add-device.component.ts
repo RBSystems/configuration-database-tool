@@ -125,7 +125,6 @@ export class AddDeviceComponent implements OnInit { toadd: Device;
 			source: "",
 			name: "",
 			destination: "",
-			host: ""
 		}
 	}
 

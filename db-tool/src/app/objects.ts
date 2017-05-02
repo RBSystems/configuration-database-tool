@@ -39,7 +39,7 @@ export class PortConfig {
 	source: string;
 	name: string;
 	destination: string;
-	host: string;
+	host?: string;
 }
 
 export class DeviceCommand {

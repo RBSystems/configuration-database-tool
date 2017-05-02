@@ -24,13 +24,6 @@
 				<option [value]="toadd.name">{{toadd.name}}</option>
 			</select>
 		</div>	
-		<div>
-			<label>host device: </label>
-			<select name="port-host" [(ngModel)]="port.host">			
-				<option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
-				<option [value]="toadd.name">{{toadd.name}}</option>
-			</select>
-		</div>	
 		<h6>post body (for this port)</h6>
 		<pre>{{port | json}}</pre>
 	</div>
