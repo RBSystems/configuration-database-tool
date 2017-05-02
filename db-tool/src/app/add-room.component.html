@@ -8,20 +8,14 @@
 		<input [(ngModel)]="toadd.description" class="form-control" name="name" placeholder="AV Conference Room" />
 	</div>
 	<div class="form-group">
-		<label>buildingID </label>
-		<select name="buildings" class="form-control" (change)="setBuildingID($event.target)" [(ngModel)]="currBuilding">
-			<option *ngFor="let building of buildings" [value]="building.id">{{building.shortname}}</option>
-		</select>
-	</div>
-	<div class="form-group">
-		<label>configurationID </label>
-		<select name="roomConfigs" class="form-control" (change)="setConfigurationID($event.target.value)" [(ngModel)]="currConfig">
+		<label>configuration </label>
+		<select name="roomConfigs" class="form-control" [(ngModel)]="toadd.configurationID">
 			<option *ngFor="let rc of roomConfigs" [value]="rc.id">{{rc.name}}</option>
 		</select>
 	</div>
 	<div class="form-group">
 		<label>roomDesignation </label>
-		<select name="roomDesignations" class="form-control" (change)="setRoomDesignation($event.target.value)">
+		<select name="roomDesignations" class="form-control" [(ngModel)]="toadd.roomDesignation">
 			<option>production</option>
 			<option>stage</option>
 			<option>dev</option>

@@ -11,16 +11,20 @@
 			<a routerLink="/add-building" routerLinkActive="active" class="btn btn-default">Go!</a>
 		</div>
 	</div>
-	<div *ngIf="rooms " class="form-group form-inline">
+	<div *ngIf="rooms" class="form-group form-inline">
 		<div class="form-group">
 			<label>Select a room</label>
-			<select name="rooms " class="form-control " (change)="switchToDevices(currBuilding, $event.target.value) " [(ngModel)]="currRoom ">
+			<select name="rooms " class="form-control " (change)="switchToRoom()" [(ngModel)]="currRoom ">
 				<option *ngFor="let room of rooms " [value]="room.name ">{{room.name}}</option>	
 			</select>
 		</div>
 		<div class="form-group">
 			<label>or add a room</label>
-			<a routerLink="/add-room" routerLinkActive="active" class="btn btn-default">Go!</a>
+			<button class="btn btn-default" (click)="switchToAddRoom()">Go!</button>
 		</div>
+	</div>
+	<div *ngIf="currBuilding && !rooms">
+		<label>This builidng has no rooms.</label>
+		<button class="btn btn-default" (click)="switchToAddRoom()">Add one!</button>
 	</div>
 </form>
