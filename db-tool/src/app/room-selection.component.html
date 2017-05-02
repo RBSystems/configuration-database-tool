@@ -1,19 +1,26 @@
-<div fxLayout="row">
-	<div fxFlex>
-		<select name="buildings" (change)="getRooms($event.target.value)" [(ngModel)]="currBuilding">
-			<option *ngFor="let building of buildings" [value]="building.shortname">
-				{{building.name}}
-			</option>	
-		</select>
-		<p> {{currBuilding}} </p>
+<form #roomSelectionForm="ngForm" novalidate>
+	<div class="form-group form-inline">
+		<div class="form-group">
+			<label>Select a building</label>
+			<select name="buildings" class="form-control" (change)="getRooms($event.target.value)" [(ngModel)]="currBuilding">
+				<option *ngFor="let building of buildings" [value]="building.shortname">{{building.name}}</option>	
+			</select>
+		</div>
+		<div class="form-group">
+			<label>or add a building</label>
+			<a routerLink="/add-building" routerLinkActive="active" class="btn btn-default">Go!</a>
+		</div>
 	</div>
-
-	<div fxFlex *ngIf="rooms">
-		<select name="rooms" (change)="switchToDevices(currBuilding, $event.target.value)"[(ngModel)]="currRoom">
-			<option *ngFor="let room of rooms" [value]="room.name">
-				{{room.name}}
-			</option>	
-		</select>
-		<p> {{currRoom}} </p>
+	<div *ngIf="rooms " class="form-group form-inline">
+		<div class="form-group">
+			<label>Select a room</label>
+			<select name="rooms " class="form-control " (change)="switchToDevices(currBuilding, $event.target.value) " [(ngModel)]="currRoom ">
+				<option *ngFor="let room of rooms " [value]="room.name ">{{room.name}}</option>	
+			</select>
+		</div>
+		<div class="form-group">
+			<label>or add a room</label>
+			<a routerLink="/add-room" routerLinkActive="active" class="btn btn-default">Go!</a>
+		</div>
 	</div>
-</div>
+</form>
