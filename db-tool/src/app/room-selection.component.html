@@ -14,7 +14,7 @@
 	<div *ngIf="rooms" class="form-group form-inline">
 		<div class="form-group">
 			<label>Select a room</label>
-			<select name="rooms " class="form-control " (change)="switchToRoom()" [(ngModel)]="currRoom ">
+			<select name="rooms " class="form-control " [(ngModel)]="currRoom ">
 				<option *ngFor="let room of rooms " [value]="room.name ">{{room.name}}</option>	
 			</select>
 		</div>
@@ -26,5 +26,9 @@
 	<div *ngIf="currBuilding && !rooms">
 		<label>This builidng has no rooms.</label>
 		<button class="btn btn-default" (click)="switchToAddRoom()">Add one!</button>
+	</div>
+	<div *ngIf="currRoom" class="form-group form-inline">
+		<button class="btn btn-default" (click)="switchToRoom()">View room</button>
+		<button class="btn btn-default" (click)="switchToAddDevice()">Add Device</button>
 	</div>
 </form>

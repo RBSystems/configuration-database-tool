@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
+
 import { APIService } from './api.service';
 import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition, PortConfig, DeviceCommand } from './objects';
 
@@ -48,12 +49,13 @@ export class AddDeviceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    /*		if(this.currBuilding == null || this.currRoom == null) {
-                alert("Please select a building and room first");
-                this.location.back();
-                return;
-            }
-    */
+    if (this.currBuilding == null || this.currRoom == null) {
+      alert("Please select a building and room first");
+      this.location.back();
+      return;
+    }
+
+    console.log("form is for building", this.currBuilding, "and room", this.currRoom);
     this.getConfig();
     this.getDevices();
     this.resetPort();
@@ -92,8 +94,6 @@ export class AddDeviceComponent implements OnInit {
   }
 
   getDevices(): Object {
-    this.currBuilding = "DSNB";
-    this.currRoom = "420";
     this.roomData = null
     return this.api.getDevices(this.currBuilding, this.currRoom).subscribe(val => {
       this.roomData = val

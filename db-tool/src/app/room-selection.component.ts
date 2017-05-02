@@ -37,7 +37,7 @@ export class RoomSelectionComponent implements OnInit {
     return this.api.getRooms(building).subscribe(val => this.rooms = val);
   }
 
-  switchToRoom(): void {
+  switchToRoom() {
     let navigationExtras: NavigationExtras = {
       queryParams: {
         "building": this.currBuilding,
@@ -56,5 +56,16 @@ export class RoomSelectionComponent implements OnInit {
     }
 
     this.router.navigate(['/add-room'], navigationExtras);
+  }
+
+  switchToAddDevice() {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        "building": this.currBuilding,
+        "room": this.currRoom
+      }
+    };
+
+    this.router.navigate(['/add-device'], navigationExtras);
   }
 }
