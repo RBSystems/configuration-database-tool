@@ -66,7 +66,6 @@ export class AddDeviceComponent implements OnInit { toadd: Device;
 			data => {
 				console.log("success");
 				// refresh data
-				this.getConfig(); // shouldn't need to do this one
 				this.getDevices();
 				this.resetDevices();
 				return true;
