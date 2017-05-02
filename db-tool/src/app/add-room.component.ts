@@ -40,6 +40,8 @@ export class AddRoomComponent implements OnInit {
   }
 
   postData() {
+    this.toadd.configurationID = Number(this.toadd.configurationID)
+
     this.api.postData("/buildings/" + this.currBuilding + "/rooms/" + this.toadd.name, this.toadd)
       .subscribe(
       data => {
