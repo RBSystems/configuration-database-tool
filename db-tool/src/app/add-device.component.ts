@@ -3,7 +3,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
 import { APIService } from './api.service';
-import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition, PortConfig } from './objects';
+import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition, PortConfig, DeviceCommand } from './objects';
 
 @Component({
 	selector: 'add-device',
@@ -11,8 +11,7 @@ import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microserv
 	providers: [APIService]
 })
 
-export class AddDeviceComponent implements OnInit {
-	toadd: Device;
+export class AddDeviceComponent implements OnInit { toadd: Device;
 
 	currBuilding: string;
 	currRoom: string;
@@ -30,6 +29,7 @@ export class AddDeviceComponent implements OnInit {
 	deviceroledefinitions: DeviceRoleDefinition;
 
 	port: PortConfig; // port to add
+	command: DeviceCommand; // command to add
 
 	public bool = [
 		{value: true, display: "True"},
@@ -47,28 +47,35 @@ export class AddDeviceComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.getConfig();
-		this.getDevices();
-		this.resetPort();
 /*		if(this.currBuilding == null || this.currRoom == null) {
 			alert("Please select a building and room first");
 			this.location.back();
 			return;
 		}
 */	
-		
-		this.toadd = {
-			name: "",
-			address: "",
-			input: null,
-			output: null,
-			type: "",
-			power: "",
-			roles: [], 
-			powerstates: [],
-			ports: [],
-			commands: []
-		}	
+		this.getConfig();
+		this.getDevices();
+		this.resetPort();
+		this.resetCommand();
+		this.resetDevices();
+	}
+
+	postData() {
+		this.api.postData("/buildings/" + this.currBuilding + "/rooms/" + this.currRoom + "/devices/" + this.toadd.name, this.toadd)
+		.subscribe(
+			data => {
+				console.log("success");
+				// refresh data
+				this.getConfig(); // shouldn't need to do this one
+				this.getDevices();
+				this.resetDevices();
+				return true;
+			}, error => {
+				console.error("failed to post data");
+				console.error(error.json());
+				return Observable.throw(error);
+			}
+		);
 	}
 
 	getConfig(): void {
@@ -85,11 +92,27 @@ export class AddDeviceComponent implements OnInit {
 	}
 
 	getDevices(): Object {
+		this.currBuilding = "DSNB";
+		this.currRoom = "420";
 		this.roomData = null
-		return this.api.getDevices("DNB", "gui3").subscribe(val => {
+		return this.api.getDevices(this.currBuilding, this.currRoom).subscribe(val => {
 			this.roomData = val
 			this.devices = this.roomData.devices;
 			});	
+	}
+
+	resetDevices() {
+		this.toadd = {
+			name: "",
+			address: "",
+			input: null,
+			output: null,
+			type: "",
+			roles: [], 
+			powerstates: [],
+			ports: [],
+			commands: [] 
+		}	
 	}
 
 	addPort() {
@@ -104,6 +127,21 @@ export class AddDeviceComponent implements OnInit {
 			destination: "",
 			host: ""
 		}
+	}
+
+	addCommand() {
+		this.toadd.commands.push(this.command);
+		this.resetCommand();
+	}
+
+	resetCommand() {
+		this.command = {
+			name: "",
+			microservice: "",
+			endpoint: {
+				name: ""
+			} 
+		}	
 	}
 }
 

@@ -27,11 +27,11 @@ export class Device {
 	building?: Building;
 	room?: Room;
 	type: string;
-	power: string;
+	power?: string;
 	roles: string[];
 	powerstates?: string[];
 	ports?: PortConfig[];
-	commands?: string[];	
+	commands?: DeviceCommand[];	
 	responding?: boolean;
 }
 
@@ -42,6 +42,13 @@ export class PortConfig {
 	host: string;
 }
 
+export class DeviceCommand {
+	deviceID?: number;
+	name: string;
+	microservice: string;
+	endpoint: Endpoint;
+	enabled?: boolean;
+}
 
 export class RoomConfiguration {
 	id: number;
@@ -95,10 +102,10 @@ export class Microservice {
 }
 
 export class Endpoint {
-	id: number;
+	id?: number;
 	name: string;
-	path: string;
-	description: string;
+	path?: string;
+	description?: string;
 }
 
 export class DeviceRoleDefinition {

@@ -8,6 +8,7 @@
 			<label>source device: </label>
 			<select name="port-source" [(ngModel)]="port.source">			
 				<option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
+				<option [value]="toadd.name">{{toadd.name}}</option>
 			</select>
 		</div>	
 		<div>
@@ -20,25 +21,55 @@
 			<label>destination device: </label>
 			<select name="port-destination" [(ngModel)]="port.destination">			
 				<option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
+				<option [value]="toadd.name">{{toadd.name}}</option>
 			</select>
 		</div>	
 		<div>
 			<label>host device: </label>
 			<select name="port-host" [(ngModel)]="port.host">			
 				<option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
+				<option [value]="toadd.name">{{toadd.name}}</option>
 			</select>
 		</div>	
 		<h6>post body (for this port)</h6>
 		<pre>{{port | json}}</pre>
 	</div>
 	<div class="app-modal-footer">
-		<button type="button" class="btn btn-default" (click)="portmodal.hide(); resetPort()">Close</button>
-		<button type="button" class="btn btn-primary" (click)="addPort(); portmodal.hide()">Add</button>
+		<button type="button" class="btn btn-default" (click)="portmodal.hide(); resetPort()">close</button>
+		<button type="button" class="btn btn-primary" (click)="addPort(); portmodal.hide()">add</button>
 	</div>
 </app-modal>
 
-<app-modal #comamnd>
-
+<app-modal #commandmodal>
+	<div class="app-modal-header">
+		Add a command
+	</div>
+	<div class="app-modal-body">
+		<div>
+			<label>name: </label>
+			<select name="command-name" [(ngModel)]="command.name">
+				<option *ngFor="let c of commands" [value]="c.name">{{c.name}}</option>
+			</select>
+		</div>
+		<div>
+			<label>microservice: </label>
+			<select name="command-microservice" [(ngModel)]="command.microservice">
+				<option *ngFor="let m of microservices" [value]="m.address">{{m.name}}</option>
+			</select>
+		</div>
+		<div>
+			<label>endpoint: </label>
+			<select name="command-endpoint" [(ngModel)]="command.endpoint.name">
+				<option *ngFor="let e of endpoints" [value]="e.name">{{e.name}}</option>
+			</select>
+		</div>
+		<h6>post body (for this command)</h6>
+		<pre>{{command | json}}</pre>
+	</div>	
+	<div class="app-modal-footer">
+		<button type="button" class="btn btn-default" (click)="commandmodal.hide(); resetCommand()">close</button>
+		<button type="button" class="btn btn-primary" (click)="addCommand(); commandmodal.hide()">add</button>
+	</div>
 </app-modal>
 
 <!-- end pop-ups -->
@@ -92,14 +123,16 @@
 </div>
 <div>
 	<label>commands: </label>
-	<select multiple name="commands" [(ngModel)]="toadd.commands">
-		<option *ngFor="let c of commands" [value]="c.name">{{c.name}}</option>
-	</select>
+	<button type="button" (click)="commandmodal.show()">add command</button>
+</div>
+<div>
+	<button type="button" class="btn btn-primary" (click)="postData()">Post Data!</button>	
 </div>
 <!-- end form -->
 
 <h4>post body</h4>
 <pre>{{toadd | json}}</pre>
-
+<!-- 
 <h5>devices</h5>
 <pre>{{devices | json}}</pre>
+-->
