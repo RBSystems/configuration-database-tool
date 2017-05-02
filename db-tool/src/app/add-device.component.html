@@ -4,26 +4,26 @@
 		Add a port
 	</div>
 	<div class="app-modal-body">
-		<div>
-			<label>source device: </label>
-			<select name="port-source" [(ngModel)]="port.source">			
-				<option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
-				<option [value]="toadd.name">{{toadd.name}}</option>
-			</select>
-		</div>
-		<div>
-			<label>port: </label>
-			<select name="port-name" [(ngModel)]="port.name">			
-				<option *ngFor="let p of ports" [value]="p.name">{{p.name}}</option>
-			</select>
-		</div>
-		<div>
-			<label>destination device: </label>
-			<select name="port-destination" [(ngModel)]="port.destination">			
-				<option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
-				<option [value]="toadd.name">{{toadd.name}}</option>
-			</select>
-		</div>
+		<form #portForm="ngForm">
+			<div class="form-group">
+				<label>source device: </label>
+				<select name="port-source" class="form-control" [(ngModel)]="port.source">			
+					<option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>port: </label>
+				<select name="port-name" class="form-control" [(ngModel)]="port.name">			
+					<option *ngFor="let p of ports" [value]="p.name">{{p.name}}</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>destination device: </label>
+				<select name="port-destination" class="form-control" [(ngModel)]="port.destination">			
+					<option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
+				</select>
+			</div>
+		</form>
 		<h6>post body (for this port)</h6>
 		<pre>{{port | json}}</pre>
 	</div>
@@ -38,24 +38,26 @@
 		Add a command
 	</div>
 	<div class="app-modal-body">
-		<div>
-			<label>name: </label>
-			<select name="command-name" [(ngModel)]="command.name">
-				<option *ngFor="let c of commands" [value]="c.name">{{c.name}}</option>
-			</select>
-		</div>
-		<div>
-			<label>microservice: </label>
-			<select name="command-microservice" [(ngModel)]="command.microservice">
-				<option *ngFor="let m of microservices" [value]="m.address">{{m.name}}</option>
-			</select>
-		</div>
-		<div>
-			<label>endpoint: </label>
-			<select name="command-endpoint" [(ngModel)]="command.endpoint.name">
-				<option *ngFor="let e of endpoints" [value]="e.name">{{e.name}}</option>
-			</select>
-		</div>
+		<form #commandForm="ngForm">
+			<div class="form-group">
+				<label>name: </label>
+				<select name="command-name" class="form-control" [(ngModel)]="command.name">
+					<option *ngFor="let c of commands" [value]="c.name">{{c.name}}</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>microservice: </label>
+				<select name="command-microservice" class="form-control" [(ngModel)]="command.microservice">
+					<option *ngFor="let m of microservices" [value]="m.address">{{m.name}}</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>endpoint: </label>
+				<select name="command-endpoint" class="form-control" [(ngModel)]="command.endpoint.name">
+					<option *ngFor="let e of endpoints" [value]="e.name">{{e.name}}</option>
+				</select>
+			</div>
+		</form>
 		<h6>post body (for this command)</h6>
 		<pre>{{command | json}}</pre>
 	</div>
@@ -68,63 +70,66 @@
 <!-- end pop-ups -->
 
 <!-- form -->
-<div>
-	<label>name: </label>
-	<input [(ngModel)]="toadd.name" placeholder="1106" />
-</div>
-<div>
-	<label>address: </label>
-	<input [(ngModel)]="toadd.address" placeholder="10.0.0.0" />
-</div>
-<div>
-	<label>input: </label>
-	<div *ngFor="let b of bool">
-		<label>
-		<input type="radio" name="input" [(ngModel)]="toadd.input" [value]="b.value">{{b.display}}
-		</label>
+<form #deviceForm="ngForm" novalidate>
+	<div class="form-group">
+		<label>name </label>
+		<input [(ngModel)]="toadd.name" class="form-control" name="name" placeholder="1106" />
 	</div>
-</div>
-<div>
-	<label>output: </label>
-	<div *ngFor="let b of bool">
-		<label>
-		<input type="radio" name="output" [(ngModel)]="toadd.output" [value]="b.value">{{b.display}}
-		</label>
+	<div class="form-group">
+		<label>address </label>
+		<input [(ngModel)]="toadd.address" class="form-control" name="address" placeholder="10.0.0.0" />
 	</div>
-</div>
-<div>
-	<label>type: </label>
-	<select name="types" [(ngModel)]="toadd.type">
+	<div class="form-group">
+		<label>input </label>
+		<div class="radio" *ngFor="let b of bool">
+			<label>
+				<input type="radio" name="input" [(ngModel)]="toadd.input" [value]="b.value">{{b.display}}
+			</label>
+		</div>
+	</div>
+	<div class="form-group">
+		<label>output </label>
+		<div class="radio" *ngFor="let b of bool">
+			<label>
+				<input type="radio" name="output" [(ngModel)]="toadd.output" [value]="b.value">{{b.display}}
+			</label>
+		</div>
+	</div>
+	<div class="form-group">
+		<label>type </label>
+		<select class="form-control" name="types" [(ngModel)]="toadd.type">
 		<option *ngFor="let dt of devicetypes" [value]="dt.name">{{dt.name}}</option>
 	</select>
-</div>
-<div>
-	<label>roles: </label>
-	<select multiple name="roles" [(ngModel)]="toadd.roles">
+	</div>
+	<div class="form-group">
+		<label>roles </label>
+		<select multiple name="roles" class="form-control" [(ngModel)]="toadd.roles">
 		<option *ngFor="let r of deviceroledefinitions" [value]="r.name">{{r.name}}</option>
 	</select>
-</div>
-<div>
-	<label>powerstates: </label>
-	<select multiple name="powerstates" [(ngModel)]="toadd.powerstates">
+	</div>
+	<div class="form-group">
+		<label>powerstates </label>
+		<select multiple name="powerstates" class="form-control" [(ngModel)]="toadd.powerstates">
 		<option *ngFor="let ps of powerstates" [value]="ps.name">{{ps.name}}</option>
 	</select>
-</div>
-<div>
-	<label>ports: </label>
-	<button type="button" (click)="portmodal.show()">add port</button>
-</div>
-<div>
-	<label>commands: </label>
-	<button type="button" (click)="commandmodal.show()">add command</button>
-</div>
-<div>
-	<button type="button" class="btn btn-primary" (click)="postData()">Post Data!</button>
-</div>
-<!-- end form -->
+	</div>
+	<div class="form-group">
+		<label>ports </label>
+		<button type="button" class="btn btn-default" (click)="portmodal.show()">add port</button>
+	</div>
+	<div class="form-group">
+		<label>commands </label>
+		<button type="button" class="btn btn-default" (click)="commandmodal.show()">add command</button>
+	</div>
+	<div>
+		<button type="button" class="btn btn-primary" (click)="postData()">Post Data!</button>
+	</div>
+	<!-- end form -->
+</form>
 
 <h4>post body</h4>
 <pre>{{toadd | json}}</pre>
+
 <!-- 
 <h5>devices</h5>
 <pre>{{devices | json}}</pre>
