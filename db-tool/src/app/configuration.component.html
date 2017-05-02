@@ -125,13 +125,13 @@
 <div class="row">
 	<div class="col-xs-2 left">
 		<ul class="nav nav-pills nav-stacked nav-tabs" role="tablist">
-			<li class="active"><a data-toggle="tab" [routerLink]="['./']" fragment="devicetypes">devicetypes</a></li>
-			<li><a data-toggle="tab" [routerLink]="['./']" fragment="powerstates">powerstates</a></li>
-			<li><a data-toggle="tab">ports</a></li>
-			<li><a data-toggle="tab">commands</a></li>
-			<li><a data-toggle="tab">microservices</a></li>
-			<li><a data-toggle="tab">endpoints</a></li>
-			<li><a data-toggle="tab">device role definitions</a></li>
+			<li [style.active]="active" (click)="setActive()"><a>devicetypes</a></li>
+			<li [style.active]="dtActive === true"><a>powerstates</a></li>
+			<li><a>ports</a></li>
+			<li><a>commands</a></li>
+			<li><a>microservices</a></li>
+			<li><a>endpoints</a></li>
+			<li><a>device role definitions</a></li>
 		</ul>
 	</div>
 	<div class="col-xs-8 col-md-10 content ">
