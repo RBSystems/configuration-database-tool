@@ -16,11 +16,7 @@ export class AddBuildingComponent implements OnInit {
   constructor(private api: APIService) { }
 
   ngOnInit(): void {
-    this.toadd = {
-      name: "",
-      shortname: "",
-      description: ""
-    };
+    this.resetForm();
   }
 
   postData() {
@@ -36,5 +32,13 @@ export class AddBuildingComponent implements OnInit {
         return Observable.throw(error);
       }
       );
+  }
+
+  resetForm() {
+    this.toadd = {
+      name: "",
+      shortname: "",
+      description: ""
+    };
   }
 }

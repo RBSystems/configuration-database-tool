@@ -30,13 +30,7 @@ export class AddRoomComponent implements OnInit {
 
   ngOnInit(): void {
     this.api.getRoomConfigs().subscribe(val => this.roomConfigs = val);
-
-    this.toadd = {
-      name: "",
-      description: "",
-      configurationID: null,
-      roomDesignation: "production"
-    }
+    this.resetForm();
   }
 
   postData() {
@@ -54,5 +48,14 @@ export class AddRoomComponent implements OnInit {
         return Observable.throw(error);
       }
       );
+  }
+
+  resetForm() {
+    this.toadd = {
+      name: "",
+      description: "",
+      configurationID: null,
+      roomDesignation: "production"
+    }
   }
 }

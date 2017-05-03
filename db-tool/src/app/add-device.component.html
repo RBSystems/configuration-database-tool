@@ -128,8 +128,9 @@
 		<button type="button" class="btn btn-default" (click)="commandmodal.show()">add command</button>
 	</div>
 	<button type="submit" class="btn btn-primary" (click)="postData()">Post Data!</button>
-	<!-- end form -->
+	<button type="submit" class="btn btn-default" (click)="resetDevices()">Reset</button>
 </form>
+<!-- end form -->
 
 <h4>post body</h4>
 <pre>{{toadd | json}}</pre>
