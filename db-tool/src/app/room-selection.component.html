@@ -1,4 +1,4 @@
-<form #roomSelectionForm="ngForm" novalidate>
+<form #roomSelectionForm="ngForm" class="text-center" novalidate>
 	<div class="form-group form-inline">
 		<div class="form-group">
 			<label>Select a building</label>
@@ -7,8 +7,8 @@
 			</select>
 		</div>
 		<div class="form-group">
-			<label>or add a building</label>
-			<a routerLink="/add-building" routerLinkActive="active" class="btn btn-default">Go!</a>
+			<label>or</label>
+			<a routerLink="/add-building" routerLinkActive="active" class="btn btn-default">add a building</a>
 		</div>
 	</div>
 	<div *ngIf="rooms" class="form-group form-inline">
@@ -19,12 +19,12 @@
 			</select>
 		</div>
 		<div class="form-group">
-			<label>or add a room</label>
-			<button class="btn btn-default" (click)="switchToAddRoom()">Go!</button>
+			<label>or</label>
+			<button class="btn btn-default" (click)="switchToAddRoom()">add a room</button>
 		</div>
 	</div>
 	<div *ngIf="currBuilding && !rooms">
-		<label>This builidng has no rooms.</label>
+		<label>This builiding has no rooms.</label>
 		<button class="btn btn-default" (click)="switchToAddRoom()">Add one!</button>
 	</div>
 	<div *ngIf="currRoom" class="form-group form-inline">
