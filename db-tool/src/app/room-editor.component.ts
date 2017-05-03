@@ -3,7 +3,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { APIService } from './api.service';
-import { Building, Room, Device, RoomConfiguration } from './objects';
+import { Building, Room, Device, RoomConfiguration, PortConfig, DeviceCommand } from './objects';
 
 @Component({
   selector: 'devices',
@@ -25,6 +25,10 @@ export class RoomEditorComponent implements OnInit {
   configuration: RoomConfiguration;
   roomDesignation: string;
 
+  currDevice: Device;
+  selectedPort: PortConfig;
+  selectedCommand: DeviceCommand;
+
   constructor(
     private api: APIService,
     private route: ActivatedRoute,
@@ -43,6 +47,22 @@ export class RoomEditorComponent implements OnInit {
       return;
     }
     this.getDevices();
+
+    this.selectedPort = {
+      source: "",
+      name: "",
+      destination: "",
+      host: ""
+    }
+
+    this.selectedCommand = {
+      name: "",
+      microservice: "",
+      endpoint: {
+        name: "",
+      },
+      enabled: null
+    }
   }
 
   getDevices(): Object {
@@ -58,5 +78,17 @@ export class RoomEditorComponent implements OnInit {
       this.configuration = this.roomData.configuration;
       this.roomDesignation = this.roomData.roomDesignation;
     });
+  }
+
+  selectDevice(d: Device) {
+    this.currDevice = d;
+  }
+
+  selectPort(p: PortConfig) {
+    this.selectedPort = p;
+  }
+
+  selectCommand(c: DeviceCommand) {
+    this.selectedCommand = c;
   }
 }
