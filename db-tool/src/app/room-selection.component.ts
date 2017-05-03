@@ -8,44 +8,64 @@ import { APIService } from './api.service';
 import { Building, Room } from './objects';
 
 @Component({
-	selector: 'room-selection',
-	templateUrl: './room-selection.component.html',
-	styleUrls: ['./room-selection.component.css'],
-	providers: [APIService]
+  selector: 'room-selection',
+  templateUrl: './room-selection.component.html',
+  providers: [APIService]
 })
 
 export class RoomSelectionComponent implements OnInit {
-	buildings: any;
-	rooms: any;
-	currBuilding: string;
-	currRoom: string;	
+  buildings: any;
+  rooms: any;
+  currBuilding: string;
+  currRoom: string;
 
-	ngOnInit(): void {
-		this.getBuildings();
-	}
+  ngOnInit(): void {
+    this.getBuildings();
+  }
 
-	constructor(
-		private api: APIService,
-	 	private router: Router
-	) {}
+  constructor(
+    private api: APIService,
+    private router: Router
+  ) { }
 
-  	getBuildings(): Object {  	
-	  return this.api.getBuildings().subscribe(val => this.buildings = val); 
-  	}
+  getBuildings(): Object {
+    return this.api.getBuildings().subscribe(val => this.buildings = val);
+  }
 
-  	getRooms(building: string): Object {
-		this.currRoom = null;
-  		return this.api.getRooms(building).subscribe(val => this.rooms = val);
-  	}
+  getRooms(building: string): Object {
+    this.currRoom = null;
+    return this.api.getRooms(building).subscribe(val => this.rooms = val);
+  }
 
-	switchToDevices(building: string, room: string): void {
-		let navigationExtras: NavigationExtras = {
-			queryParams: {
-				"building": this.currBuilding,
-				"room": this.currRoom
-			}
-		};
+  switchToRoom() {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        "building": this.currBuilding,
+        "room": this.currRoom
+      }
+    };
 
-		this.router.navigate(['/room-editor'], navigationExtras);
-	}
+    this.router.navigate(['/room-editor'], navigationExtras);
+  }
+
+  switchToAddRoom() {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        "building": this.currBuilding
+      }
+    }
+
+    this.router.navigate(['/add-room'], navigationExtras);
+  }
+
+  switchToAddDevice() {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        "building": this.currBuilding,
+        "room": this.currRoom
+      }
+    };
+
+    this.router.navigate(['/add-device'], navigationExtras);
+  }
 }

@@ -1,78 +1,61 @@
 import { Component, OnInit } from '@angular/core'
 import { Observable } from 'rxjs/Rx';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Location } from '@angular/common';
 
 import { APIService } from './api.service';
 import { Room } from './objects';
 
 @Component({
-	selector: 'add-room',
-	templateUrl: './add-room.component.html',
-	providers: [APIService],
+  selector: 'add-room',
+  templateUrl: './add-room.component.html',
+  providers: [APIService],
 })
 
 export class AddRoomComponent implements OnInit {
-	//
-	// is there a table in the database with available roomDesignations?
-	// just hardcoded for now:) 
-	//
-	toadd: Room;
+  toadd: Room;
 
-	buildings: any; 
-	currBuilding: string;
-	myCurrBuilding: string;
-	roomConfigs: any;
-	currConfig: string;
+  currBuilding: string;
+  roomConfigs: any;
 
-	constructor(private api: APIService) {}
+  constructor(
+    private api: APIService,
+    private route: ActivatedRoute,
+    private Location: Location
+  ) {
+    this.route.queryParams.subscribe(params => {
+      this.currBuilding = params["building"];
+    })
+  }
 
-	ngOnInit(): void {
-		this.api.getBuildings().subscribe(val => this.buildings = val);
-		this.api.getRoomConfigs().subscribe(val => this.roomConfigs = val);
+  ngOnInit(): void {
+    this.api.getRoomConfigs().subscribe(val => this.roomConfigs = val);
+    this.resetForm();
+  }
 
-		this.toadd = {
-			name: "",
-			description: "",
-			building: {
-				id: null,
-				name: "",
-				shortname: "",
-				description: ""
-			},
-		    configurationID: null,
-			roomDesignation: ""	
-		}	
-		this.toadd.roomDesignation = "production";
-	}
+  postData() {
+    this.toadd.configurationID = Number(this.toadd.configurationID)
 
-	setBuildingID(target: any) {
-		console.log("setting building id to " + target.value);
-		this.toadd.building.id = Number(target.value);
-		this.myCurrBuilding = target.options[target.selectedIndex].text;
-		console.log("myCurrBuilding = " + this.myCurrBuilding);
-	}
+    this.api.postData("/buildings/" + this.currBuilding + "/rooms/" + this.toadd.name, this.toadd)
+      .subscribe(
+      data => {
+        //refresh rooms?
+        console.log("success");
+        return true;
+      }, error => {
+        console.error("failed to post data");
+        console.error(error.json());
+        return Observable.throw(error);
+      }
+      );
+  }
 
-	setConfigurationID(id: number){
-		console.log("setting config id to " + id);
-		this.toadd.configurationID = Number(id);
-	}
-
-	setRoomDesignation(s: string) {
-		console.log("setting roomDesignation to " + s);
-		this.toadd.roomDesignation = s;
-	}
-
-	postData() {
-		this.api.postData("/buildings/" + this.myCurrBuilding + "/rooms/" + this.toadd.name, this.toadd)
-		.subscribe(
-			data => {
-				//refresh rooms?
-				console.log("success");
-				return true;
-			}, error => {
-				console.error("failed to post data");
-				console.error(error.json());
-				return Observable.throw(error);
-			}
-		);
-	}
+  resetForm() {
+    this.toadd = {
+      name: "",
+      description: "",
+      configurationID: null,
+      roomDesignation: "production"
+    }
+  }
 }

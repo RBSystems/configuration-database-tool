@@ -1,9 +1,15 @@
-<nav>
-	<a routerLink="/config" routerLinkActive="active">config</a>
-	<a routerLink="/room-selection" routerLinkActive="active">room selection</a>
-	<a routerLink ="/room-editor" routerLinkActive="active">room editor</a>
-	<a routerLink = "/add-building" routerLinkActive="active">add building</a>
-	<a routerLink = "/add-room" routerLinkActive="active">add room</a>
-	<a routerLink = "./add-device" routerLinkActive="active">add device</a>
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">AV-DB-Tool</a>
+		</div>
+		<ul class="nav navbar-nav">
+			<li [routerLinkActive]="['active']"><a routerLink="/room-selection" routerLinkActive="active">room selection</a></li>
+			<li [routerLinkActive]="['active']"><a routerLink="/config" routerLinkActive="active">config</a></li>
+		</ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+		</ul>
+	</div>
 </nav>
 <router-outlet></router-outlet>

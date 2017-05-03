@@ -1,20 +1,26 @@
-<div>
-	<label>name: </label>
-	<input [(ngModel)]="toadd.name" placeholder="Information Technology Building"/>
+<div class="container">
+	<div class="jumbotron">
+		<h2 class="text-center">Add a building</h2>
+	</div>
 </div>
-<div>
-	<label>shortname: </label>
-	<input [(ngModel)]="toadd.shortname" placeholder="ITB"/>
-</div>
-<div>
-	<label>description: </label>
-	<input [(ngModel)]="toadd.description" placeholder="BYU's IT Building"/>
-</div>
-<div>
-	<button type ="button" (click)="postData()">Post Data!</button>
-</div>
+<form #buildingForm="ngForm" novalidate>
+	<div class="form-group">
+		<label>name </label>
+		<input [(ngModel)]="toadd.name" class="form-control" name="name" placeholder="Information Technology Building" />
+	</div>
+	<div class="form-group">
+		<label>shortname </label>
+		<input [(ngModel)]="toadd.shortname" class="form-control" name="shortname" placeholder="ITB" />
+	</div>
+	<div class="form-group">
+		<label>description </label>
+		<input [(ngModel)]="toadd.description" class="form-control" name="description" placeholder="BYU's IT Building" />
+	</div>
+	<div>
+		<button type="button" class="btn btn-primary" (click)="postData()">Post Data!</button>
+		<button type="button" class="btn btn-default" (click)="resetForm()">Reset</button>
+	</div>
+</form>
 
-<!--
 <h4>post body</h4>
 <pre>{{toadd | json}}</pre>
--->

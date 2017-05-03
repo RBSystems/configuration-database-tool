@@ -1,36 +1,35 @@
-<div>
-	<label>name: </label>
-	<input [(ngModel)]="toadd.name" placeholder="1106"/>
+<div class="container">
+	<div class="jumbotron">
+		<h2 class="text-center">Add a room to {{currBuilding}}</h2>
+	</div>
 </div>
-<div>
-	<label>description: </label>
-	<input [(ngModel)]="toadd.description" placeholder="AV Conference Room"/>
-</div>
-<div>
-	<label>buildingID: </label>
-	<select name="buildings" (change)="setBuildingID($event.target)" [(ngModel)]="currBuilding">
-		<option *ngFor="let building of buildings" [value]="building.id">{{building.shortname}}</option>
-	</select>
-</div>
-<div>
-	<label>configurationID: </label>
-	<select name="roomConfigs" (change)="setConfigurationID($event.target.value)" [(ngModel)]="currConfig">
-		<option *ngFor="let rc of roomConfigs" [value]="rc.id">{{rc.name}}</option>
-	</select>
-</div>
-<div>
-	<label>roomDesignation: </label>
-	<select name="roomDesignations" (change)="setRoomDesignation($event.target.value)">
-		<option>production</option>
-		<option>stage</option>
-		<option>dev</option>
-	</select>
-</div>
-<div>
-	<button type ="button" (click)="postData()">Post Data!</button>
-</div>
+<form #roomForm="ngForm" novalidate>
+	<div class="form-group">
+		<label>name </label>
+		<input [(ngModel)]="toadd.name" class="form-control" name="name" placeholder="1106" />
+	</div>
+	<div class="form-group">
+		<label>description </label>
+		<input [(ngModel)]="toadd.description" class="form-control" name="name" placeholder="AV Conference Room" />
+	</div>
+	<div class="form-group">
+		<label>configuration </label>
+		<select name="roomConfigs" class="form-control" [(ngModel)]="toadd.configurationID">
+			<option *ngFor="let rc of roomConfigs" [value]="rc.id">{{rc.name}}</option>
+		</select>
+	</div>
+	<div class="form-group">
+		<label>roomDesignation </label>
+		<select name="roomDesignations" class="form-control" [(ngModel)]="toadd.roomDesignation">
+			<option>production</option>
+			<option>stage</option>
+			<option>dev</option>
+		</select>
+	</div>
+	<button type="submit" class="btn btn-primary" (click)="postData()">Post Data!</button>
+	<button type="submit" class="btn btn-default" (click)="resetForm()">Reset</button>
+</form>
 
-<!--
+
 <h4>post body</h4>
 <pre>{{toadd | json}}</pre>
--->
