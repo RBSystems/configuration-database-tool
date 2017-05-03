@@ -113,3 +113,11 @@ export class DeviceRoleDefinition {
   name: string;
   description: string;
 }
+
+export class GenericConfig {
+  name: string;
+  description: string;
+  priority?: number;
+  address?: string;
+  path?: string;
+}

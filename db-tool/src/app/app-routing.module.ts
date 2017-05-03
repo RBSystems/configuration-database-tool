@@ -9,7 +9,7 @@ import { AddRoomComponent } from './add-room.component';
 import { AddDeviceComponent } from './add-device.component';
 
 const routes: Routes = [
-  //	{ path: '', redirectTo: '/room-selection', pathMatch: 'full'},
+  { path: '', redirectTo: '/room-selection', pathMatch: 'full' },
   { path: 'room-selection', component: RoomSelectionComponent },
   { path: 'config', component: ConfigurationComponent },
   { path: 'room-editor', component: RoomEditorComponent },
