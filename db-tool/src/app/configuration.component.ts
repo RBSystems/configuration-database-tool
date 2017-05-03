@@ -20,16 +20,19 @@ export class ConfigurationComponent implements OnInit {
   endpoints: Endpoint[];
   deviceroledefinitions: DeviceRoleDefinition;
 
-  selectedDT: DeviceType;
-  selectedPS: Powerstate;
-  selectedP: Port;
-  selectedC: Command;
-  selectedM: Microservice;
-  selectedE: Endpoint;
-  selectedDRD: DeviceRoleDefinition;
+  selectedDT: boolean;
+  selectedPS: boolean;
+  selectedP: boolean;
+  selectedC: boolean;
+  selectedM: boolean;
+  selectedE: boolean;
+  selectedDRD: boolean;
+
+  selected: any;
 
   ngOnInit(): void {
     this.getConfig();
+    this.selectedDT = true;
   }
 
   constructor(private api: APIService) { }
@@ -47,31 +50,46 @@ export class ConfigurationComponent implements OnInit {
     });
   }
 
-  updateDT(dt: DeviceType) {
-    this.selectedDT = dt;
+  setActive(selected: string) {
+    this.selected = null;
+    this.selectedDT = false;
+    this.selectedPS = false;
+    this.selectedP = false;
+    this.selectedC = false;
+    this.selectedM = false;
+    this.selectedE = false;
+    this.selectedDRD = false;
+
+    switch (selected) {
+      case 'dt':
+        this.selectedDT = true;
+        break;
+      case 'ps':
+        this.selectedPS = true;
+        break;
+      case 'p':
+        this.selectedP = true;
+        break;
+      case 'c':
+        this.selectedC = true;
+        break;
+      case 'm':
+        this.selectedM = true;
+        break;
+      case 'e':
+        this.selectedE = true;
+        break;
+      case 'drd':
+        this.selectedDRD = true;
+        break;
+      default:
+        this.selectedDT = true;
+        console.log("selected was", selected);
+        break;
+    }
   }
 
-  updatePS(ps: Powerstate) {
-    this.selectedPS = ps;
-  }
-
-  updateP(p: Port) {
-    this.selectedP = p;
-  }
-
-  updateC(c: Command) {
-    this.selectedC = c;
-  }
-
-  updateM(m: Microservice) {
-    this.selectedM = m;
-  }
-
-  updateE(e: Endpoint) {
-    this.selectedE = e;
-  }
-
-  updateDRD(drd: DeviceRoleDefinition) {
-    this.selectedDRD = drd;
+  onSelect(anything: any) {
+    this.selected = anything;
   }
 }
