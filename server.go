@@ -40,6 +40,8 @@ func main() {
 	secure.POST("/devices/microservices/:microservice", handlers.AddMicroservice)
 	secure.POST("/devices/roledefinitions/:deviceroledefinition", handlers.AddRoleDefinition)
 
+	secure.Static("/", "/db-tool/dist")
+
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,
