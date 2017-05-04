@@ -1,5 +1,4 @@
-import {Component} from '@angular/core';
-
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
@@ -28,11 +27,10 @@ import {Component} from '@angular/core';
   `]
 })
 export class ModalComponent {
-
   public visible = false;
-  private visibleAnimate = false;
+  public visibleAnimate = false;
 
-  constructor(){}
+  constructor() { }
 
   public show(): void {
     this.visible = true;
@@ -42,13 +40,12 @@ export class ModalComponent {
   public hide(): void {
     this.visibleAnimate = false;
     setTimeout(() => this.visible = false, 300);
-  } 
+  }
 
   public onContainerClicked(event: MouseEvent): void {
     if ((<HTMLElement>event.target).classList.contains('modal')) {
       this.hide();
     }
   }
-
 }
 
