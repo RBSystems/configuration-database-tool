@@ -11,7 +11,7 @@ dependencies:
 test:
     override:
         - go test -v -race $(go list ./... | grep -v /vendor/)
-        - npm install angular2 -g
+        - npm install -g @angular/core 
         - npm install -g @angular/cli 
         - cd db-tool && npm install && ng build --prod --base-href="./"
 

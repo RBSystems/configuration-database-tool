@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { PopoverModule } from 'ng2-popover'
+import { PopoverModule } from 'ngx-popover'
 
 import { RoomSelectionComponent } from './room-selection.component';
 import { ConfigurationComponent } from './configuration.component';
