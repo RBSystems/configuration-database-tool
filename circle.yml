@@ -13,7 +13,7 @@ test:
         - go test -v -race $(go list ./... | grep -v /vendor/)
         - npm install angular2 -g
         - npm install -g @angular/cli 
-	- cd db-tool && npm install && ng build --prod --base-href="./"
+        - cd db-tool && npm install && ng build --prod --base-href="./"
 
 deployment:
     production:
