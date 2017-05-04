@@ -14,7 +14,7 @@ test:
         - npm install -g @angular/core 
         - npm install -g @angular/cli 
         - cd db-tool && npm install && ng build --prod --base-href="./"
-        - ls -la && mv dist/ ../dist && cd ../ && rm -r db-tool
+        - mv db-tool/dist/ dist && rm -r db-tool
 
 deployment:
     production:
