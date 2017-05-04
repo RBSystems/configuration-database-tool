@@ -1,4 +1,6 @@
 machine:
+    node:
+        version: 7.10.0
     services:
         - docker
 
@@ -9,6 +11,10 @@ dependencies:
 test:
     override:
         - go test -v -race $(go list ./... | grep -v /vendor/)
+        - npm install -g @angular/core 
+        - npm install -g @angular/cli 
+        - cd db-tool && npm install && ng build --prod --base-href="./"
+        - mv db-tool/dist/ dist && rm -r db-tool
 
 deployment:
     production:
