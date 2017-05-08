@@ -7,7 +7,7 @@ machine:
         GOROOT: ""
         GOPATH: "${HOME}/.go_project"
         PATH: "${GOPATH}/bin:${PATH}"
-        BUILD_PATH: "${GOPATH}/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"dependencies:
+        BUILD_PATH: "${GOPATH}/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
     post:
         - rm -r ~/.gradle || true
 
