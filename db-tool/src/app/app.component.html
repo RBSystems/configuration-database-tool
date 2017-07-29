@@ -1,11 +1,11 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default accent">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#">AV-DB-Tool</a>
+			<a class="navbar-brand accent-text" href="#">AV-DB-Tool</a>
 		</div>
 		<ul class="nav navbar-nav">
-			<li [routerLinkActive]="['active']"><a routerLink="/room-selection" routerLinkActive="active">room selection</a></li>
-			<li [routerLinkActive]="['active']"><a routerLink="/config" routerLinkActive="active">config</a></li>
+			<li [routerLinkActive]="['active']" class='accent-hover'><a routerLink="/room-selection" routerLinkActive="active" class='accent-text'>room selection</a></li>
+			<li [routerLinkActive]="['active']" class='accent-hover'><a routerLink="/config" routerLinkActive="active" class='accent-text'>config</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
 			<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>

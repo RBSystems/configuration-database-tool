@@ -33,6 +33,7 @@ export class Device {
   ports?: PortConfig[];
   commands?: DeviceCommand[];
   responding?: boolean;
+  selected?: boolean;
 }
 
 export class PortConfig {

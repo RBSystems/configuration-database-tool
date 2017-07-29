@@ -8,8 +8,10 @@ import { Building, Room, Device, RoomConfiguration, PortConfig, DeviceCommand } 
 @Component({
   selector: 'devices',
   templateUrl: './room-editor.component.html',
+  styleUrls: ['./room-selection.component.scss'],
   providers: [APIService]
 })
+
 
 export class RoomEditorComponent implements OnInit {
   currBuilding: string;
@@ -22,8 +24,8 @@ export class RoomEditorComponent implements OnInit {
   building: Building;
   devices: Device[];
   configurationID: number;
-  configuration: RoomConfiguration;
-  roomDesignation: string;
+  public configuration: RoomConfiguration;
+  public roomDesignation: string;
 
   currDevice: Device;
   selectedPort: PortConfig;
@@ -81,6 +83,9 @@ export class RoomEditorComponent implements OnInit {
   }
 
   selectDevice(d: Device) {
+    if (this.currDevice != null) 
+        this.currDevice.selected = false
+    d.selected = true;
     this.currDevice = d;
   }
 

@@ -1,69 +1,107 @@
-<div class="container">
-	<div class="jumbotron">
-		<div class="row">
-			<div class="col-md-4">
-				<h2>{{currBuilding}}-->{{name}}</h2>
-			</div>
-			<div class="col-md-8">
-				<div><label>description:</label> {{description}}</div>
-				<div><label>Configuration ID:</label> {{configurationID}}</div>
-				<div><label>Room Designation:</label> {{roomDesignation}}</div>
-			</div>
-		</div>
-	</div>
+<div class="container top">
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>{{currBuilding}} {{name}}</h2>
+            </div>
+            <div class="col-md-8">
+                <div>
+                    <label>Description:</label> {{description}}</div>
+                <div>
+                    <label>Room Configuration:</label> {{configuration.name}}</div>
+                <div>
+                    <label>Room Designation:</label> {{roomDesignation}}</div>
+            </div>
+        </div>
+    </div>
 </div>
 <div *ngIf="devices" class="row">
-	<div class="col-md-2 left">
-		<ul class="nav nav-pills nav-stacked" role="tablist">
-			<li *ngFor="let d of devices" [ngClass]="{'active': d === currDevice}" (click)="selectDevice(d)"><a>{{d.name}}</a></li>
-		</ul>
-	</div>
-	<div *ngIf="currDevice" class="col-md-10">
-		<div><label>Name: </label> {{currDevice.name}}</div>
-		<div><label>Address: </label> {{currDevice.address}}</div>
-		<div><label>Input: </label> {{currDevice.input}}</div>
-		<div><label>Output: </label> {{currDevice.output}}</div>
-		<div><label>Type: </label> {{currDevice.type}}</div>
-		<div *ngIf="currDevice.power"><label>Power: </label> {{currDevice.power}}</div>
-		<div>
-			<label>Roles: </label>
-			<ul>
-				<li *ngFor="let r of currDevice.roles">{{r}}</li>
-			</ul>
-		</div>
-		<div *ngIf="currDevice.powerstates">
-			<label>Powerstates: </label>
-			<ul>
-				<li *ngFor="let p of currDevice.powerstates">{{p}}</li>
-			</ul>
-		</div>
-		<div><label>Responding: </label> {{currDevice.responding}}</div>
-		<div *ngIf="currDevice.ports">
-			<popover-content #portsPop placement="right" [closeOnMouseOutside]="true">
-				<div><label>source:</label> {{selectedPort.source}}</div>
-				<div><label>destination:</label> {{selectedPort.destination}}</div>
-				<div><label>host:</label> {{selectedPort.host}}</div>
-			</popover-content>
-			<label>Ports: </label>
-			<ul class="" role="tablist">
-				<li *ngFor="let p of currDevice.ports"><a on-mouseover="selectPort(p)" [popover]="portsPop" [popoverOnHover]="true">{{p.name}}</a></li>
-			</ul>
-		</div>
-		<div *ngIf="currDevice.commands">
-			<popover-content #commandsPop placement="right" [closeOnMouseOutside]="true">
-				<div><label>endpoint name:</label> {{selectedCommand.endpoint.name}}</div>
-				<div><label>endpoint path:</label> {{selectedCommand.endpoint.path}}</div>
-				<div><label>microservice:</label> {{selectedCommand.microservice}}</div>
-			</popover-content>
-			<label>Commands: </label>
-			<ul class="" role="tablist">
-				<li *ngFor="let c of currDevice.commands"><a on-mouseover="selectCommand(c)" [popover]="commandsPop" [popoverOnHover]="true">{{c.name}}</a></li>
-			</ul>
-		</div>
-	</div>
+    <div class="col-md-3 left overflow-scroll bottom">
+        <div class='card-container'>
+            <div class='card small room flex-center-vertically' [class.selected]='d.selected' (click)='selectDevice(d)' *ngFor="let d of devices">
+                <div class='main-name small'>{{d.name}}</div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="currDevice" class="col-md-8 card-container">
+        <div class='card medium'>
+            <div class='card-header'>Base Info </div>
+            <div>
+                <label>Name: </label> {{currDevice.name}}</div>
+            <div>
+                <label>Address: </label> {{currDevice.address}}</div>
+        </div>
+        <div class='card medium'>
+            <div class='card-header'>Classification</div>
+            <div>
+                <label>Input: </label> {{currDevice.input}}</div>
+            <div>
+                <label>Output: </label> {{currDevice.output}}</div>
+        </div>
+        <div class='card medium'>
+            <div class='card-header'>Device Information</div>
+            <div><label>Type: </label> {{currDevice.type}}</div>
+            <div>
+                <label>Roles: </label>
+                <ul>
+                    <li *ngFor="let r of currDevice.roles">{{r}}</li>
+                </ul>
+            </div>
+        </div>
+            <div class='fill-card' *ngIf="currDevice.ports">
+                <div class='card-header'>Port Configuration</div>
+                <table class='port-table'> 
+                    <tr class='port-table'>
+                        <th class='port-table'>Port Name</th>
+                        <th class='port-table'>Source</th>
+                        <th class='port-table'>Destination</th>
+                    </tr>
+                    <tr class='port-table' *ngFor="let p of currDevice.ports">
+                        <td class='port-table'>{{p.name}}</td>
+                        <td class='port-table'>{{p.source}}</td>
+                        <td class='port-table'>{{p.destination}}</td>
+                    </tr>
+                </table>
+            </div>
+            <!--
+            <div *ngIf="currDevice.ports">
+                <popover-content #portsPop placement="right" [closeOnMouseOutside]="true">
+                    <div>
+                        <label>source:</label> {{selectedPort.source}}</div>
+                    <div>
+                        <label>destination:</label> {{selectedPort.destination}}</div>
+                    <div>
+                        <label>host:</label> {{selectedPort.host}}</div>
+                </popover-content>
+                <label>Ports: </label>
+                <ul class="" role="tablist">
+                    <li *ngFor="let p of currDevice.ports">
+                        <a on-mouseover="selectPort(p)" [popover]="portsPop" [popoverOnHover]="true">{{p.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            --!>
+            <div *ngIf="currDevice.commands && detailView">
+                <popover-content #commandsPop placement="right" [closeOnMouseOutside]="true">
+                    <div>
+                        <label>endpoint name:</label> {{selectedCommand.endpoint.name}}</div>
+                    <div>
+                        <label>endpoint path:</label> {{selectedCommand.endpoint.path}}</div>
+                    <div>
+                        <label>microservice:</label> {{selectedCommand.microservice}}</div>
+                </popover-content>
+                <label>Commands: </label>
+                <ul class="" role="tablist">
+                    <li *ngFor="let c of currDevice.commands">
+                        <a on-mouseover="selectCommand(c)" [popover]="commandsPop" [popoverOnHover]="true">{{c.name}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 <div *ngIf="!devices">
-	<p>There are no devices in this room yet.</p>
+    <p>There are no devices in this room yet.</p>
 </div>
 
 <!--
