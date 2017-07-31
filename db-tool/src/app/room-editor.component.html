@@ -24,28 +24,48 @@
         </div>
     </div>
     <div *ngIf="currDevice" class="col-md-8 card-container">
-        <div class='card medium'>
-            <div class='card-header'>Base Info </div>
-            <div class='card-content'>
-                <label class='card-label'>Name: </label>
-                <div class='card-value'> {{currDevice.name}}</div>
+        <div class='flippable-card medium'>
+            <div class='card non-selectable medium front' [class.flipped]="currDeviceState.editing">
+                <div class='card-header'>Base Info <div class="edit-icon material-icons selectable" (click)='editDevice()'>mode_edit</div></div>
+                <div class='card-content'>
+                    <label class='card-label'>Name: </label>
+                    <div class='card-value'> {{currDevice.name}}</div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Address: </label>
+                    <div class='card-value'>{{currDevice.address}}</div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Type: </label>
+                    <div class='card-value'>{{currDevice.type}}</div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Class: </label>
+                    <div class='card-value'>{{currDevice.class}}</div>
+                </div>
             </div>
-            <div class='card-content'>
-                <label class='card-label'>Address: </label>
-                <div class='card-value'>{{currDevice.address}}</div>
+            <div class='card non-selectable medium back' [class.flipped]="currDeviceState.editing">
+                <div class='card-header'>Base Info <div class="edit-icon material-icons selectable" (click)='commitDeviceEdits()'>check</div><div class="edit-icon material-icons selectable" (click)='cancelDeviceEdits()'>clear</div></div>
+                <div class='card-content'>
+                    <label class='card-label'>Name: </label>
+                    <div class=''><input class='card-input card-value' [(ngModel)]="currDeviceState.edits.name" /> </div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Address: </label>
+                    <div class=''><input class='card-input card-value' [(ngModel)]="currDeviceState.edits.address" /> </div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Type: </label>
+                    <div class=''><div class='card-input card-value' (click)='editCurDeviceType()' >{{currDeviceState.edits.type}}</div> </div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Class: </label>
+                    <div class=''><div class='card-input card-value' (click)='editCurDeviceClass()'>{{currDeviceState.edits.class}} </div> </div>
+                </div>
             </div>
-            <div class='card-content'>
-                <label class='card-label'>Type: </label>
-                <div class='card-value'>{{currDevice.type}}</div>
-            </div>
-            <div class='card-content'>
-                <label class='card-label'>Class: </label>
-                <div class='card-value'>{{currDevice.class}}</div>
-            </div>
-
         </div>
-        <div class='card medium'>
-            <div class='card-header'>Classification</div>
+        <div class='card non-selectable medium'>
+            <div class='card-header'>Classification<div class="edit-icon material-icons selectable">mode_edit</div></div>
             <div class='card-content'>
                 <label class='card-label'>Input: </label>
                 <div class='card-value'>{{currDevice.input}}</div>
@@ -56,8 +76,8 @@
                 <div class='card-value'>{{currDevice.output}}</div>
             </div>
         </div>
-        <div class='card medium'>
-            <div class='card-header'>Roles</div>
+        <div class='card non-selectable medium'>
+            <div class='card-header'>Roles<div class="edit-icon material-icons selectable">mode_edit</div></div>
             <div class='card-content'>
                 <ul class='simple-list'>
                     <li *ngFor="let r of currDevice.roles">{{r}}</li>
@@ -65,7 +85,7 @@
             </div>
         </div>
         <div class='fill-card' *ngIf="currDevice.ports">
-            <div class='card-header'>Port Configuration</div>
+            <div class='card-header'>Port Configuration<div class="edit-icon material-icons selectable">mode_edit</div></div>
             <table *ngIf="!currDevice.roles.includes('VideoSwitcher')" class='port-table'>
                 <tr class='port-table'>
                     <th class='port-table'>Port Name</th>
@@ -170,3 +190,20 @@
 
 <h3>Raw Response</h3>
 <pre>{{ roomData | json }}</pre> -->
+
+
+<app-modal #selectSingleOption>
+    <div class="app-modal-body">
+        <div class='selection-header centered-main-content'>
+            <div class='selection-modal-title'> Select the {{selectionModalInfo.Title}}</div>
+        </div>
+        <div class='selection-body'>
+            <input #modalinputfilter class='modal-input' [(ngModel)]="selectionModalInfo.FilterValue" (input)="filterModalOptions(modalinputfilter.value)" placeholder='Filter' />
+            <div class='modal-selection-list'>
+                <div *ngFor="let option of selectionModalInfo.filteredOptions">
+                    <div class='modal-selection-option' (click)='selectionModalInfo.callback(currDeviceState, option); selectSingleOption.hide();'>{{option}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-modal>

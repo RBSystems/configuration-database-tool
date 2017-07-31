@@ -8,10 +8,10 @@ $cardbackground: #FFFFFF;
     margin: 10px;
     box-shadow: 3px 4px 8px 3px rgba(0,0,0,0.2);
     border-radius: 8px;
-    width: 700px;
+    width: 685px;
 }
 
-.card {
+.card  {
     width: 200px;
     height: 100px;
     padding: 2px 2px 2px 2px;
@@ -21,10 +21,11 @@ $cardbackground: #FFFFFF;
     cursor: hand;
     transition: all 0.1s ease-in-out;
     border-radius: 2%;
+    background-color: $cardbackground;
 }
 
 .card.medium {
-    width: 220px;
+    width: 215px;
     height: 220px;
     word-wrap: break-word;
 }
@@ -54,6 +55,22 @@ $cardbackground: #FFFFFF;
 
 .card-value {
     max-width: 120px;
+    width: 120px;
+}
+
+.card-input,
+.modal-input {
+    border:none;
+    border-bottom: 3px solid #5c6670;
+    color: #7D868C;
+    transition: .2s;
+}
+
+.card-input:focus
+.modal-input:focus {
+    outline:none;
+    color: #333E48;
+    transform: scale(1.1);
 }
 
 .header-label {
@@ -74,7 +91,8 @@ $cardbackground: #FFFFFF;
     font-weight: 900;
 }
 
-ul.simple-list {
+ul.simple-list
+{
     display: inline-block;
     list-style-type: none;
     margin: 0;
@@ -103,6 +121,56 @@ ul.simple-list {
     margin: 10px;
 
     border-bottom: 2px solid $accentHover;
+}
+
+.card.non-selectable:hover {
+    background-color: $cardbackground;
+    transform: none;
+
+    cursor: default; 
+}
+
+.flippable-card.medium {
+    width: 215px;
+    height: 220px;
+    word-wrap: break-word;
+}
+.flippable-card {
+    width: 200px;
+    height: 100px;
+    padding: 2px 2px 2px 2px;
+    margin: 10px 10px 10px 10px;
+}
+
+.front, .back{
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    position: absolute;
+    top: 0;
+    left: 15px;
+    transition: 0.5s;
+}
+
+.front.flipped {
+    transform:rotateY(180deg) !important;
+}
+
+.back.flipped {
+    transform:rotateY(360deg) !important;
+}
+
+.front 0{
+    z-index: 2;
+}
+
+.back {
+    transform: rotateY(180deg);
+}
+
+.selectable:hover {
+    transform: translate(0,-5px);
+    cursor: pointer;
+    cursor: hand;
 }
 
 .card:hover {
@@ -260,4 +328,59 @@ tr.port-table:hover {background: $accentHover; }
 .centered-main-content {
     margin: auto !important;
     width: 90% !important;
+}
+
+.edit-icon {
+    float: right;
+}
+
+.unselectable {
+    user-select: none;
+}
+
+.selection-header {
+    display: flex;
+    justify-content: center;
+}
+
+.selection-modal-title {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.selection-body {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.modal-input {
+    width: 70%;
+    font-size: 19px;
+    margin: 10px;
+}
+
+.modal-input:focus {
+    outline:none;
+    color: #333E48;
+    font-size: 24px;
+}
+
+.modal-selection-list {
+    padding: 10px;
+
+}
+
+.modal-selection-option {
+    transition: all 0.3s;
+    padding: 5px;
+    font-size: 16px;
+    color: #5C6670;
+    cursor: pointer; 
+    cursor: hand;
+}
+
+.modal-selection-option:hover {
+    color: black;
+    transform: translateX(10px);
 }

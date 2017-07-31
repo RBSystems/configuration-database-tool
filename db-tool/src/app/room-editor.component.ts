@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { APIService } from './api.service';
 import { SwitcherPort, Building, Room, Device, RoomConfiguration, PortConfig, DeviceCommand } from './objects';
+
+import { ModalComponent } from './modal.component';
 
 @Component({
   selector: 'devices',
@@ -14,6 +16,9 @@ import { SwitcherPort, Building, Room, Device, RoomConfiguration, PortConfig, De
 
 
 export class RoomEditorComponent implements OnInit {
+
+  @ViewChild('selectSingleOption') selectSingleOption:ModalComponent;
+
   currBuilding: string;
   currRoom: string;
 
@@ -28,15 +33,23 @@ export class RoomEditorComponent implements OnInit {
   public roomDesignation: string;
 
   currDevice: Device;
+  currDeviceState: any;
   selectedPort: PortConfig;
   selectedCommand: DeviceCommand;
+  availableTypes: {};
+  availableClasses: {};
+  
+    
+  public selectionModalInfo:any;
 
   constructor(
     private api: APIService,
     private route: ActivatedRoute,
     private location: Location
   ) {
-    this.route.queryParams.subscribe(params => {
+      this.selectionModalInfo = {};
+      this.currDeviceState = {'editing': false, 'edits': {}};
+      this.route.queryParams.subscribe(params => {
       this.currBuilding = params["building"];
       this.currRoom = params["room"];
     })
@@ -112,6 +125,20 @@ export class RoomEditorComponent implements OnInit {
       
     });
   }
+   
+  editDevice() {
+      console.log("editing");
+      if (this.currDevice == null) 
+          return;
+      this.prepForEdits();
+      this.currDeviceState.editing = true;
+  }
+
+  cancelDeviceEdits() {
+      if (this.currDevice == null) 
+          return;
+      this.currDeviceState.editing = false
+  }
 
   selectDevice(d: Device) {
     if (this.currDevice != null) 
@@ -126,5 +153,38 @@ export class RoomEditorComponent implements OnInit {
 
   selectCommand(c: DeviceCommand) {
     this.selectedCommand = c;
+  }
+
+  prepForEdits() {
+      Object.assign(this.currDeviceState.edits, this.currDevice);
+  }
+
+  editCurDeviceType() {
+
+      console.log("editing type");
+
+      //we need to open a modal
+      this.selectionModalInfo.Title = "device type";
+      this.selectionModalInfo.options = ["John", "Jimmer Fredette", "joe", "brandon Smith", "frank Smith", "Brandon Valkarye"];
+      this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
+      this.selectionModalInfo.callback = function(deviceState, name) { 
+          deviceState.edits.type = name;
+      };
+      this.selectSingleOption.show();
+  }
+
+  editCurDeviceClass() {
+      console.log("editing class");
+  }
+
+  filterModalOptions(value) {
+      if (!value) {
+          this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options); 
+          return
+      }
+
+      this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options).filter( 
+          item => item.toLowerCase().indexOf(value.toLowerCase()) > -1
+      );
   }
 }

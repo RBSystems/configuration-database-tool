@@ -7,15 +7,19 @@ import { Component } from '@angular/core';
        [ngStyle]="{'display': visible ? 'block' : 'none', 'opacity': visibleAnimate ? 1 : 0}">
     <div class="modal-dialog">
       <div class="modal-content">
+	  	<!--
         <div class="modal-header">
           <ng-content select=".app-modal-header"></ng-content>
         </div>
+		-->
         <div class="modal-body">
           <ng-content select=".app-modal-body"></ng-content>
         </div>
+		<!--
         <div class="modal-footer">
           <ng-content select=".app-modal-footer"></ng-content>
         </div>
+		-->
       </div>
     </div>
   </div>
@@ -24,13 +28,18 @@ import { Component } from '@angular/core';
     .modal {
       background: rgba(0,0,0,0.6);
     }
+	.modal-dialog {
+	  top: 25vh;	
+	}
   `]
 })
 export class ModalComponent {
   public visible = false;
   public visibleAnimate = false;
+  public selectionModalInfo:any;
 
-  constructor() { }
+  constructor() {
+  }
 
   public show(): void {
     this.visible = true;
@@ -48,4 +57,3 @@ export class ModalComponent {
     }
   }
 }
-
