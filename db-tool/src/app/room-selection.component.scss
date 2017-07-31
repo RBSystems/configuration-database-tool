@@ -1,12 +1,14 @@
 $accentColor: #5eb5ba;
 $accentHover: #2c6a6e;
 $accentHighlight: #d6e8e9;
+$cardbackground: #FFFFFF;
 
 .fill-card {
     padding: 10px;
     margin: 10px;
     box-shadow: 3px 4px 8px 3px rgba(0,0,0,0.2);
     border-radius: 8px;
+    width: 700px;
 }
 
 .card {
@@ -22,7 +24,7 @@ $accentHighlight: #d6e8e9;
 }
 
 .card.medium {
-    width: 330px;
+    width: 220px;
     height: 220px;
     word-wrap: break-word;
 }
@@ -32,6 +34,61 @@ $accentHighlight: #d6e8e9;
     height: 50px;
     word-wrap: break-word;
 
+}
+
+.card-background {
+    background-color: $cardbackground
+}
+
+.card-content {
+    padding: 2px 2px 2px 2px;
+    margin: 10px;
+    font-size: 14px;
+    display: flex;
+    word-wrap: break-word;
+}
+
+.card-label {
+    width: 75px;
+}
+
+.card-value {
+    max-width: 120px;
+}
+
+.header-label {
+    width: 200px;
+    font-weight: 800;
+}
+
+.header-content {
+    font-size: 17px;
+}
+
+.heaer-contnet {
+    padding: 75px;
+}
+
+.header-title {
+    font-size: 42px;
+    font-weight: 900;
+}
+
+ul.simple-list {
+    display: inline-block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.simple-list > li {
+    font: 100 14px;
+    //border-bottom: 1px solid #ccc;
+    padding: 2px 5px;
+}
+
+.simple-list > li:last-child {
+    border: none;
 }
 
 .main-name.small {
@@ -69,6 +126,11 @@ $accentHighlight: #d6e8e9;
     align-items: center;
 }
 
+.flex-center-horizontally {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
 .overflow-scroll {
     overflow: scroll;
     overflow-y: auto;
@@ -138,12 +200,20 @@ a.accent-text.active {
     margin-left: 10px;
 }
 
+.switcher-ports-container {
+    display: flex;
+}
+
 table.port-table {  
     color: #333;
     font-family: Helvetica, Arial, sans-serif;
     width: 640px; 
     border-spacing: 0;
     margin: 10px;
+}
+
+table.port-table.switcher {
+    width: 300px; 
 }
 
 td.port-table, th.port-table {  
@@ -155,13 +225,13 @@ td.port-table, th.port-table {
 }
 
 th.port-table:first-child{
-    border-radius: 6px 0 0 0;
+    //border-radius: 6px 0 0 0;
 }
 th.port-table:last-child{
-    border-radius: 0 6px 0 0;
+    //border-radius: 0 6px 0 0;
 }
 th.port-table:only-child{
-    border-radius: 6px 6px 0 0;
+    //border-radius: 6px 6px 0 0;
 }
 
 th.port-table {  
@@ -182,3 +252,12 @@ tr.port-table:nth-child(odd) td { background: $accentHighlight; }
 
 tr.port-table:hover {background: $accentHover; }  
 /* Hover cell effect! */
+
+.jumbotron.customjumbo {
+    background-color: #D1D3D3;
+}
+
+.centered-main-content {
+    margin: auto !important;
+    width: 90% !important;
+}

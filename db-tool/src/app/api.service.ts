@@ -22,7 +22,9 @@ export class APIService {
 
 	getDevices(building: string, room: string): Observable<Object> {
 		return this.http.get(this.url + "/buildings/" + building + "/rooms/" + room)
-						.map(response => response.json());
+						.map(
+                            response => response.json()
+                        );
 	}
 
 	getConfig(): Observable<Object> {

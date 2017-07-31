@@ -1,21 +1,21 @@
-<div class="container top">
-    <div class="jumbotron">
-        <div class="row">
-            <div class="col-md-4">
-                <h2>{{currBuilding}} {{name}}</h2>
+<div class="container top centered-main-content">
+    <div class="jumbotron jumbotron-fluid customjumbo ">
+        <div class="row flex-center-horizontally">
+            <div class="header-content header-title">
+                <div>{{currBuilding}} {{name}}</div>
             </div>
-            <div class="col-md-8">
-                <div>
-                    <label>Description:</label> {{description}}</div>
-                <div>
-                    <label>Room Configuration:</label> {{configuration.name}}</div>
-                <div>
-                    <label>Room Designation:</label> {{roomDesignation}}</div>
+            <div class="header-content">
+                <div class='header-content'>
+                    <label class='header-label'>Description:</label> {{description}}</div>
+                <div class='header-content'>
+                    <label class='header-label'>Room Configuration:</label> {{configuration.name}}</div>
+                <div class='header-content'>
+                    <label class='header-label'>Room Designation:</label> {{roomDesignation}}</div>
             </div>
         </div>
     </div>
 </div>
-<div *ngIf="devices" class="row">
+<div *ngIf="devices" class="row card-background centered-main-content">
     <div class="col-md-3 left overflow-scroll bottom">
         <div class='card-container'>
             <div class='card small room flex-center-vertically' [class.selected]='d.selected' (click)='selectDevice(d)' *ngFor="let d of devices">
@@ -26,44 +26,88 @@
     <div *ngIf="currDevice" class="col-md-8 card-container">
         <div class='card medium'>
             <div class='card-header'>Base Info </div>
-            <div>
-                <label>Name: </label> {{currDevice.name}}</div>
-            <div>
-                <label>Address: </label> {{currDevice.address}}</div>
+            <div class='card-content'>
+                <label class='card-label'>Name: </label>
+                <div class='card-value'> {{currDevice.name}}</div>
+            </div>
+            <div class='card-content'>
+                <label class='card-label'>Address: </label>
+                <div class='card-value'>{{currDevice.address}}</div>
+            </div>
+            <div class='card-content'>
+                <label class='card-label'>Type: </label>
+                <div class='card-value'>{{currDevice.type}}</div>
+            </div>
+            <div class='card-content'>
+                <label class='card-label'>Class: </label>
+                <div class='card-value'>{{currDevice.class}}</div>
+            </div>
+
         </div>
         <div class='card medium'>
             <div class='card-header'>Classification</div>
-            <div>
-                <label>Input: </label> {{currDevice.input}}</div>
-            <div>
-                <label>Output: </label> {{currDevice.output}}</div>
+            <div class='card-content'>
+                <label class='card-label'>Input: </label>
+                <div class='card-value'>{{currDevice.input}}</div>
+            </div>
+
+            <div class='card-content'>
+                <label class='card-label'>Output: </label>
+                <div class='card-value'>{{currDevice.output}}</div>
+            </div>
         </div>
         <div class='card medium'>
-            <div class='card-header'>Device Information</div>
-            <div><label>Type: </label> {{currDevice.type}}</div>
-            <div>
-                <label>Roles: </label>
-                <ul>
+            <div class='card-header'>Roles</div>
+            <div class='card-content'>
+                <ul class='simple-list'>
                     <li *ngFor="let r of currDevice.roles">{{r}}</li>
                 </ul>
             </div>
         </div>
-            <div class='fill-card' *ngIf="currDevice.ports">
-                <div class='card-header'>Port Configuration</div>
-                <table class='port-table'> 
+        <div class='fill-card' *ngIf="currDevice.ports">
+            <div class='card-header'>Port Configuration</div>
+            <table *ngIf="!currDevice.roles.includes('VideoSwitcher')" class='port-table'>
+                <tr class='port-table'>
+                    <th class='port-table'>Port Name</th>
+                    <th class='port-table'>Source</th>
+                    <th class='port-table'>Destination</th>
+                </tr>
+                <tr class='port-table' *ngFor="let p of currDevice.ports">
+                    <td class='port-table'>{{p.name}}</td>
+                    <td class='port-table'>{{p.source}}</td>
+                    <td class='port-table'>{{p.destination}}</td>
+                </tr>
+            </table>
+            <div class='switcher-ports-container' *ngIf="currDevice.roles.includes('VideoSwitcher')">
+                <table class='port-table switcher'>
                     <tr class='port-table'>
-                        <th class='port-table'>Port Name</th>
-                        <th class='port-table'>Source</th>
-                        <th class='port-table'>Destination</th>
+                        <th class='port-table' colspan='2'>In ports</th>
                     </tr>
-                    <tr class='port-table' *ngFor="let p of currDevice.ports">
+                    <tr class='port-table'>
+                        <th class='port-table'>Port</th>
+                        <th class='port-table'>Device</th>
+                    </tr>
+                    <tr class='port-table' *ngFor="let p of currDevice.switcherPortsIn">
                         <td class='port-table'>{{p.name}}</td>
-                        <td class='port-table'>{{p.source}}</td>
-                        <td class='port-table'>{{p.destination}}</td>
+                        <td class='port-table'>{{p.device}}</td>
+                    </tr>
+                </table>
+                <table class='port-table switcher'>
+                    <tr class='port-table'>
+                        <th class='port-table' colspan='2'>Out ports</th>
+                    </tr>
+                    <tr class='port-table'>
+                        <th class='port-table'>Port</th>
+                        <th class='port-table'>Device</th>
+                    </tr>
+                    <tr class='port-table' *ngFor="let p of currDevice.switcherPortsOut">
+                        <td class='port-table'>{{p.name}}</td>
+                        <td class='port-table'>{{p.device}}</td>
                     </tr>
                 </table>
             </div>
-            <!--
+        </div>
+        <!--
             <div *ngIf="currDevice.ports">
                 <popover-content #portsPop placement="right" [closeOnMouseOutside]="true">
                     <div>

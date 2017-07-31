@@ -3,7 +3,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { APIService } from './api.service';
-import { Building, Room, Device, RoomConfiguration, PortConfig, DeviceCommand } from './objects';
+import { SwitcherPort, Building, Room, Device, RoomConfiguration, PortConfig, DeviceCommand } from './objects';
 
 @Component({
   selector: 'devices',
@@ -79,6 +79,37 @@ export class RoomEditorComponent implements OnInit {
       this.configurationID = this.roomData.configurationID;
       this.configuration = this.roomData.configuration;
       this.roomDesignation = this.roomData.roomDesignation;
+       
+      for (let d of this.devices) {
+          if (d.roles.includes("VideoSwitcher")) {
+              //we need to calculate the in/out ports and figure out what's plugged into each. 
+              d.switcherPortsIn = [];
+              d.switcherPortsOut = [];
+
+              var foundIn = {}
+              var foundOut = {}
+
+              //go through the ports, calculating the values
+              for (let p of d.ports) {
+                  var splitStr = p.name.split(":")
+                  if (!(splitStr[0] in foundIn)) {
+                      foundIn[splitStr[0]] = p.source;
+                      var newPort = new SwitcherPort();
+                      newPort.name = splitStr[0];
+                      newPort.device = p.source;
+                      d.switcherPortsIn.push(newPort);
+                  }
+                  if (!(splitStr[1] in foundOut)) {
+                      foundOut[splitStr[1]] = p.destination;
+                      var newPort = new SwitcherPort();
+                      newPort.name = splitStr[1];
+                      newPort.device = p.destination;
+                      d.switcherPortsOut.push(newPort);
+                  }
+              }
+          }
+      }
+      
     });
   }
 

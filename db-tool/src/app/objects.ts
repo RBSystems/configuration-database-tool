@@ -29,11 +29,19 @@ export class Device {
   type: string;
   power?: string;
   roles: string[];
+  class?: string;
   powerstates?: string[];
   ports?: PortConfig[];
   commands?: DeviceCommand[];
   responding?: boolean;
   selected?: boolean;
+  switcherPortsIn?: SwitcherPort[];
+  switcherPortsOut?: SwitcherPort[];
+}
+
+export class SwitcherPort {
+    name: string;
+    device: string;
 }
 
 export class PortConfig {
