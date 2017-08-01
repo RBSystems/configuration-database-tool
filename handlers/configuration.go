@@ -10,6 +10,7 @@ import (
 
 type Configuration struct {
 	DeviceTypes           []accessors.DeviceType
+	DeviceClasses         []accessors.DeviceClass
 	PowerStates           []accessors.PowerState
 	Ports                 []accessors.PortType
 	Commands              []accessors.RawCommand
