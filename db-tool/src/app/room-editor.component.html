@@ -198,10 +198,10 @@
             <div class='selection-modal-title'> Select the {{selectionModalInfo.Title}}</div>
         </div>
         <div class='selection-body'>
-            <input #modalinputfilter class='modal-input' [(ngModel)]="selectionModalInfo.FilterValue" (input)="filterModalOptions(modalinputfilter.value)" placeholder='Filter' />
+            <input id="modalinputfilter" #modalinputfilter class='modal-input' [(ngModel)]="selectionModalInfo.FilterValue" (input)="filterModalOptions(modalinputfilter.value)" placeholder='Filter' autofocus />
             <div class='modal-selection-list'>
                 <div *ngFor="let option of selectionModalInfo.filteredOptions">
-                    <div class='modal-selection-option' (click)='selectionModalInfo.callback(currDeviceState, option); selectSingleOption.hide();'>{{option}}</div>
+                    <div class='modal-selection-option' (click)='selectionModalInfo.callback(currDeviceState, option); selectSingleOption.hide();'>{{option.display}}</div>
                 </div>
             </div>
         </div>

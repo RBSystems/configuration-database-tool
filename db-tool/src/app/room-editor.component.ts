@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -38,6 +38,8 @@ export class RoomEditorComponent implements OnInit {
   selectedCommand: DeviceCommand;
   availableTypes: {};
   availableClasses: {};
+
+  configurationOptions: any;
   
     
   public selectionModalInfo:any;
@@ -49,6 +51,10 @@ export class RoomEditorComponent implements OnInit {
   ) {
       this.selectionModalInfo = {};
       this.currDeviceState = {'editing': false, 'edits': {}};
+
+      this.api.getConfig().subscribe(value => {
+          this.configurationOptions = value;
+      });
       this.route.queryParams.subscribe(params => {
       this.currBuilding = params["building"];
       this.currRoom = params["room"];
@@ -159,22 +165,54 @@ export class RoomEditorComponent implements OnInit {
       Object.assign(this.currDeviceState.edits, this.currDevice);
   }
 
+  buildTypeOptions(): Object {
+      let toReturn = []
+      for (let i in this.configurationOptions.DeviceTypes) {
+          let dType = this.configurationOptions.DeviceTypes[i];
+          let curValue: any = {};
+
+          curValue.display = dType['name'];
+          curValue.value = dType;
+          toReturn.push(curValue);
+      }
+      return toReturn;
+  }
+
+  buildClassOptions(): Object {
+      let toReturn = [];
+      for (let i in this.configurationOptions.DeviceClasses) {
+          let dClass = this.configurationOptions.DeviceClasses[i];
+          let curValue: any = {};
+
+          curValue.display = dClass['display-name'];
+          curValue.value = dClass;
+          toReturn.push(curValue);
+      }
+      return toReturn;
+  }
+
+    
+
   editCurDeviceType() {
-
-      console.log("editing type");
-
       //we need to open a modal
       this.selectionModalInfo.Title = "device type";
-      this.selectionModalInfo.options = ["John", "Jimmer Fredette", "joe", "brandon Smith", "frank Smith", "Brandon Valkarye"];
+      this.selectionModalInfo.options = this.buildTypeOptions();
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
-      this.selectionModalInfo.callback = function(deviceState, name) { 
-          deviceState.edits.type = name;
+      this.selectionModalInfo.callback = function(deviceState, option) { 
+          deviceState.edits.type = option.display;
       };
       this.selectSingleOption.show();
   }
 
   editCurDeviceClass() {
-      console.log("editing class");
+      //we need to open a modal
+      this.selectionModalInfo.Title = "device class";
+      this.selectionModalInfo.options = this.buildClassOptions();
+      this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
+      this.selectionModalInfo.callback = function(deviceState, option) { 
+          deviceState.edits.class = option.display;
+      };
+      this.selectSingleOption.show();
   }
 
   filterModalOptions(value) {
@@ -184,7 +222,7 @@ export class RoomEditorComponent implements OnInit {
       }
 
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options).filter( 
-          item => item.toLowerCase().indexOf(value.toLowerCase()) > -1
+          item => item.display.toLowerCase().indexOf(value.toLowerCase()) > -1
       );
   }
 }

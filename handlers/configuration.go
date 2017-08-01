@@ -10,6 +10,7 @@ import (
 
 type Configuration struct {
 	DeviceTypes           []accessors.DeviceType
+	DeviceClasses         []accessors.DeviceClass
 	PowerStates           []accessors.PowerState
 	Ports                 []accessors.PortType
 	Commands              []accessors.RawCommand
@@ -54,6 +55,11 @@ func buildConfiguration() (output Configuration, err error) {
 	}
 
 	output.Endpoints, err = dbo.GetEndpoints()
+	if err != nil {
+		return
+	}
+
+	output.DeviceClasses, err = dbo.GetDeviceClasses()
 	if err != nil {
 		return
 	}
