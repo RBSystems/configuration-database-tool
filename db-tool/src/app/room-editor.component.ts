@@ -18,6 +18,9 @@ import { ModalComponent } from './modal.component';
 export class RoomEditorComponent implements OnInit {
 
   @ViewChild('selectSingleOption') selectSingleOption:ModalComponent;
+  @ViewChild('confirmCommit') confirmCommit:ModalComponent;
+  @ViewChild('noCommitsModal') noCommitsModal:ModalComponent;
+  @ViewChild('successCommit') successCommit:ModalComponent;
 
   currBuilding: string;
   currRoom: string;
@@ -37,6 +40,8 @@ export class RoomEditorComponent implements OnInit {
   selectedCommand: DeviceCommand;
   availableTypes: {};
   availableClasses: {};
+
+  commitCandidates: {};
 
   configurationOptions: any;
   
@@ -148,20 +153,51 @@ export class RoomEditorComponent implements OnInit {
 
   commitDeviceEdits() {
       //we need to go through the values and see if they were changed, if so, we send a request to change them. Before we do so we should prompt
-
       let edits = {};
       for(let key in this.currDevice) {
           if (this.currDevice[key] != this.currDeviceState.edits[key]) {
             //they don't match, so there were edits
-            edits[key] = this.currDeviceState.edits[key]
+            if (this.currDeviceState.edits.toEdit[key]) {
+                edits[key] = this.currDeviceState.edits.toEdit[key];
+            } else {
+                edits[key] = this.currDeviceState.edits[key];
+            }
           }
       }
-      if (isEmpty(edits)) {
-
+      if (this.isEmpty(edits)) {
+          //nothing to edit
+          this.noCommitsModal.show();
+          return;
       }
+      else {
+          this.commitCandidates = edits;
+          this.confirmCommit.show();
+      } 
   }
 
-  isEmpty(o: Object) boolean {
+  saveChanges() {
+      let typeMapping = {
+          "type": {"name": "typeID", "type": "int"},
+          "class": {"name": "classID", "type": "int"},
+          "input": {"name": "input", "type": "bool"},
+          "output": {"name": "output", "type": "bool"},
+          "name": {"name": "name", "type": "string"},
+          "address": {"name": "address", "type": "string"}
+      }
+
+      console.log(this.commitCandidates);
+      let deviceID = this.currDevice.id;
+      for (let edit in this.commitCandidates) {
+          this.api.setRoomAttribute(typeMapping[edit].name, this.commitCandidates[edit], deviceID, typeMapping[edit].type).subscribe(value => {
+              this.getDevices();
+              console.log(value);
+              });
+      }
+      this.confirmCommit.hide();
+      this.successCommit.show();
+  }
+
+  isEmpty(o: Object): boolean {
       for (let i in o) {
           return false;
       }
@@ -170,7 +206,11 @@ export class RoomEditorComponent implements OnInit {
 
   selectDevice(d: Device) {
     if (this.currDevice != null) 
-        this.currDevice.selected = false
+        this.currDevice.selected = false;
+
+    this.currDeviceState.editing = false;
+    this.currDeviceState.edits = {};
+
     d.selected = true;
     this.currDevice = d;
   }
@@ -214,8 +254,6 @@ export class RoomEditorComponent implements OnInit {
       return toReturn;
   }
 
-    
-
   editCurDeviceType() {
       //we need to open a modal
       this.selectionModalInfo.Title = "device type";
@@ -223,7 +261,7 @@ export class RoomEditorComponent implements OnInit {
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
       this.selectionModalInfo.callback = function(deviceState, option) { 
           deviceState.edits.type = option.display;
-          deviceState.edits.toEdit["typeID"] = option.value;
+          deviceState.edits.toEdit["type"] = option.value.id.toString();
       };
       this.selectionModalInfo.FilterValue = '';
       this.selectSingleOption.show();
@@ -236,7 +274,7 @@ export class RoomEditorComponent implements OnInit {
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
       this.selectionModalInfo.callback = function(deviceState, option) { 
           deviceState.edits.class = option.display;
-          deviceState.edits.toEdit["classID"] = option.value;
+          deviceState.edits.toEdit["class"] = option.value.id.toString();
       };
       this.selectionModalInfo.FilterValue = '';
       this.selectSingleOption.show();

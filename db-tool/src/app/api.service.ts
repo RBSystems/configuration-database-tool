@@ -37,6 +37,14 @@ export class APIService {
 						.map(response => response.json());
 	}
 
+    setRoomAttribute(attribute: string, value: string, deviceID: number, attributeType: string): Observable<Object> {
+        let body = {"attributeName": attribute, "attributeValue": value, "deviceID": deviceID, "attributeType": attributeType}
+
+        let url = "/devices/attribute"
+
+        return this.putData(url, body)
+    }
+
 	postData(urlExtension: string, data: any) {
 	   	let postUrl = this.url + urlExtension; 	
 		let headers = new Headers();
@@ -49,4 +57,17 @@ export class APIService {
 
 		return this.http.post(postUrl, body, options).map((res: Response) => res.json());
 	}
+
+    putData(urlExtension: string, data: any): Observable<Object> {
+	   	let putUrl = this.url + urlExtension; 	
+		let headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+		let options = new RequestOptions({ headers: headers });
+		let body = JSON.stringify(data);
+
+		console.log("posting: \n" + body);
+		console.log("to " + putUrl);
+
+		return this.http.put(putUrl, body, options).map((res: Response) => res.json());
+    }
 }

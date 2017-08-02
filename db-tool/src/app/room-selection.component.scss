@@ -354,6 +354,33 @@ tr.port-table:hover {background: $accentHover; }
     align-content: center;
 }
 
+.warning-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.warning-text {
+    font-size: 16px;
+    font-weight: 500;
+    margin: auto;
+}
+
+.confirm-button {
+    margin-left: 10px;
+    margin-right: 10px;
+    min-width: 150px;
+}
+
+.confirmation-buttons {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+}
+
 .modal-input {
     width: 70%;
     font-size: 19px;
