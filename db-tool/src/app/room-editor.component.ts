@@ -26,8 +26,7 @@ export class RoomEditorComponent implements OnInit {
   id: number;
   name: string;
   description: string;
-  building: Building;
-  devices: Device[];
+  building: Building; devices: Device[];
   configurationID: number;
   public configuration: RoomConfiguration;
   public roomDesignation: string;
@@ -144,6 +143,29 @@ export class RoomEditorComponent implements OnInit {
       if (this.currDevice == null) 
           return;
       this.currDeviceState.editing = false
+      this.currDeviceState.edits = {};
+  }
+
+  commitDeviceEdits() {
+      //we need to go through the values and see if they were changed, if so, we send a request to change them. Before we do so we should prompt
+
+      let edits = {};
+      for(let key in this.currDevice) {
+          if (this.currDevice[key] != this.currDeviceState.edits[key]) {
+            //they don't match, so there were edits
+            edits[key] = this.currDeviceState.edits[key]
+          }
+      }
+      if (isEmpty(edits)) {
+
+      }
+  }
+
+  isEmpty(o: Object) boolean {
+      for (let i in o) {
+          return false;
+      }
+      return true
   }
 
   selectDevice(d: Device) {
@@ -163,6 +185,7 @@ export class RoomEditorComponent implements OnInit {
 
   prepForEdits() {
       Object.assign(this.currDeviceState.edits, this.currDevice);
+      this.currDeviceState.edits.toEdit = {};
   }
 
   buildTypeOptions(): Object {
@@ -200,7 +223,9 @@ export class RoomEditorComponent implements OnInit {
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
       this.selectionModalInfo.callback = function(deviceState, option) { 
           deviceState.edits.type = option.display;
+          deviceState.edits.toEdit["typeID"] = option.value;
       };
+      this.selectionModalInfo.FilterValue = '';
       this.selectSingleOption.show();
   }
 
@@ -211,7 +236,9 @@ export class RoomEditorComponent implements OnInit {
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
       this.selectionModalInfo.callback = function(deviceState, option) { 
           deviceState.edits.class = option.display;
+          deviceState.edits.toEdit["classID"] = option.value;
       };
+      this.selectionModalInfo.FilterValue = '';
       this.selectSingleOption.show();
   }
 

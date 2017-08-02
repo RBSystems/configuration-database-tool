@@ -28,6 +28,8 @@ func main() {
 	secure.GET("/configuration", handlers.GetConfiguration)
 	secure.GET("/roomconfigurations", handlers.GetRoomConfigurations)
 
+	secure.PUT("/devices/attribute", handlers.SetDeviceAttribute)
+
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 	secure.POST("/buildings/:building/rooms/:room", handlers.AddRoom)
 	secure.POST("buildings/:building/rooms/:room/devices/:device", handlers.AddDevice)

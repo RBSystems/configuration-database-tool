@@ -41,3 +41,20 @@ func AddDevice(context echo.Context) error {
 
 	return context.JSON(http.StatusOK, device)
 }
+
+func SetDeviceAttribute(context echo.Context) error {
+	var info accessors.DeviceAttributeInfo
+
+	err := context.Bind(&info)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	device, err := dbo.SetDeviceAttribute(info)
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, device)
+
+}

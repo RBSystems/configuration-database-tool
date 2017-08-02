@@ -23,7 +23,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="currDevice" class="col-md-8 card-container">
+    <div *ngIf="currDevice.name" class="col-md-8 card-container">
         <div class='flippable-card medium'>
             <div class='card non-selectable medium front' [class.flipped]="currDeviceState.editing">
                 <div class='card-header'>Base Info <div class="edit-icon material-icons selectable" (click)='editDevice()'>mode_edit</div></div>
