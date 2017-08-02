@@ -25,9 +25,9 @@
     </div>
     <div *ngIf="devices && currDevice && currDevice.name" class="col-md-8 card-container">
         <div class='flippable-card medium'>
-            <div class='card non-selectable medium front' [class.flipped]="currDeviceState.editing">
+            <div class='card non-selectable medium front' [class.flipped]="currDeviceState.editingInfo">
                 <div class='card-header'>Base Info
-                    <div class="edit-icon material-icons selectable" (click)='editDevice()'>mode_edit</div>
+                    <div class="edit-icon material-icons selectable" (click)='editDevice("editingInfo")'>mode_edit</div>
                 </div>
                 <div class='card-content'>
                     <label class='card-label'>Name: </label>
@@ -46,10 +46,12 @@
                     <div class='card-value'>{{currDevice.class}}</div>
                 </div>
             </div>
-            <div class='card non-selectable medium back' [class.flipped]="currDeviceState.editing">
+            <div class='card non-selectable medium back' [class.flipped]="currDeviceState.editingInfo">
                 <div class='card-header'>Base Info
-                    <div class="edit-icon material-icons selectable" (click)='commitDeviceEdits()'>check</div>
-                    <div class="edit-icon material-icons selectable" (click)='cancelDeviceEdits()'>clear</div>
+                    <div class='icon-container'>
+                        <div class="edit-icon material-icons selectable" (click)='commitDeviceEdits()'>check</div>
+                        <div class="edit-icon material-icons selectable" (click)='cancelDeviceEdits("editingInfo")'>clear</div>
+                    </div>
                 </div>
                 <div class='card-content'>
                     <label class='card-label'>Name: </label>
@@ -75,28 +77,61 @@
                 </div>
             </div>
         </div>
-        <div class='card non-selectable medium'>
-            <div class='card-header'>Classification
-                <div class="edit-icon material-icons selectable">mode_edit</div>
-            </div>
-            <div class='card-content'>
-                <label class='card-label'>Input: </label>
-                <div class='card-value'>{{currDevice.input}}</div>
-            </div>
+        <div class='flippable-card medium'>
+            <div class='card non-selectable medium front' [class.flipped]="currDeviceState.editingClass">
+                <div class='card-header'>Classification
+                    <div class="edit-icon material-icons selectable" (click)="editDevice('editingClass')">mode_edit</div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Input: </label>
+                    <div class='card-value'>{{currDevice.input}}</div>
+                </div>
 
-            <div class='card-content'>
-                <label class='card-label'>Output: </label>
-                <div class='card-value'>{{currDevice.output}}</div>
+                <div class='card-content'>
+                    <label class='card-label'>Output: </label>
+                    <div class='card-value'>{{currDevice.output}}</div>
+                </div>
+            </div>
+            <div class='card non-selectable medium back' [class.flipped]="currDeviceState.editingClass">
+                <div class='card-header'><div>Classification</div>
+                    <div class='icon-container'>
+                        <div class="edit-icon material-icons selectable" (click)='commitDeviceEdits()'>check</div>
+                        <div class="edit-icon material-icons selectable" (click)='cancelDeviceEdits("editingClass")'>clear</div>
+                    </div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Input: </label>
+                    <div class='card-value'><input type="checkbox" [checked]="currDeviceState.edits.input" (change)="currDeviceState.edits.input = !currDeviceState.edits.input"/></div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Output: </label>
+                    <div class='card-value'><input type="checkbox" [checked]="currDeviceState.edits.output" (change)="currDeviceState.edits.output = !currDeviceState.edits.output"/></div>
+                </div>
             </div>
         </div>
-        <div class='card non-selectable medium'>
-            <div class='card-header'>Roles
-                <div class="edit-icon material-icons selectable">mode_edit</div>
+        <div class='flippable-card medium'>
+            <div class='card non-selectable medium front' [class.flipped]="currDevice.editingRoles">
+                <div class='card-header'>Roles
+                    <div class="edit-icon material-icons selectable"(click)="editDevice('editingRoles')">mode_edit</div>
+                </div>
+                <div class='card-content'>
+                    <ul class='simple-list'>
+                        <li *ngFor="let r of currDevice.roles">{{r}}</li>
+                    </ul>
+                </div>
             </div>
-            <div class='card-content'>
-                <ul class='simple-list'>
-                    <li *ngFor="let r of currDevice.roles">{{r}}</li>
-                </ul>
+            <div class='card non-selectable medium back' [class.flipped]="currDevice.editingRoles">
+                <div class='card-header'>Roles
+                    <div class='icon-container'>
+                        <div class="edit-icon material-icons selectable" (click)='commitDeviceEdits()'>check</div>
+                        <div class="edit-icon material-icons selectable" (click)='cancelDeviceEdits("editingRoles")'>clear</div>
+                    </div>
+                </div>
+                <div class='card-content'>
+                    <ul class='simple-list'>
+                        <li *ngFor="let r of currDevice.roles">{{r}}</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class='fill-card' *ngIf="currDevice.ports">
@@ -208,62 +243,61 @@
 <h3>Raw Response</h3>
 <pre>{{ roomData | json }}</pre> -->
 
-
-<app-modal #selectSingleOption>
-    <div class="app-modal-body">
-        <div class='selection-header centered-main-content'>
-            <div class='selection-modal-title'> Select the {{selectionModalInfo.Title}}</div>
-        </div>
-        <div class='selection-body'>
-            <input id="modalinputfilter" #modalinputfilter class='modal-input' [(ngModel)]="selectionModalInfo.FilterValue" (input)="filterModalOptions(modalinputfilter.value)" placeholder='Filter' autofocus />
-            <div class='modal-selection-list'>
-                <div *ngFor="let option of selectionModalInfo.filteredOptions">
-                    <div class='modal-selection-option' (click)='selectionModalInfo.callback(currDeviceState, option); selectSingleOption.hide();'>{{option.display}}</div>
+        <app-modal #selectSingleOption>
+            <div class="app-modal-body">
+                <div class='selection-header centered-main-content'>
+                    <div class='selection-modal-title'> Select the {{selectionModalInfo.Title}}</div>
+                </div>
+                <div class='selection-body'>
+                    <input id="modalinputfilter" #modalinputfilter class='modal-input' [(ngModel)]="selectionModalInfo.FilterValue" (input)="filterModalOptions(modalinputfilter.value)" placeholder='Filter' autofocus />
+                    <div class='modal-selection-list'>
+                        <div *ngFor="let option of selectionModalInfo.filteredOptions">
+                            <div class='modal-selection-option' (click)='selectionModalInfo.callback(currDeviceState, option); selectSingleOption.hide();'>{{option.display}}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</app-modal>
+        </app-modal>
 
-<app-modal #confirmCommit>
-    <div class="app-modal-body">
-        <div class='selection-header centered-main-content'>
-            <div class='selection-modal-title'>Confirm Changes</div>
-        </div>
-        <div class='warning-body'>
-            <div class='warning-text'>
-                Any changes will affect how devices behave and will take effect immediately. Are you sure you want to save these changes?
+        <app-modal #confirmCommit>
+            <div class="app-modal-body">
+                <div class='selection-header centered-main-content'>
+                    <div class='selection-modal-title'>Confirm Changes</div>
+                </div>
+                <div class='warning-body'>
+                    <div class='warning-text'>
+                        Any changes will affect how devices behave and will take effect immediately. Are you sure you want to save these changes?
+                    </div>
+                    <div class="confirmation-buttons">
+                        <button (click)="saveChanges()" class="confirm-button btn btn-lg btn-danger">Save</button>
+                        <button (click)="confirmCommit.hide()" class="confirm-button btn btn-lg btn-success">Cancel</button>
+                    </div>
+                </div>
             </div>
-            <div class="confirmation-buttons">
-                <button (click)="saveChanges()" class="confirm-button btn btn-lg btn-danger">Save</button>
-                <button (click)="confirmCommit.hide()" class="confirm-button btn btn-lg btn-success">Cancel</button>
-            </div>
-        </div>
-    </div>
-</app-modal>
+        </app-modal>
 
-<app-modal #noCommitsModal>
-    <div class="app-modal-body">
-        <div class='selection-header centered-main-content'>
-            <div class='selection-modal-title'>No changes to save</div>
-        </div>
-        <div class='warning-body'>
-            <div class="confirmation-buttons">
-                <button (click)="noCommitsModal.hide()" class="confirm-button btn btn-lg btn-success">Close</button>
+        <app-modal #noCommitsModal>
+            <div class="app-modal-body">
+                <div class='selection-header centered-main-content'>
+                    <div class='selection-modal-title'>No changes to save</div>
+                </div>
+                <div class='warning-body'>
+                    <div class="confirmation-buttons">
+                        <button (click)="noCommitsModal.hide()" class="confirm-button btn btn-lg btn-success">Close</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</app-modal>
+        </app-modal>
 
-<app-modal #successCommit>
-    <div class="app-modal-body">
-        <div class='selection-header centered-main-content'>
-            <div class='selection-modal-title'>Changes saved</div>
-        </div>
-        <div class='warning-body'>
-            <div class="confirmation-buttons">
-                <button (click)="successCommit.hide(); cancelDeviceEdits()" class="confirm-button btn btn-lg btn-success">Close</button>
+        <app-modal #successCommit>
+            <div class="app-modal-body">
+                <div class='selection-header centered-main-content'>
+                    <div class='selection-modal-title'>Changes saved</div>
+                </div>
+                <div class='warning-body'>
+                    <div class="confirmation-buttons">
+                        <button (click)="successCommit.hide(); resetCards()" class="confirm-button btn btn-lg btn-success">Close</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</app-modal>
+        </app-modal>

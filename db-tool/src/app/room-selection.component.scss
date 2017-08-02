@@ -37,6 +37,14 @@ $cardbackground: #FFFFFF;
 
 }
 
+.flippable-card > .card {
+    margin: 0;
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .card-background {
     background-color: $cardbackground
 }
@@ -114,6 +122,8 @@ ul.simple-list
 }
 
 .card-header {
+    display: flex;
+    justify-content:space-between;
     font-weight: 900;
     font-size: 20px;
     align-text: center;
@@ -121,6 +131,10 @@ ul.simple-list
     margin: 10px;
 
     border-bottom: 2px solid $accentHover;
+}
+
+.icon-container {
+    display:flex;
 }
 
 .card.non-selectable:hover {
@@ -136,6 +150,7 @@ ul.simple-list
     word-wrap: break-word;
 }
 .flippable-card {
+    position: relative;
     width: 200px;
     height: 100px;
     padding: 2px 2px 2px 2px;

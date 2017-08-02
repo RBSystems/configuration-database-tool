@@ -54,7 +54,7 @@ export class RoomEditorComponent implements OnInit {
     private location: Location
   ) {
       this.selectionModalInfo = {};
-      this.currDeviceState = {'editing': false, 'edits': {}};
+      this.currDeviceState = {'editingClass': false, 'editingInfo': false, 'editingRoles': false, 'edits': {}};
 
       this.api.getConfig().subscribe(value => {
           this.configurationOptions = value;
@@ -136,19 +136,26 @@ export class RoomEditorComponent implements OnInit {
     });
   }
    
-  editDevice() {
+  editDevice(editingType) {
       console.log("editing");
       if (this.currDevice == null) 
           return;
       this.prepForEdits();
-      this.currDeviceState.editing = true;
+      this.currDeviceState[editingType] = true;
   }
 
-  cancelDeviceEdits() {
+  cancelDeviceEdits(editingType) {
       if (this.currDevice == null) 
           return;
-      this.currDeviceState.editing = false
+      this.currDeviceState[editingType] = false
       this.currDeviceState.edits = {};
+  }
+
+  resetCards() {
+      if (this.currDevice == null) 
+          return;
+
+      this.currDeviceState = {'editingClass': false, 'editingInfo': false, 'editingRoles': false, 'edits': {}};
   }
 
   commitDeviceEdits() {
@@ -188,7 +195,7 @@ export class RoomEditorComponent implements OnInit {
       console.log(this.commitCandidates);
       let deviceID = this.currDevice.id;
       for (let edit in this.commitCandidates) {
-          this.api.setRoomAttribute(typeMapping[edit].name, this.commitCandidates[edit], deviceID, typeMapping[edit].type).subscribe(value => {
+          this.api.setRoomAttribute(typeMapping[edit].name, this.commitCandidates[edit].toString(), deviceID, typeMapping[edit].type).subscribe(value => {
               this.getDevices();
               console.log(value);
               });
