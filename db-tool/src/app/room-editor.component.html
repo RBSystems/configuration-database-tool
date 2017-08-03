@@ -21,6 +21,9 @@
             <div class='card small room flex-center-vertically' [class.selected]='d.selected' (click)='selectDevice(d)' *ngFor="let d of devices">
                 <div class='main-name small'>{{d.name}}</div>
             </div>
+            <div class='card small room flex-center-vertically' [class.selected]='d.selected' (click)='createDevice()'>
+                <div class='main-name small add-button material-icons'>add</div>
+            </div>
         </div>
     </div>
     <div *ngIf="devices && currDevice && currDevice.name" class="col-md-8 card-container">

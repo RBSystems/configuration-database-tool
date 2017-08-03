@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
@@ -6,9 +6,11 @@ import { Observable } from 'rxjs/Rx';
 import { APIService } from './api.service';
 import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition, PortConfig, DeviceCommand } from './objects';
 
+import { ModalComponent } from './modal.component';
 @Component({
   selector: 'add-device',
   templateUrl: './add-device.component.html',
+  styleUrls: ['./room-selection.component.scss'],
   providers: [APIService]
 })
 
@@ -33,18 +35,30 @@ export class AddDeviceComponent implements OnInit {
   port: PortConfig; // port to add
   command: DeviceCommand; // command to add
 
+  configurationOptions: any;
+
+  @ViewChild('selectSingleOption') selectSingleOption:ModalComponent;
+  @ViewChild('setDeviceRoles') setDeviceRoles:ModalComponent;
+
   public bool = [
     { value: true, display: "True" },
     { value: false, display: "False" }
   ];
 
+  public selectionModalInfo:any;
+
   constructor(
     private api: APIService, private route: ActivatedRoute,
     private location: Location
   ) {
-    this.route.queryParams.subscribe(params => {
-      this.currBuilding = params["building"];
-      this.currRoom = params["room"];
+   this.selectionModalInfo = {};
+
+   this.api.getConfig().subscribe(value => {
+       this.configurationOptions = value;
+   });
+   this.route.queryParams.subscribe(params => {
+   this.currBuilding = params["building"];
+   this.currRoom = params["room"];
     })
   }
 
@@ -141,6 +155,80 @@ export class AddDeviceComponent implements OnInit {
         name: ""
       }
     }
+  }
+  buildTypeOptions(): Object {
+      let toReturn = []
+      for (let i in this.configurationOptions.DeviceTypes) {
+          let dType = this.configurationOptions.DeviceTypes[i];
+          let curValue: any = {};
+
+          curValue.display = dType['name'];
+          curValue.value = dType;
+          toReturn.push(curValue);
+      }
+      return toReturn;
+  }
+
+  buildClassOptions(): Object {
+      let toReturn = [];
+      for (let i in this.configurationOptions.DeviceClasses) {
+          let dClass = this.configurationOptions.DeviceClasses[i];
+          let curValue: any = {};
+
+          curValue.display = dClass['display-name'];
+          curValue.value = dClass;
+          toReturn.push(curValue);
+      }
+      return toReturn;
+  }
+
+  buildRoleOptions(): Object {
+      let toReturn = [];
+      for (let i in this.configurationOptions.DeviceRoleDefinitions) {
+          let dRole = this.configurationOptions.DeviceRoleDefinitions[i];
+          let curValue: any = {};
+
+          curValue.display = dRole['name'];
+          curValue.value = dRole;
+          if (this.toadd.roles.indexOf(curValue.display) > -1) {
+              curValue.selected = true;
+          } else {
+              curValue.selected = false;
+          }
+          toReturn.push(curValue);
+      }
+      return toReturn;
+  }
+
+  editCurDeviceType() {
+      //we need to open a modal
+      this.selectionModalInfo.Title = "device type";
+      this.selectionModalInfo.options = this.buildTypeOptions();
+      this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
+      this.selectionModalInfo.callback = function(toadd, option) { 
+          toadd.type = option.display;
+      };
+      this.selectionModalInfo.FilterValue = '';
+      this.selectSingleOption.show();
+  }
+
+  editCurDeviceClass() {
+      //we need to open a modal
+      this.selectionModalInfo.Title = "device class";
+      this.selectionModalInfo.options = this.buildClassOptions();
+      this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
+      this.selectionModalInfo.callback = function(toadd, option) { 
+          toadd.class = option.display;
+      };
+      this.selectionModalInfo.FilterValue = '';
+      this.selectSingleOption.show();
+  }
+
+  editCurDeviceRoles() {
+      this.selectionModalInfo.options = this.buildRoleOptions();
+      this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
+      this.selectionModalInfo.FilterValue = '';
+      this.setDeviceRoles.show();
   }
 }
 

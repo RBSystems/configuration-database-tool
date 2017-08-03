@@ -72,6 +72,12 @@ $cardbackground: #FFFFFF;
     border-bottom: 3px solid #5c6670;
     color: #7D868C;
     transition: .2s;
+    min-height: 100%;
+}
+
+.clickable {
+    cursor: pointer;
+    cursor: hand;
 }
 
 .card-input:focus
@@ -426,3 +432,13 @@ tr.port-table:hover {background: $accentHover; }
     color: black;
     transform: translateX(10px);
 }
+
+.add-button {
+    color: #94D500;
+}
+
+.add-button.small {
+    font-size: 44px;
+}
+
+

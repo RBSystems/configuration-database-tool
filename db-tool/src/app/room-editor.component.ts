@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router, NavigationExtras  } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { APIService } from './api.service';
 import { SwitcherPort, Building, Room, Device, RoomConfiguration, PortConfig, DeviceCommand } from './objects';
 
 import { ModalComponent } from './modal.component';
-
 @Component({
   selector: 'devices',
   templateUrl: './room-editor.component.html',
@@ -52,7 +51,8 @@ export class RoomEditorComponent implements OnInit {
   constructor(
     private api: APIService,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private router: Router
   ) {
       this.selectionModalInfo = {};
       this.currDeviceState = {'editingClass': false, 'editingInfo': false, 'editingRoles': false, 'edits': {}};
@@ -89,6 +89,17 @@ export class RoomEditorComponent implements OnInit {
       },
       enabled: null
     }
+  }
+
+  createDevice() {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        "building": this.currBuilding,
+        "room": this.currRoom
+      }
+    };
+
+    this.router.navigate(['/add-device'], navigationExtras);
   }
 
   getDevices(): Object {
