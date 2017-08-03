@@ -112,7 +112,7 @@
         <div class='flippable-card medium'>
             <div class='card non-selectable medium front' [class.flipped]="currDevice.editingRoles">
                 <div class='card-header'>Roles
-                    <div class="edit-icon material-icons selectable"(click)="editDevice('editingRoles')">mode_edit</div>
+                    <div class="edit-icon material-icons selectable"(click)="editCurDeviceRoles()">mode_edit</div>
                 </div>
                 <div class='card-content'>
                     <ul class='simple-list'>
@@ -301,3 +301,20 @@
                 </div>
             </div>
         </app-modal>
+
+        <app-modal #setDeviceRoles>
+            <div class="app-modal-body">
+                <div class='selection-header centered-main-content'>
+                    <div class='selection-modal-title'>Select the device roles</div>
+                </div>
+                <div class='selection-body'>
+                    <input id="modalinputfilter" #modalinputfilter class='modal-input' [(ngModel)]="selectionModalInfo.FilterValue" (input)="filterModalOptions(modalinputfilter.value)" placeholder='Filter' autofocus />
+                    <div class='modal-selection-list'>
+                        <div *ngFor="let option of selectionModalInfo.filteredOptions">
+                            <div class='modal-selection-option'>{{option.display}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </app-modal>
+

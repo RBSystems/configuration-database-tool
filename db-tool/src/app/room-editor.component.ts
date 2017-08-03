@@ -21,6 +21,7 @@ export class RoomEditorComponent implements OnInit {
   @ViewChild('confirmCommit') confirmCommit:ModalComponent;
   @ViewChild('noCommitsModal') noCommitsModal:ModalComponent;
   @ViewChild('successCommit') successCommit:ModalComponent;
+  @ViewChild('setDeviceRoles') setDeviceRolesModal:ModalComponent;
 
   currBuilding: string;
   currRoom: string;
@@ -261,6 +262,31 @@ export class RoomEditorComponent implements OnInit {
       return toReturn;
   }
 
+  buildRoleOptions(): Object {
+      let toReturn = [];
+      for (let i in this.configurationOptions.DeviceRoles) {
+          let dRole = this.configurationOptions.DeviceRoles[i];
+          let curValue: any = {};
+
+          curValue.display = dRole['name'];
+          curValue.value = dRole;
+          if (this.currDevice.roles.indexOf(curValue.display) > -1) {
+              curValue.selected = true;
+          } else {
+              curValue.selected = false;
+          }
+          toReturn.push(curValue);
+      }
+      return toReturn;
+  }
+
+ editCurDeviceRoles() {
+     this.selectionModalInfo.options = this.buildRoleOptions();
+     this.selectionModalInfo.FilterValue = '';
+     //we need to show which of the versions are currently selected;
+     this.setDeviceRolesModal.show();
+ }
+
   editCurDeviceType() {
       //we need to open a modal
       this.selectionModalInfo.Title = "device type";
@@ -286,7 +312,7 @@ export class RoomEditorComponent implements OnInit {
       this.selectionModalInfo.FilterValue = '';
       this.selectSingleOption.show();
   }
-
+  
   filterModalOptions(value) {
       if (!value) {
           this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options); 
