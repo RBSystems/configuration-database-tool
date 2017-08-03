@@ -28,6 +28,20 @@ func GetConfiguration(context echo.Context) error {
 	return context.JSON(http.StatusOK, output)
 }
 
+func GetPortsByClass(context echo.Context) error {
+	class := context.Param("class")
+	if len(class) < 1 {
+		return context.JSON(http.StatusBadRequest, "Not a valid class")
+	}
+
+	output, err := dbo.GetPortsByClass(class)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+
+	}
+	return context.JSON(http.StatusOK, output)
+}
+
 func buildConfiguration() (output Configuration, err error) {
 	output.DeviceTypes, err = dbo.GetDeviceTypes()
 	if err != nil {

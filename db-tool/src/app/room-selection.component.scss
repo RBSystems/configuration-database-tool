@@ -3,6 +3,8 @@ $accentHover: #2c6a6e;
 $accentHighlight: #d6e8e9;
 $cardbackground: #FFFFFF;
 
+$addGreen: #94D500;
+
 .fill-card {
     padding: 10px;
     margin: 10px;
@@ -428,13 +430,19 @@ tr.port-table:hover {background: $accentHover; }
     cursor: hand;
 }
 
+.modal-selection-option.selected {
+    color: $addGreen;
+    transform: translateX(20px);
+
+}
+
 .modal-selection-option:hover {
     color: black;
     transform: translateX(10px);
 }
 
 .add-button {
-    color: #94D500;
+    color: $addGreen;
 }
 
 .add-button.small {

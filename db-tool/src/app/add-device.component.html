@@ -82,7 +82,7 @@
         </div>
     </div>
 </app-modal>
-<app-modal #setDeviceRoles>
+<app-modal #setDeviceRolesModal>
     <div class="app-modal-body">
         <div class='selection-header centered-main-content'>
             <div class='selection-modal-title'>Select the device roles</div>
@@ -91,9 +91,13 @@
             <input id="modalinputfilter" #modalinputfilter class='modal-input' [(ngModel)]="selectionModalInfo.FilterValue" (input)="filterModalOptions(modalinputfilter.value)" placeholder='Filter' autofocus />
             <div class='modal-selection-list'>
                 <div *ngFor="let option of selectionModalInfo.filteredOptions">
-                    <div class='modal-selection-option'>{{option.display}}</div>
+                    <div (click)='toggleRole(option)' class='modal-selection-option' [class.selected]="option.selected">{{option.display}}</div>
                 </div>
             </div>
+        </div>
+        <div class="confirmation-buttons">
+            <button type="button" class="confirm-button btn btn-lg btn-danger" (click)="setDeviceRolesModal.hide();">Close</button>
+            <button type="button" class="confirm-button btn btn-lg btn-success" (click)="setDeviceRoles();">Save</button>
         </div>
     </div>
 </app-modal>

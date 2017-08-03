@@ -38,7 +38,7 @@ export class AddDeviceComponent implements OnInit {
   configurationOptions: any;
 
   @ViewChild('selectSingleOption') selectSingleOption:ModalComponent;
-  @ViewChild('setDeviceRoles') setDeviceRoles:ModalComponent;
+  @ViewChild('setDeviceRolesModal') setDeviceRolesModal:ModalComponent;
 
   public bool = [
     { value: true, display: "True" },
@@ -228,7 +228,39 @@ export class AddDeviceComponent implements OnInit {
       this.selectionModalInfo.options = this.buildRoleOptions();
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
       this.selectionModalInfo.FilterValue = '';
-      this.setDeviceRoles.show();
+      this.setDeviceRolesModal.show();
+  }
+
+  setDeviceRoles() {
+      let selectedRoles = [];
+      for (let i in this.selectionModalInfo.options) {
+          if (this.selectionModalInfo.options[i].selected)  {
+              selectedRoles.push(this.selectionModalInfo.options[i].value.name);
+          }
+      }
+      this.toadd.roles = selectedRoles;
+      this.setDeviceRolesModal.hide();
+  }
+
+  toggleRole(role: any) {
+      //find the value
+      role.selected = !role.selected ;
+      for (let v in this.selectionModalInfo.options) {
+          if (role == this.selectionModalInfo.options[v]) {
+            this.selectionModalInfo.options[v].selected = role.selected;
+          }
+      }
+  }
+
+  filterModalOptions(value) {
+      if (!value) {
+          this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options); 
+          return
+      }
+
+      this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options).filter( 
+          item => item.display.toLowerCase().indexOf(value.toLowerCase()) > -1
+      );
   }
 }
 

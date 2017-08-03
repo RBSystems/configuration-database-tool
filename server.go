@@ -27,6 +27,7 @@ func main() {
 	secure.GET("/buildings/:building/rooms/:room/devices", handlers.GetDevicesByRoom)
 	secure.GET("/configuration", handlers.GetConfiguration)
 	secure.GET("/roomconfigurations", handlers.GetRoomConfigurations)
+	secure.GET("/classes/:class/ports", handlers.GetPortsByClass)
 
 	secure.PUT("/devices/attribute", handlers.SetDeviceAttribute)
 
