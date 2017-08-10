@@ -21,7 +21,7 @@
             <div class='card small room flex-center-vertically' [class.selected]='d.selected' (click)='selectDevice(d)' *ngFor="let d of devices">
                 <div class='main-name small'>{{d.name}}</div>
             </div>
-            <div class='card small room flex-center-vertically' [class.selected]='d.selected' (click)='createDevice()'>
+            <div class='card small room flex-center-vertically' (click)='createDevice()'>
                 <div class='main-name small add-button material-icons'>add</div>
             </div>
         </div>
@@ -41,12 +41,8 @@
                     <div class='card-value'>{{currDevice.address}}</div>
                 </div>
                 <div class='card-content'>
-                    <label class='card-label'>Type: </label>
-                    <div class='card-value'>{{currDevice.type}}</div>
-                </div>
-                <div class='card-content'>
-                    <label class='card-label'>Class: </label>
-                    <div class='card-value'>{{currDevice.class}}</div>
+                    <label class='card-label'>Display Name: </label>
+                    <div class='card-value'>{{currDevice.display_name}}</div>
                 </div>
             </div>
             <div class='card non-selectable medium back' [class.flipped]="currDeviceState.editingInfo">
@@ -67,16 +63,9 @@
                         <input class='card-input card-value' [(ngModel)]="currDeviceState.edits.address" /> </div>
                 </div>
                 <div class='card-content'>
-                    <label class='card-label'>Type: </label>
+                    <label class='card-label'>Display Name: </label>
                     <div class=''>
-                        <div class='card-input card-value' (click)='editCurDeviceType()'>{{currDeviceState.edits.type}}</div>
-                    </div>
-                </div>
-                <div class='card-content'>
-                    <label class='card-label'>Class: </label>
-                    <div class=''>
-                        <div class='card-input card-value' (click)='editCurDeviceClass()'>{{currDeviceState.edits.class}} </div>
-                    </div>
+                        <input class='card-input card-value' [(ngModel)]="currDeviceState.edits.display_name" /> </div>
                 </div>
             </div>
         </div>
@@ -94,6 +83,14 @@
                     <label class='card-label'>Output: </label>
                     <div class='card-value'>{{currDevice.output}}</div>
                 </div>
+                <div class='card-content'>
+                    <label class='card-label'>Type: </label>
+                    <div class='card-value'>{{currDevice.type}}</div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Class: </label>
+                    <div class='card-value'>{{currDevice.class}}</div>
+                </div>
             </div>
             <div class='card non-selectable medium back' [class.flipped]="currDeviceState.editingClass">
                 <div class='card-header'><div>Classification</div>
@@ -109,6 +106,18 @@
                 <div class='card-content'>
                     <label class='card-label'>Output: </label>
                     <div class='card-value'><input type="checkbox" [checked]="currDeviceState.edits.output" (change)="currDeviceState.edits.output = !currDeviceState.edits.output"/></div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Type: </label>
+                    <div class=''>
+                        <div class='card-input card-value' (click)='editCurDeviceType()'>{{currDeviceState.edits.type}}</div>
+                    </div>
+                </div>
+                <div class='card-content'>
+                    <label class='card-label'>Class: </label>
+                    <div class=''>
+                        <div class='card-input card-value' (click)='editCurDeviceClass()'>{{currDeviceState.edits.class}} </div>
+                    </div>
                 </div>
             </div>
         </div>

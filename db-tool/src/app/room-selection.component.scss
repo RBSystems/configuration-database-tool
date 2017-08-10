@@ -64,6 +64,8 @@ $addGreen: #94D500;
 }
 
 .card-value {
+    margin-top: auto;
+    margin-bottom: 5px;
     max-width: 120px;
     width: 120px;
 }
@@ -333,6 +335,11 @@ th.port-table {
 td.port-table {  
     background: #FAFAFA;
     text-align: center;
+    font-size: 15px;
+}
+td.port-table > .edit-button {  
+    font-size: 15px;
+    margin-left: 5px;
 }
 
 /* Cells in even rows (2,4,6...) are one color */        
@@ -344,6 +351,15 @@ tr.port-table:nth-child(odd) td { background: $accentHighlight; }
 tr.port-table:hover {background: $accentHover; }  
 /* Hover cell effect! */
 
+.main-button {
+    margin:10px;
+}
+
+.add-buttons {
+    display:flex;
+    justify-content: center;
+}
+
 .jumbotron.customjumbo {
     background-color: #D1D3D3;
 }
@@ -354,8 +370,10 @@ tr.port-table:hover {background: $accentHover; }
 }
 
 .edit-icon {
+    margin-left: 5px;
     float: right;
 }
+
 
 .unselectable {
     user-select: none;
@@ -391,6 +409,7 @@ tr.port-table:hover {background: $accentHover; }
 }
 
 .confirm-button {
+    margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
     min-width: 150px;

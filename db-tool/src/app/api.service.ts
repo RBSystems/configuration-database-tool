@@ -27,6 +27,13 @@ export class APIService {
                         );
 	}
 
+    getPortsByClass(deviceClass: string) {
+        return this.http.get(this.url + "/classes/" + deviceClass + "/ports")
+                       .map(
+                           response => response.json()
+                       );
+    }
+
 	getConfig(): Observable<Object> {
 		return this.http.get(this.url + "/configuration")
 						.map(response => response.json());
@@ -36,6 +43,12 @@ export class APIService {
 		return this.http.get(this.url + "/roomconfigurations")
 						.map(response => response.json());
 	}
+
+    getRoomDesignations(): Observable<Object> {
+        return this.http.get(this.url + "/rooms/designations")
+                        .map(response => response.json());
+
+    }
 
     setRoomAttribute(attribute: string, value: string, deviceID: number, attributeType: string): Observable<Object> {
         let body = {"attributeName": attribute, "attributeValue": value, "deviceID": deviceID, "attributeType": attributeType}

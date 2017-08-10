@@ -17,6 +17,7 @@ export class AddRoomComponent implements OnInit {
 
   currBuilding: string;
   roomConfigs: any;
+  roomDesignations: any;
 
   constructor(
     private api: APIService,
@@ -30,6 +31,7 @@ export class AddRoomComponent implements OnInit {
 
   ngOnInit(): void {
     this.api.getRoomConfigs().subscribe(val => this.roomConfigs = val);
+    this.api.getRoomDesignations().subscribe(val => this.roomDesignations = val);
     this.resetForm();
   }
 

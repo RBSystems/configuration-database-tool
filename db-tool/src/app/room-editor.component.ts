@@ -201,7 +201,8 @@ export class RoomEditorComponent implements OnInit {
           "input": {"name": "input", "type": "bool"},
           "output": {"name": "output", "type": "bool"},
           "name": {"name": "name", "type": "string"},
-          "address": {"name": "address", "type": "string"}
+          "address": {"name": "address", "type": "string"},
+          "display_name": {"name": "displayName", "type": "string"}
       }
 
       console.log(this.commitCandidates);

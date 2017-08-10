@@ -36,6 +36,7 @@ export class AddDeviceComponent implements OnInit {
   command: DeviceCommand; // command to add
 
   configurationOptions: any;
+  portOptions: any;
 
   @ViewChild('selectSingleOption') selectSingleOption:ModalComponent;
   @ViewChild('setDeviceRolesModal') setDeviceRolesModal:ModalComponent;
@@ -51,14 +52,15 @@ export class AddDeviceComponent implements OnInit {
     private api: APIService, private route: ActivatedRoute,
     private location: Location
   ) {
-   this.selectionModalInfo = {};
+       this.portOptions = {};
+       this.selectionModalInfo = {};
 
-   this.api.getConfig().subscribe(value => {
-       this.configurationOptions = value;
-   });
-   this.route.queryParams.subscribe(params => {
-   this.currBuilding = params["building"];
-   this.currRoom = params["room"];
+       this.api.getConfig().subscribe(value => {
+           this.configurationOptions = value;
+       });
+       this.route.queryParams.subscribe(params => {
+       this.currBuilding = params["building"];
+       this.currRoom = params["room"];
     })
   }
 
@@ -129,6 +131,7 @@ export class AddDeviceComponent implements OnInit {
     }
   }
 
+
   addPort() {
     this.toadd.ports.push(this.port);
     this.resetPort();
@@ -156,6 +159,32 @@ export class AddDeviceComponent implements OnInit {
       }
     }
   }
+
+  getAndBuildPorts(deviceClass) {
+      this.api.getPortsByClass(deviceClass).subscribe( returnVal => {
+       this.portOptions = returnVal;
+       this.buildPortOptions(returnVal);
+      });
+  }
+
+  buildPortOptions(ports) {
+      this.toadd.ports = new Array<PortConfig>();
+      if (!this.toadd.roles.includes("VideoSwitcher")) {
+          for (let i in ports) {
+              let portToAdd: PortConfig;
+              portToAdd = new PortConfig();
+              portToAdd.name = ports[i]["port-info"]["name"].toString();
+
+              portToAdd.host = this.toadd.name;
+              if (ports[i]["mirror-host-dest"]) {
+                  portToAdd.destination = this.toadd.name;
+              }
+
+              this.toadd.ports.push(portToAdd);
+          }
+      }
+  }
+
   buildTypeOptions(): Object {
       let toReturn = []
       for (let i in this.configurationOptions.DeviceTypes) {
@@ -199,13 +228,37 @@ export class AddDeviceComponent implements OnInit {
       }
       return toReturn;
   }
+  
+  buildSourceOptions() : Object{
+      let toReturn = [];
+      for (let i in this.devices) {
+          let curValue: any ={};
+          curValue.value = this.devices[i];
+          curValue.display = this.devices[i].name;
+          toReturn.push(curValue);
+      }
+      return toReturn;
+  }
+
+  setSource(p: PortConfig) {
+  
+      //we need to open a modal with all the possible devices in the room.
+      this.selectionModalInfo.Title = "input device for port " + p.name;
+      this.selectionModalInfo.options = this.buildSourceOptions();
+      this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
+      this.selectionModalInfo.callback = (toadd, option) => { 
+          p.source = option.display;
+      };
+      this.selectionModalInfo.FilterValue = '';
+      this.selectSingleOption.show();
+  }
 
   editCurDeviceType() {
       //we need to open a modal
       this.selectionModalInfo.Title = "device type";
       this.selectionModalInfo.options = this.buildTypeOptions();
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
-      this.selectionModalInfo.callback = function(toadd, option) { 
+      this.selectionModalInfo.callback = (toadd, option) => { 
           toadd.type = option.display;
       };
       this.selectionModalInfo.FilterValue = '';
@@ -217,8 +270,10 @@ export class AddDeviceComponent implements OnInit {
       this.selectionModalInfo.Title = "device class";
       this.selectionModalInfo.options = this.buildClassOptions();
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options)
-      this.selectionModalInfo.callback = function(toadd, option) { 
-          toadd.class = option.display;
+      this.selectionModalInfo.callback = (toadd, option) => { 
+          toadd.class = option.value.name;
+          console.log(this);
+          this.getAndBuildPorts(option.value.name);//build our port options
       };
       this.selectionModalInfo.FilterValue = '';
       this.selectSingleOption.show();
@@ -261,6 +316,7 @@ export class AddDeviceComponent implements OnInit {
       this.selectionModalInfo.filteredOptions = Object.assign([], this.selectionModalInfo.options).filter( 
           item => item.display.toLowerCase().indexOf(value.toLowerCase()) > -1
       );
+
   }
 }
 

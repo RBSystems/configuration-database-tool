@@ -16,8 +16,7 @@
                 <select name="port-name" class="form-control" [(ngModel)]="port.name">
                     <option *ngFor="let p of ports" [value]="p.name">{{p.name}}</option>
                 </select>
-            </div>
-            <div class="form-group">
+            </div> <div class="form-group">
                 <label>destination device: </label>
                 <select name="port-destination" class="form-control" [(ngModel)]="port.destination">
                     <option *ngFor="let d of devices" [value]="d.name">{{d.name}}</option>
@@ -167,64 +166,33 @@
                 </ul>
             </div>
         </div>
+        <div class='fill-card'>
+            <div *ngIf="!toadd.class">
+                <div class='card-header notice'>Select a Class to Configure Ports</div>
+            </div>
+            <div *ngIf="toadd.class">
+                <div class='card-header'>Port Configuration
+                </div>
+                <table *ngIf="!toadd.roles.includes('VideoSwitcher')" class='port-table'>
+                    <tr class='port-table'>
+                        <th class='port-table'>Port Name</th>
+                        <th class='port-table'>Source</th>
+                        <th class='port-table'>Destination</th>
+                    </tr>
+                    <tr class='port-table' *ngFor="let p of toadd.ports">
+                        <td class='port-table'>{{p.name}}</td>
+                        <td class='port-table'>{{p.source}}<div (click)="setSource(p)" class="material-icons edit-button selectable">mode_edit</div></td>
+                        <td class='port-table'>{{p.destination}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-<form #deviceForm="ngForm" novalidate>
-    <div class="form-group">
-        <label>name </label>
-        <input [(ngModel)]="toadd.name" class="form-control" name="name" placeholder="1106" />
-    </div>
-    <div class="form-group">
-        <label>address </label>
-        <input [(ngModel)]="toadd.address" class="form-control" name="address" placeholder="10.0.0.0" />
-    </div>
-    <div class="form-group">
-        <label>input </label>
-        <div class="radio" *ngFor="let b of bool">
-            <label>
-                <input type="radio" name="input" [(ngModel)]="toadd.input" [value]="b.value">{{b.display}}
-            </label>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>output </label>
-        <div class="radio" *ngFor="let b of bool">
-            <label>
-                <input type="radio" name="output" [(ngModel)]="toadd.output" [value]="b.value">{{b.display}}
-            </label>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>type </label>
-        <select class="form-control" name="types" [(ngModel)]="toadd.type">
-            <option *ngFor="let dt of devicetypes" [value]="dt.name">{{dt.name}}</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>roles </label>
-        <select multiple name="roles" class="form-control" [(ngModel)]="toadd.roles">
-            <option *ngFor="let r of deviceroledefinitions" [value]="r.name">{{r.name}}</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>powerstates </label>
-        <select multiple name="powerstates" class="form-control" [(ngModel)]="toadd.powerstates">
-            <option *ngFor="let ps of powerstates" [value]="ps.name">{{ps.name}}</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>ports </label>
-        <button type="button" class="btn btn-default" (click)="portmodal.show()">add port</button>
-    </div>
-    <div class="form-group">
-        <label>commands </label>
-        <button type="button" class="btn btn-default" (click)="commandmodal.show()">add command</button>
-    </div>
-    <button type="submit" class="btn btn-primary" (click)="postData()">Post Data!</button>
-    <button type="submit" class="btn btn-default" (click)="resetDevices()">Reset</button>
-</form>
-<!-- end form -->
-
+<div class='row add-buttons'>
+    <button type="button" class='btn btn-lg btn-success confirm-button' (click)="postData()">Save</button>
+    <button type="button" class='btn btn-lg btn-danger confirm-button'>Cancel</button>
+</div>
 <h4>post body</h4>
 <pre>{{toadd | json}}</pre>
 

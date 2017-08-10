@@ -25,6 +25,7 @@ export class Device {
   input: boolean;
   output: boolean;
   building?: Building;
+  display_name?: string;
   room?: Room;
   type: string;
   power?: string;
