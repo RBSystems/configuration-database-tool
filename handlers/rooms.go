@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/av-api/dbo"
-	"github.com/byuoitav/configuration-database-microservice/accessors"
+	"github.com/byuoitav/configuration-database-microservice/structs"
 	"github.com/labstack/echo"
 )
 
@@ -33,7 +33,7 @@ func GetRoomByBuildingAndName(context echo.Context) error {
 
 // AddRoom adds a room to the database
 func AddRoom(context echo.Context) error {
-	var room accessors.Room
+	var room structs.Room
 	err := context.Bind(&room)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
