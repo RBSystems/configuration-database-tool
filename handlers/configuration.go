@@ -4,19 +4,19 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/av-api/dbo"
-	"github.com/byuoitav/configuration-database-microservice/accessors"
+	"github.com/byuoitav/configuration-database-microservice/structs"
 	"github.com/labstack/echo"
 )
 
 type Configuration struct {
-	DeviceTypes           []accessors.DeviceType
-	DeviceClasses         []accessors.DeviceClass
-	PowerStates           []accessors.PowerState
-	Ports                 []accessors.PortType
-	Commands              []accessors.RawCommand
-	Microservices         []accessors.Microservice
-	Endpoints             []accessors.Endpoint
-	DeviceRoleDefinitions []accessors.DeviceRoleDef
+	DeviceTypes           []structs.DeviceType
+	DeviceClasses         []structs.DeviceClass
+	PowerStates           []structs.PowerState
+	Ports                 []structs.PortType
+	Commands              []structs.RawCommand
+	Microservices         []structs.Microservice
+	Endpoints             []structs.Endpoint
+	DeviceRoleDefinitions []structs.DeviceRoleDef
 }
 
 func GetConfiguration(context echo.Context) error {
@@ -88,7 +88,7 @@ func buildConfiguration() (output Configuration, err error) {
 
 func AddCommand(context echo.Context) error {
 	cmdName := context.Param("command")
-	var cmdToAdd accessors.RawCommand
+	var cmdToAdd structs.RawCommand
 
 	context.Bind(&cmdToAdd)
 	if cmdName != cmdToAdd.Name {
@@ -105,7 +105,7 @@ func AddCommand(context echo.Context) error {
 
 func AddPort(context echo.Context) error {
 	portName := context.Param("port")
-	var portToAdd accessors.PortType
+	var portToAdd structs.PortType
 
 	context.Bind(&portToAdd)
 	if portName != portToAdd.Name {
@@ -122,7 +122,7 @@ func AddPort(context echo.Context) error {
 
 func AddEndpoint(context echo.Context) error {
 	name := context.Param("endpoint")
-	var toAdd accessors.Endpoint
+	var toAdd structs.Endpoint
 
 	context.Bind(&toAdd)
 	if name != toAdd.Name {
@@ -139,7 +139,7 @@ func AddEndpoint(context echo.Context) error {
 
 func AddPowerState(context echo.Context) error {
 	name := context.Param("powerstate")
-	var toAdd accessors.PowerState
+	var toAdd structs.PowerState
 
 	context.Bind(&toAdd)
 	if name != toAdd.Name {
@@ -156,7 +156,7 @@ func AddPowerState(context echo.Context) error {
 
 func AddMicroservice(context echo.Context) error {
 	name := context.Param("microservice")
-	var toAdd accessors.Microservice
+	var toAdd structs.Microservice
 
 	context.Bind(&toAdd)
 	if name != toAdd.Name {
@@ -173,7 +173,7 @@ func AddMicroservice(context echo.Context) error {
 
 func AddDeviceType(context echo.Context) error {
 	name := context.Param("devicetype")
-	var toAdd accessors.DeviceType
+	var toAdd structs.DeviceType
 
 	context.Bind(&toAdd)
 	if name != toAdd.Name {
@@ -190,7 +190,7 @@ func AddDeviceType(context echo.Context) error {
 
 func AddRoleDefinition(context echo.Context) error {
 	name := context.Param("deviceroledefinition")
-	var toAdd accessors.DeviceRoleDef
+	var toAdd structs.DeviceRoleDef
 
 	context.Bind(&toAdd)
 	if name != toAdd.Name {

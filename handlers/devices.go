@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/av-api/dbo"
-	"github.com/byuoitav/configuration-database-microservice/accessors"
+	"github.com/byuoitav/configuration-database-microservice/structs"
 	"github.com/labstack/echo"
 )
 
@@ -21,7 +21,7 @@ func GetDevicesByRoom(context echo.Context) error {
 }
 
 func AddDevice(context echo.Context) error {
-	var device accessors.Device
+	var device structs.Device
 	err := context.Bind(&device)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
@@ -43,7 +43,7 @@ func AddDevice(context echo.Context) error {
 }
 
 func SetDeviceAttribute(context echo.Context) error {
-	var info accessors.DeviceAttributeInfo
+	var info structs.DeviceAttributeInfo
 
 	err := context.Bind(&info)
 	if err != nil {
