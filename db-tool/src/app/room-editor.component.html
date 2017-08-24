@@ -15,7 +15,7 @@
         </div>
     </div>
 </div>
-<div *ngIf="devices" class="row card-background centered-main-content">
+<div  class="row card-background centered-main-content">
     <div class="col-md-3 left overflow-scroll bottom">
         <div class='card-container'>
             <div class='card small room flex-center-vertically' [class.selected]='d.selected' (click)='selectDevice(d)' *ngFor="let d of devices">
@@ -145,6 +145,13 @@
                     </ul>
                 </div>
             </div>
+        </div>
+        <div class='fill-card form-card' *ngIf="currDevice.roles.includes('Touchpanel')">
+            <div class='card-header'>UI Configuration
+                <div class="edit-icon material-icons selectable">mode_edit</div>
+            </div>
+            <!--Form here -->
+
         </div>
         <div class='fill-card' *ngIf="currDevice.ports">
             <div class='card-header'>Port Configuration
