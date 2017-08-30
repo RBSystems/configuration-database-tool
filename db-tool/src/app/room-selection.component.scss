@@ -5,6 +5,25 @@ $cardbackground: #FFFFFF;
 
 $addGreen: #94D500;
 
+.flippable-card.fill-card{
+    position: relative;
+    height: 400px;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 3px 4px 8px 3px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    width: 685px;
+}
+
+.flippable-card > .fill-card {
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 3px 4px 8px 3px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+}
+
 .fill-card {
     padding: 10px;
     margin: 10px;
@@ -39,6 +58,7 @@ $addGreen: #94D500;
 
 }
 
+.flippable-card > .fill-card,
 .flippable-card > .card {
     margin: 0;
     padding: 10px;

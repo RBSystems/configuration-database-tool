@@ -118,17 +118,7 @@ export class AddDeviceComponent implements OnInit {
   }
 
   resetDevices() {
-    this.toadd = {
-      name: "",
-      address: "",
-      input: null,
-      output: null,
-      type: "",
-      roles: [],
-      powerstates: [],
-      ports: [],
-      commands: []
-    }
+    this.toadd = new Device();
   }
 
 
@@ -169,7 +159,7 @@ export class AddDeviceComponent implements OnInit {
 
   buildPortOptions(ports) {
       this.toadd.ports = new Array<PortConfig>();
-      if (!this.toadd.roles.includes("VideoSwitcher")) {
+      if (!this.toadd.HasRole("VideoSwitcher")) {
           for (let i in ports) {
               let portToAdd: PortConfig;
               portToAdd = new PortConfig();

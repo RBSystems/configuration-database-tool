@@ -27,22 +27,44 @@ export class Device {
   building?: Building;
   display_name?: string;
   room?: Room;
-  type: string;
+  type?: DeviceType;
   power?: string;
-  roles: string[];
-  class?: string;
-  powerstates?: string[];
+  roles: DeviceRoleDefinition[];
+  class?: DeviceClass;
+  powerstates?: DevicePowerState[];
   ports?: PortConfig[];
   commands?: DeviceCommand[];
   responding?: boolean;
   selected?: boolean;
   switcherPortsIn?: SwitcherPort[];
   switcherPortsOut?: SwitcherPort[];
+
+}
+
+export function DeviceHasRole(device: Device, role: string): boolean {
+    for (let r in device.roles) {
+        if (device.roles[r].name == role) 
+            return true
+    }
+    return false
+}
+
+export class DeviceClass {
+    id: number;
+    name: string;
+    description: string;
+    displayName: string;
 }
 
 export class SwitcherPort {
     name: string;
     device: string;
+}
+
+export class DevicePowerState {
+    name: string;
+    id: number;
+    description: number;
 }
 
 export class PortConfig {

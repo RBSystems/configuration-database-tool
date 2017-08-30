@@ -153,7 +153,8 @@
             <!--Form here -->
 
         </div>
-        <div class='fill-card' *ngIf="currDevice.ports">
+        <div class='flippable-card fill-card'>
+        <div class='front fill-card' *ngIf="currDevice.ports">
             <div class='card-header'>Port Configuration
                 <div class="edit-icon material-icons selectable">mode_edit</div>
             </div>
@@ -198,6 +199,25 @@
                 </table>
             </div>
         </div>
+        <div class="back fill-card">
+            <div *ngIf="currDevice.class">
+                <div class='card-header'>Port Configuration
+                </div>
+                <table *ngIf="!currDevice.roles.includes('VideoSwitcher')" class='port-table'>
+                    <tr class='port-table'>
+                        <th class='port-table'>Port Name</th>
+                        <th class='port-table'>Source</th>
+                        <th class='port-table'>Destination</th>
+                    </tr>
+                    <tr class='port-table' *ngFor="let p of currDeviceState.edits.ports">
+                        <td class='port-table'>{{p.name}}</td>
+                        <td class='port-table'>{{p.source}}<div (click)="setSource(p)" class="material-icons edit-button selectable">mode_edit</div></td>
+                        <td class='port-table'>{{p.destination}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
         <!--
             <div *ngIf="currDevice.ports">
                 <popover-content #portsPop placement="right" [closeOnMouseOutside]="true">
