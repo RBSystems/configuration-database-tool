@@ -3,7 +3,7 @@ import { ActivatedRoute, Params, Router, NavigationExtras } from '@angular/route
 import { Location } from '@angular/common';
 
 import { APIService } from './api.service';
-import { SwitcherPort, Building, Room, Device, RoomConfiguration, PortConfig, DeviceCommand } from './objects';
+import { SwitcherPort, Building, Room, Device, RoomConfiguration, PortConfig, DeviceCommand, DeviceHasRole } from './objects';
 
 import { ModalComponent } from './modal.component';
 @Component({

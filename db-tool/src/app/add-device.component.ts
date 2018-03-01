@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
 
 import { APIService } from './api.service';
-import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition, PortConfig, DeviceCommand } from './objects';
+import { Device, Configuration, DeviceType, Powerstate, Port, Command, Microservice, Endpoint, DeviceRoleDefinition, PortConfig, DeviceCommand, DeviceHasRole } from './objects';
 
 import { ModalComponent } from './modal.component';
 @Component({
@@ -159,7 +159,7 @@ export class AddDeviceComponent implements OnInit {
 
   buildPortOptions(ports) {
       this.toadd.ports = new Array<PortConfig>();
-      if (!this.toadd.HasRole("VideoSwitcher")) {
+      if (!DeviceHasRole(this.toadd, "VideoSwitcher")) {
           for (let i in ports) {
               let portToAdd: PortConfig;
               portToAdd = new PortConfig();
