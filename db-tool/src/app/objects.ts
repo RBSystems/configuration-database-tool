@@ -1,123 +1,121 @@
-import { Component } from '@angular/core';
-
 export class Building {
-  id?: number;
-  name?: string;
-  shortname?: string;
-  description?: string;
+    _id?: string;
+    _rev?: string;
+    name?: string;
+    description?: string;
+    tags?: string[]; 
+
+    constructor() {
+        this.tags = [];
+    }
 }
 
 export class Room {
-  id?: number;
-  name?: string;
-  description?: string;
-  building?: Building;
-  devices?: Device[];
-  configurationID?: number;
-  configuration?: RoomConfiguration;
-  roomDesignation?: string;
-}
+    _id?: string;
+    _rev?: string;
+    name?: string;
+    description?: string;
+    configuration?: RoomConfiguration;
+    designation?: string;
+    devices?: Device[];
+    tags?: string[];
 
-export class Device {
-  id?: number;
-  name: string;
-  address: string;
-  input: boolean;
-  output: boolean;
-  building?: Building;
-  room?: Room;
-  type: string;
-  power?: string;
-  roles: string[];
-  powerstates?: string[];
-  ports?: PortConfig[];
-  commands?: DeviceCommand[];
-  responding?: boolean;
-}
-
-export class PortConfig {
-  source: string;
-  name: string;
-  destination: string;
-  host?: string;
-}
-
-export class DeviceCommand {
-  deviceID?: number;
-  name: string;
-  microservice: string;
-  endpoint: Endpoint;
-  enabled?: boolean;
+    constructor() {
+        this.tags = [];
+    }
 }
 
 export class RoomConfiguration {
-  id: number;
-  name: string;
-  roomKey: string;
-  description: string;
-  roomInitKey: string;
-  commands: Command[];
+    _id?: string;
+    tags?: string[];
 }
 
-export class Configuration {
-  DeviceTypes: DeviceType[];
-  Powerstates: Powerstate[];
-  Ports: Port[];
-  Commands: Command[];
-  Microservices: Microservice[];
-  Endpoints: Endpoint[];
-  DeviceRoleDefinitions: DeviceRoleDefinition[];
+export class Device {
+    _id?: string;
+    _rev?: string;
+    name?: string;
+    address?: string;
+    description?: string;
+    display_name?: string;
+    type?: DeviceType;
+    roles?: Role[];
+    ports?: Port[];
+    tags?: string[];
+
+    constructor() {
+        this.roles = [];
+        this.tags = [];
+    }
 }
 
 export class DeviceType {
-  id: number;
-  name: string;
-  description: string;
+    _id?: string;
+    input?: boolean;
+    output?: boolean;
+    ports?: Port[];
+    tags?: string[];
 }
 
-export class Powerstate {
-  id: number;
-  name: string;
-  description: string;
+export class Role {
+    _id?: string;
+    description?: string;
+    tags?: string[];
 }
 
 export class Port {
-  id: number;
-  name: string;
-  description: string;
+    _id?: string;
+    friendly_name?: string;
+    source_device?: string;
+    destination_device?: string;
+    description?: string;
+    tags?: string[];
 }
 
-export class Command {
-  id: number;
-  name: string;
-  description: string;
-  priority: number;
+export class Template {
+    _id?: string;
+    uiconfig?: UIConfig;
+    devices?: Device[];
 }
 
-export class Microservice {
-  id: number;
-  name: string;
-  address: string;
-  description: string;
+export class UIConfig   {
+	_id?: 				  string
+	_rev?:                string            
+	api?:                 string[] = [];     
+	panels?:              Panel[] = [];    
+	presets?:             Preset[] = [];
+	inputConfiguration?:  IOConfiguration[] = [];
+	outputConfiguration?: IOConfiguration[] = [];
+	audioConfiguration?:  AudioConfiguration[] = [];
 }
 
-export class Endpoint {
-  id?: number;
-  name: string;
-  path?: string;
-  description?: string;
+export class Preset   {
+	name?:                    string  
+	icon?:                    string  
+	displays?:                string[] = [];
+	shareableDisplays?:       string[] = [];
+	audioDevices?:            string[] = [];
+	inputs?:                  string[] = [];
+	independentAudioDevices?: string[] = [];
 }
 
-export class DeviceRoleDefinition {
-  id: number;
-  name: string;
-  description: string;
+export class Panel   {
+	hostname?: string   
+	uipath?:   string   
+	preset?:   string   
+	features?: string[] = [];
 }
 
-export class GenericConfig {
-  name: string;
-  description: string;
-  priority?: number;
-  address?: string;
-  path?: string;
+export class AudioConfiguration   {
+	display?:      string   
+	audioDevices?: string[] = [];
+	roomWide?:     boolean     
+}
+
+export class IOConfiguration   {
+	name?: string 
+	icon?: string 
+}
+
+export class Tag {
+    name: string
 }

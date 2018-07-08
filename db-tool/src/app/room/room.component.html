@@ -1,0 +1,168 @@
+<div [ngClass]="{ 'room-container': !InStepper, 'room-container-half': InStepper }">
+    <mat-tab-group #tabs mat-stretch-tabs="always" [selectedIndex]="tabIndex">
+        <mat-tab label="ADD" [disabled]="InStepper && roomExists">
+            <div class="room-row">
+                <!-- BUILDING -->
+                <mat-form-field class="a" style="margin-left: 38%;">
+                    <mat-label>Building</mat-label>
+                    <mat-select matInput [(ngModel)]="addBuilding" (selectionChange)="getRoomList()">
+                        <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-divider *ngIf="addBuilding._id != null"></mat-divider>
+            </div>
+
+            <!-- ID -->
+            <div *ngIf="addBuilding._id" class="room-row">
+                <mat-form-field class="a">
+                    <mat-label>ID</mat-label>
+                    <input required matInput type="text" placeholder="ex. HFAC-D400" [(ngModel)]="addRoom._id">
+                </mat-form-field>
+                <!-- NAME -->
+                <mat-form-field class="a">
+                    <mat-label>Name</mat-label>
+                    <input required matInput type="text" placeholder="ex. Madsen Recital Hall" [(ngModel)]="addRoom.name">
+                </mat-form-field>
+                <!-- DESCRIPTION -->
+                <mat-form-field class="a">
+                    <mat-label>Description</mat-label>
+                    <input matInput type="text" placeholder="ex. HFAC D400 (Madsen)" [(ngModel)]="addRoom.description">
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="addBuilding._id" class="room-row">
+                <!-- CONFIGURATION -->
+                <mat-form-field class="a">
+                    <mat-label>Configuration</mat-label>
+                    <mat-select required matInput placeholder="None" [(ngModel)]="addRoom.configuration">
+                        <mat-option *ngFor="let c of configurationList" [value]="c._id">{{c._id}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- DESIGNATION -->
+                <mat-form-field class="a">
+                    <mat-label>Designation</mat-label>
+                    <mat-select required matInput placeholder="None" [(ngModel)]="addRoom.designation">
+                        <mat-option *ngFor="let d of designationList" [value]="d">{{d}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- TAGS -->
+                <!-- <mat-form-field class="a">
+                    <mat-label>Tags</mat-label>
+                    <mat-select matInput placeholder="None" [(ngModel)]="addRoom.tags" multiple>
+                        <mat-option *ngFor="let tag of tagList" [value]="tag">{{tag}}</mat-option>
+                    </mat-select>
+                </mat-form-field> -->
+                <!-- TAGS -->
+                <mat-form-field class="room-chip-list">
+                    <mat-label style="padding: 2px;">Tags</mat-label>
+                    <mat-chip-list #roomChipList>
+                        <mat-chip *ngFor="let tag of addRoom.tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag, true)">
+                            {{tag}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+
+                        <input style="padding: 4px;" matInput [matChipInputFor]="roomChipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, true)">
+                    </mat-chip-list>
+                </mat-form-field>
+            </div>
+            <!-- <div *ngIf="addBuilding._id" class="room-row"> -->
+            <!-- TAGS -->
+            <!-- <mat-form-field class="a">
+                    <mat-label>Tags</mat-label>
+                    <mat-select matInput placeholder="None" [(ngModel)]="addRoom.tags" multiple>
+                        <mat-option *ngFor="let tag of tagList" [value]="tag">{{tag}}</mat-option>
+                    </mat-select>
+                </mat-form-field> -->
+            <!-- </div> -->
+            <!-- BUTTONS -->
+            <div *ngIf="addBuilding._id" class="room-row-b">
+                <button mat-raised-button class="room-button submit" (click)="CreateRoom()">Submit</button>
+            </div>
+        </mat-tab>
+        <mat-tab label="EDIT" [disabled]="InStepper && !roomExists">
+            <div class="room-row">
+                <!-- BUILDING -->
+                <mat-form-field class="a" style="margin-left: 23%;">
+                    <mat-label>Building</mat-label>
+                    <mat-select matInput [(ngModel)]="editBuilding" (selectionChange)="getRoomList()">
+                        <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- ROOM -->
+                <mat-form-field class="a" *ngIf="editBuilding._id != null && roomList.length > 0">
+                    <mat-label>Room</mat-label>
+                    <mat-select matInput [(ngModel)]="editRoom">
+                        <mat-option *ngFor="let r of roomList" [value]="r">{{r._id}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-divider *ngIf="editRoom._id != null"></mat-divider>
+            </div>
+            <!-- ID -->
+            <div *ngIf="editRoom._id" class="room-row">
+                <mat-form-field class="a">
+                    <mat-label>ID</mat-label>
+                    <input required matInput type="text" placeholder="ex. HFAC-D400" [(ngModel)]="editRoom._id">
+                </mat-form-field>
+                <!-- NAME -->
+                <mat-form-field class="a">
+                    <mat-label>Name</mat-label>
+                    <input required matInput type="text" placeholder="ex. Madsen Recital Hall" [(ngModel)]="editRoom.name">
+                </mat-form-field>
+                <!-- DESCRIPTION -->
+                <mat-form-field class="a">
+                    <mat-label>Description</mat-label>
+                    <input matInput type="text" placeholder="ex. HFAC D400 (Madsen)" [(ngModel)]="editRoom.description">
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="editRoom._id" class="room-row">
+                <!-- CONFIGURATION -->
+                <mat-form-field class="a">
+                    <mat-label>Configuration</mat-label>
+                    <mat-select required matInput placeholder="None" [(ngModel)]="editRoom.configuration._id" (ngModelChange)="UpdateConfiguration()">
+                        <mat-option *ngFor="let c of configurationList" [value]="c._id">{{c._id}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- DESIGNATION -->
+                <mat-form-field class="a">
+                    <mat-label>Designation</mat-label>
+                    <mat-select required matInput placeholder="None" [(ngModel)]="editRoom.designation">
+                        <mat-option *ngFor="let d of designationList" [value]="d">{{d}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- TAGS -->
+                <!-- <mat-form-field class="a">
+                    <mat-label>Tags</mat-label>
+                    <mat-select matInput placeholder="None" [(ngModel)]="editRoom.tags" multiple>
+                        <mat-option *ngFor="let tag of tagList" [value]="tag">{{tag}}</mat-option>
+                    </mat-select>
+                </mat-form-field> -->
+                <!-- TAGS -->
+                <mat-form-field class="room-chip-list">
+                    <mat-label style="padding: 2px;">Tags</mat-label>
+                    <mat-chip-list #roomChipList2>
+                        <mat-chip *ngFor="let tag of editRoom.tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag, false)">
+                            {{tag}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+
+                        <input style="padding: 4px;" matInput [matChipInputFor]="roomChipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, false)">
+                    </mat-chip-list>
+                </mat-form-field>
+            </div>
+            <!-- <div *ngIf="editRoom._id" class="room-row"> -->
+            <!-- TAGS -->
+            <!-- <mat-form-field class="a">
+                    <mat-label>Tags</mat-label>
+                    <mat-select matInput placeholder="None" [(ngModel)]="editRoom.tags" multiple>
+                        <mat-option *ngFor="let tag of tagList" [value]="tag">{{tag}}</mat-option>
+                    </mat-select>
+                </mat-form-field> -->
+            <!-- </div> -->
+            <!-- BUTTONS -->
+            <div *ngIf="editRoom._id" class="room-row-b">
+                <button mat-raised-button class="room-button submit" (click)="UpdateRoom()">Submit</button>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

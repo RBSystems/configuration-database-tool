@@ -1,0 +1,84 @@
+<!-- <div class="home-container">
+    <button class="home-button-a">
+      Full Setup Process
+  </button>
+    <a routerLink="/building"><button class="home-button-b">
+          Add/Edit a Building
+        </button></a>
+    <a routerLink="/room"><button class="home-button-b">
+            Add/Edit a Room
+          </button></a>
+    <a routerLink="/device"><button class="home-button-b">
+              Add/Edit a Device
+            </button></a>
+
+</div> -->
+<div class="home-container">
+    <mat-horizontal-stepper [linear]="false" #setupStepper>
+        <mat-step [stepControl]="locationFormGroup">
+            <form [formGroup]="locationFormGroup">
+                <ng-template matStepLabel>Location information</ng-template>
+                <mat-form-field style="margin: auto; display: block; width: 15%;">
+                    <input matInput type="text" placeholder="BLDG-ROOM" [formControl]="locationFormControl" [errorStateMatcher]="locationMatcher">
+                    <mat-error *ngIf="locationFormControl.hasError('pattern') && !locationFormControl.hasError('required')">
+                        Please put in the format BLDG-ROOM
+                    </mat-error>
+                    <mat-error *ngIf="locationFormControl.hasError('required')">
+                        The building and room info is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <div>
+                    <button mat-raised-button (click)="ValidateLocation(setupStepper)" [disabled]="!locationFormControl.valid">Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="locationDetailFormGroup">
+            <form [formGroup]="locationDetailFormGroup">
+                <ng-template matStepLabel>Verify location</ng-template>
+
+                <div class="home-row">
+                    <div class="home-container-half">
+                        <app-building [InStepper]="true" [buildingExists]="buildingExists" [editBuilding]="locBuilding"></app-building>
+                    </div>
+                    <div class="home-container-half">
+                        <app-room [InStepper]="true" [roomExists]="roomExists" [editBuilding]="locBuilding" [editRoom]="locRoom"></app-room>
+                    </div>
+                </div>
+                <div>
+                    <button mat-raised-button matStepperPrevious>Back</button>
+                    <button mat-raised-button matStepperNext>Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step>
+            <ng-template matStepLabel>Device information</ng-template>
+
+            <div class="home-row-center">
+                <label style="padding-bottom: 25px; margin-left: 28%;">Which template for this room?</label>
+                <mat-form-field class="c">
+                    <mat-label>Template</mat-label>
+                    <mat-select matInput [(ngModel)]="currentTemplate" (ngModelChange)="deviceListSize = currentTemplate.devices.length; extraDeviceList = currentTemplate.devices">
+                        <mat-option *ngFor="let t of templateList" [value]="t">{{t._id}}</mat-option>
+                        <mat-option [value]="customTemplate">Custom</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="num">
+                    <mat-label># of devices</mat-label>
+                    <input matInput type="text" [(ngModel)]="deviceListSize" (ngModelChange)="UpdateAccordion()">
+                </mat-form-field>
+            </div>
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let device of extraDeviceList">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>{{device._id}}</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <app-device [InStepper]="true" [addDevice]="device" [addBuilding]="locBuilding" [addRoom]="locRoom"></app-device>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <div class="home-row">
+                <button mat-raised-button matStepperPrevious>Back</button>
+                <button mat-raised-button (click)="Check()">Next</button>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
+</div>
