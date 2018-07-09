@@ -43,7 +43,11 @@
                 <mat-form-field class="a" ng-init="UpdateDeviceInfo()">
                     <mat-label>Roles</mat-label>
                     <mat-select required matInput placeholder="None" [(ngModel)]="addDevice.roles" multiple (ngModelChange)="UpdateDeviceInfo()">
-                        <mat-option *ngFor="let r of deviceRoleList" [value]="r">{{r._id}}</mat-option>
+                        <mat-option *ngFor="let a of addDevice.roles" [value]="a">{{a._id}}</mat-option>
+                        <ng-container *ngFor="let r of deviceRoleList">
+                            <mat-option *ngIf="!addDevice.roles.includes(r)" [value]="r">{{r._id}}</mat-option>
+                        </ng-container>
+
                         <!-- <ng-container *ngFor="let r of addRoleList;">
                             <mat-option *ngIf="!addDevice.roles.includes(r)" [value]="r">{{r._id}}</mat-option>
                         </ng-container> -->
@@ -178,8 +182,12 @@
                 <mat-form-field class="a">
                     <mat-label>Roles</mat-label>
                     <mat-select required matInput placeholder="None" [(ngModel)]="editDevice.roles" multiple (ngModelChange)="UpdateDeviceInfo()">
-                        <mat-option *ngFor="let r of deviceRoleList" [value]="r">{{r._id}}</mat-option>
-                        <!-- <mat-option *ngFor="let r of editRoleList" [value]="r">{{r._id}}</mat-option> -->
+                        <mat-option *ngFor="let a of editDevice.roles" [value]="a">{{a._id}}</mat-option>
+                        <ng-container *ngIf="editDevice.roles != null && editDevice.roles.length > 0">
+                            <ng-container *ngFor="let r of deviceRoleList">
+                                <mat-option *ngIf="!editDevice.roles.includes(r)" [value]="r">{{r._id}}</mat-option>
+                            </ng-container>
+                        </ng-container>
                     </mat-select>
                 </mat-form-field>
                 <!-- ADDRESS -->

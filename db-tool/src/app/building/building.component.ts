@@ -116,6 +116,13 @@ export class BuildingComponent implements OnInit {
   }
 
   add(event: MatChipInputEvent, add: boolean): void {
+    if(add && (this.addBuilding.tags == null || this.addBuilding.tags.length == 0)) {
+      this.addBuilding.tags = [];
+    }
+    if(!add && (this.editBuilding.tags == null || this.editBuilding.tags.length == 0)) {
+      this.editBuilding.tags = [];
+    }
+
     const input = event.input;
     const value = event.value;
 

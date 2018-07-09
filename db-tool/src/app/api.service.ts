@@ -7,7 +7,8 @@ import { Building, Room, RoomConfiguration, Device, DeviceType, Template } from 
 
 @Injectable()
 export class ApiService {
-  url: string = "http://10.5.34.100:9999";
+  // url: string = "http://10.5.34.100:9999";
+  url: string = '';
   options: RequestOptions;
   headers: Headers;
   constructor(private http: Http) {

@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/byuoitav/authmiddleware"
+	mid "github.com/byuoitav/common/auth/middleware"
 	"github.com/byuoitav/configuration-database-tool/handlers"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
@@ -11,13 +11,14 @@ import (
 )
 
 func main() {
+	// log.SetLevel("debug")
 	port := ":9999"
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
 
 	// Use the `secure` routing group to require authentication
-	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
+	secure := router.Group("", echo.WrapMiddleware(mid.AuthenticateCASUser))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	secure.GET("/buildings", handlers.GetBuildings)
