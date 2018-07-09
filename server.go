@@ -47,7 +47,11 @@ func main() {
 	// secure.POST("/devices/microservices/:microservice", handlers.AddMicroservice)
 	// secure.POST("/devices/roledefinitions/:deviceroledefinition", handlers.AddRoleDefinition)
 
-	secure.Static("/", "dist")
+	secure.Static("/", "db-tool/dist")
+	secure.Static("/home", "db-tool/dist")
+	secure.Static("/building", "db-tool/dist")
+	secure.Static("/room", "db-tool/dist")
+	secure.Static("/device", "db-tool/dist")
 
 	server := http.Server{
 		Addr:           port,
