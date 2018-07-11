@@ -7,13 +7,14 @@ import { Building, Room, RoomConfiguration, Device, DeviceType, Template } from 
 
 @Injectable()
 export class ApiService {
-  // url: string = "http://10.5.34.100:9999";
-  url: string = '';
+  url: string = "http://10.5.34.100:9999";
+  // url: string = '';
   options: RequestOptions;
   headers: Headers;
   constructor(private http: Http) {
     this.headers = new Headers(
-      {'Content-Type': 'application/json'}
+      {'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'}
     );
 
     this.options = new RequestOptions({headers : this.headers}); 
@@ -33,6 +34,10 @@ export class ApiService {
 
   GetRoomList(building: string): Observable<Room[]> {
     return this.http.get(this.url+"/buildings/" + building + "/rooms", this.options).map(response => response.json());
+  }
+
+  GetRoomByID(roomID: string): Observable<Room> {
+    return this.http.get(this.url + "/rooms/" + roomID, this.options).map(response => response.json());
   }
 
   AddRoom(toAdd: Room): Observable<any> {
@@ -73,5 +78,9 @@ export class ApiService {
 
   GetTemplates(): Observable<Template[]> {
     return this.http.get(this.url + "/templates", this.options).map(response => response.json());
+  }
+
+  GetAllRooms(): Observable<Room[]> {
+    return this.http.get(this.url + "/rooms", this.options).map(response => response.json());
   }
 }

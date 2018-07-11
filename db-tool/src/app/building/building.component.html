@@ -1,11 +1,14 @@
 <div [ngClass]="{ 'bldg-container': !InStepper, 'bldg-container-half': InStepper }">
     <mat-tab-group mat-stretch-tabs="always" [selectedIndex]="tabIndex">
+        <!-- //////////// -->
+        <!-- ADD BUILDING -->
+        <!-- //////////// -->
         <mat-tab label="ADD" [disabled]="InStepper && buildingExists">
             <div class="bldg-row">
                 <!-- ID -->
                 <mat-form-field class="a">
                     <mat-label>ID</mat-label>
-                    <input #AID matInput required type="text" placeholder="ex. HRCB" [(ngModel)]="addBuilding._id" [errorStateMatcher]="buildingMatcher">
+                    <input #AID matInput required type="text" [(ngModel)]="addBuilding._id" [errorStateMatcher]="buildingMatcher">
                     <mat-error *ngIf="addIDFormControl.hasError('required')">
                         The building ID is <strong>required</strong>
                     </mat-error>
@@ -13,7 +16,7 @@
                 <!-- NAME -->
                 <mat-form-field class="a">
                     <mat-label>Name</mat-label>
-                    <input matInput type="text" placeholder="ex. Harold R. Clark Building" [(ngModel)]="addBuilding.name">
+                    <input matInput type="text" [(ngModel)]="addBuilding.name">
                 </mat-form-field>
             </div>
 
@@ -21,18 +24,17 @@
                 <!-- DESCRIPTION -->
                 <mat-form-field class="a">
                     <mat-label>Description</mat-label>
-                    <input matInput type="text" placeholder="ex. Kennedy International Center" [(ngModel)]="addBuilding.description">
+                    <input matInput type="text" [(ngModel)]="addBuilding.description">
                 </mat-form-field>
                 <!-- TAGS -->
                 <mat-form-field class="bldg-chip-list">
                     <mat-label style="padding: 2px;">Tags</mat-label>
                     <mat-chip-list #chipList>
-                        <mat-chip *ngFor="let tag of addBuilding.tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag, true)">
+                        <mat-chip *ngFor="let tag of addBuilding.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, true)">
                             {{tag}}
                             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                         </mat-chip>
-
-                        <input style="padding: 4px;" matInput [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, true)">
+                        <input style="padding: 4px;" matInput [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, true)">
                     </mat-chip-list>
                 </mat-form-field>
             </div>
@@ -43,6 +45,10 @@
             </div>
 
         </mat-tab>
+
+        <!-- ///////////// -->
+        <!-- EDIT BUILDING -->
+        <!-- ///////////// -->
         <mat-tab label="EDIT" [disabled]="InStepper && !buildingExists">
             <div class="bldg-row">
                 <!-- BUILDING -->
@@ -59,7 +65,7 @@
                 <!-- ID -->
                 <mat-form-field class="a">
                     <mat-label>ID</mat-label>
-                    <input matInput required type="text" placeholder="ex. HRCB" [(ngModel)]="editBuilding._id" [errorStateMatcher]="buildingMatcher">
+                    <input matInput required type="text" [(ngModel)]="editBuilding._id" [errorStateMatcher]="buildingMatcher">
                     <mat-error *ngIf="editIDFormControl.hasError('required')">
                         The building ID is <strong>required</strong>
                     </mat-error>
@@ -67,7 +73,7 @@
                 <!-- NAME -->
                 <mat-form-field class="a">
                     <mat-label>Name</mat-label>
-                    <input matInput type="text" placeholder="ex. Harold R. Clark Building" [(ngModel)]="editBuilding.name">
+                    <input matInput type="text" [(ngModel)]="editBuilding.name">
                 </mat-form-field>
             </div>
 
@@ -75,18 +81,18 @@
                 <!-- DESCRIPTION -->
                 <mat-form-field class="a">
                     <mat-label>Description</mat-label>
-                    <input matInput type="text" placeholder="ex. Kennedy International Center" [(ngModel)]="editBuilding.description">
+                    <input matInput type="text" [(ngModel)]="editBuilding.description">
                 </mat-form-field>
                 <!-- TAGS -->
                 <mat-form-field class="bldg-chip-list">
                     <mat-label style="padding: 2px;">Tags</mat-label>
                     <mat-chip-list #chipList2>
-                        <mat-chip *ngFor="let tag of editBuilding.tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag, false)">
+                        <mat-chip *ngFor="let tag of editBuilding.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, false)">
                             {{tag}}
                             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                         </mat-chip>
 
-                        <input style="padding: 4px;" matInput [matChipInputFor]="chipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, false)">
+                        <input style="padding: 4px;" matInput [matChipInputFor]="chipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, false)">
                     </mat-chip-list>
                 </mat-form-field>
             </div>
@@ -98,48 +104,3 @@
         </mat-tab>
     </mat-tab-group>
 </div>
-
-<!-- <div class="bldg-container-half" *ngIf="InStepper"> -->
-<!-- <div class="bldg-row"> -->
-<!-- BUILDING -->
-<!-- <mat-form-field class="a" style="margin-left: 39%;">
-            <mat-label>Building</mat-label>
-            <mat-select matInput [(ngModel)]="editBuilding">
-                <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-divider *ngIf="editBuilding._id != null"></mat-divider> -->
-<!-- </div> -->
-<!-- <div *ngIf="editBuilding._id != null" class="bldg-row"> -->
-<!-- ID -->
-<!-- <mat-form-field class="a">
-            <mat-label>ID</mat-label>
-            <input matInput type="text" placeholder="ex. HRCB" [(ngModel)]="editBuilding._id">
-        </mat-form-field> -->
-<!-- NAME -->
-<!-- <mat-form-field class="a">
-            <mat-label>Name</mat-label>
-            <input matInput type="text" placeholder="ex. Harold R. Clark Building" [(ngModel)]="editBuilding.name">
-        </mat-form-field> -->
-<!-- </div> -->
-
-<!-- <div *ngIf="editBuilding._id != null" class="bldg-row"> -->
-<!-- DESCRIPTION -->
-<!-- <mat-form-field class="a">
-            <mat-label>Description</mat-label>
-            <input matInput type="text" placeholder="ex. Kennedy International Center" [(ngModel)]="editBuilding.description">
-        </mat-form-field> -->
-<!-- TAGS -->
-<!-- <mat-form-field class="a">
-            <mat-label>Tags</mat-label>
-            <mat-select matInput placeholder="None" [(ngModel)]="editBuilding.tags" multiple>
-                <mat-option *ngFor="let tag of tagList" [value]="tag">{{tag}}</mat-option>
-            </mat-select>
-        </mat-form-field> -->
-<!-- </div> -->
-
-<!-- BUTTONS -->
-<!-- <div *ngIf="editBuilding._id != null" class="bldg-row-b">
-        <button mat-raised-button class="bldg-button submit" (click)="UpdateBuilding()">Submit</button>
-    </div> -->
-<!-- </div> -->

@@ -22,6 +22,7 @@ export class Room {
 
     constructor() {
         this.tags = [];
+        this.designation = "production";
     }
 }
 

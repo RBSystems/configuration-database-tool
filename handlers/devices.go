@@ -12,6 +12,14 @@ import (
 
 // GetDevicesByRoom returns all of the devices in a room.
 func GetDevicesByRoom(context echo.Context) error {
+	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	// if err != nil {
+	// 	return context.JSON(http.StatusInternalServerError, err.Error())
+	// }
+	// if !ok {
+	// 	return context.JSON(http.StatusForbidden, alert)
+	// }
+
 	roomID := context.Param("room")
 
 	devices, err := db.GetDB().GetDevicesByRoom(roomID)
@@ -25,14 +33,24 @@ func GetDevicesByRoom(context echo.Context) error {
 
 // AddDevice adds a device to the database.
 func AddDevice(context echo.Context) error {
+	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	// if err != nil {
+	// 	return context.JSON(http.StatusInternalServerError, err.Error())
+	// }
+	// if !ok {
+	// 	return context.JSON(http.StatusForbidden, alert)
+	// }
+
 	var device structs.Device
 	err := context.Bind(&device)
 	if err != nil {
+		log.L.Info("#1")
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	device, err = db.GetDB().CreateDevice(device)
 	if err != nil {
+		log.L.Info(err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
@@ -41,6 +59,14 @@ func AddDevice(context echo.Context) error {
 
 // UpdateDevice updates a device's information in the database.
 func UpdateDevice(context echo.Context) error {
+	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	// if err != nil {
+	// 	return context.JSON(http.StatusInternalServerError, err.Error())
+	// }
+	// if !ok {
+	// 	return context.JSON(http.StatusForbidden, alert)
+	// }
+
 	id := context.Param("device")
 	var device structs.Device
 
@@ -60,6 +86,14 @@ func UpdateDevice(context echo.Context) error {
 
 // GetDeviceTypes returns a list of all device types in the database.
 func GetDeviceTypes(context echo.Context) error {
+	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	// if err != nil {
+	// 	return context.JSON(http.StatusInternalServerError, err.Error())
+	// }
+	// if !ok {
+	// 	return context.JSON(http.StatusForbidden, alert)
+	// }
+
 	deviceTypes, err := db.GetDB().GetAllDeviceTypes()
 	if err != nil {
 		log.L.Errorf("[error] An error occurred while getting device types: %v", err)
@@ -71,6 +105,14 @@ func GetDeviceTypes(context echo.Context) error {
 
 // GetDeviceRoles returns a list of all device roles in the database.
 func GetDeviceRoles(context echo.Context) error {
+	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	// if err != nil {
+	// 	return context.JSON(http.StatusInternalServerError, err.Error())
+	// }
+	// if !ok {
+	// 	return context.JSON(http.StatusForbidden, alert)
+	// }
+
 	deviceRoles, err := db.GetDB().GetDeviceRoles()
 	if err != nil {
 		log.L.Errorf("[error] An error occurred while getting device roles: %v", err)

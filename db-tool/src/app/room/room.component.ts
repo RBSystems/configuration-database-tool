@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Building, Room, RoomConfiguration } from '../objects';
 import { ApiService } from '../api.service'; 
 import { MatDialog } from '@angular/material';
@@ -14,20 +14,21 @@ import { MatChipInputEvent } from '@angular/material';
 export class RoomComponent implements OnInit {
   @Input() InStepper: boolean = false;
   @Input() roomExists: boolean = false;
-  tagList: string[] = ["Red", "Yellow", "Blue"];
-  tags: string[] = [];
+  roomtabIndex: number = 0;
+
   buildingList: Building[] = [];
   roomList: Room[] = [];
   addBuilding: Building;
   @Input() editBuilding: Building;
   addRoom: Room;
   @Input() editRoom: Room;
+
   configurationList: RoomConfiguration[] = [];
   configNameList: string[] = [];
   designationList: string[] = [];
-  tabIndex: number = 0;
 
-  message: string;
+  @ViewChild("roomtabs") roomtabs;
+  
   visible = true;
   selectable = true;
   removable = true;
@@ -37,23 +38,25 @@ export class RoomComponent implements OnInit {
   constructor(private api: ApiService, public dialog: MatDialog) { }
 
   ngOnInit() {
-    this.tabIndex = 0;
     this.addBuilding = new Building();
     this.editBuilding = new Building();
     this.addRoom = new Room();
     this.editRoom = new Room();
+
     this.getBuildingList();
     this.getConfigurationList();
     this.getDesignationList();
   }
 
   ngOnChanges() {
-    if(this.InStepper && this.roomExists) {
-      this.tabIndex = 1;
-    }
-    else {
-      this.tabIndex = 0;
-    }
+    setTimeout(() => {
+      if(this.InStepper && this.roomExists) {
+        this.roomtabIndex = 1;
+      }
+      else {
+        this.roomtabIndex = 0;
+      }
+    }, 0); 
   }
 
   getBuildingList() {
@@ -63,8 +66,13 @@ export class RoomComponent implements OnInit {
     });
   }
 
-  getRoomList() {
+  getRoomList(add: boolean) {
     this.roomList = [];
+
+    if (add) {
+      this.addRoom._id = this.addBuilding._id + "-"
+    }
+
     this.api.GetRoomList(this.editBuilding._id).subscribe(val => {
       this.roomList = val;
     });
@@ -73,9 +81,13 @@ export class RoomComponent implements OnInit {
   getConfigurationList() {
     this.configurationList = [];
     this.configNameList = [];
+
     this.api.GetRoomConfigurations().subscribe(val => {
       this.configurationList = val;
       this.configurationList.forEach(c => {
+        if(this.addRoom != null && c._id == "Default") {
+          this.addRoom.configuration = c;
+        }
         this.configNameList.push(c._id)
       });
     });
@@ -88,9 +100,9 @@ export class RoomComponent implements OnInit {
     })
   }
 
-  UpdateID() {
-    if(this.addRoom._id == null || !this.addRoom._id.includes(this.addBuilding._id)) {
-      this.addRoom._id = this.addBuilding._id + "-";
+  FixMissingName() {
+    if(this.editRoom != null && this.editRoom._id != null && (this.editRoom.name == null || this.editRoom.name.length == 0)) {
+      this.editRoom.name = this.editRoom._id;
     }
   }
 
@@ -137,7 +149,7 @@ export class RoomComponent implements OnInit {
     });
   }
 
-  add(event: MatChipInputEvent, add: boolean): void {
+  AddChip(event: MatChipInputEvent, add: boolean): void {
     if(add && (this.addRoom.tags == null || this.addRoom.tags.length == 0)) {
       this.addRoom.tags = [];
     }
@@ -162,7 +174,7 @@ export class RoomComponent implements OnInit {
     }
   }
 
-  remove(tag: string, add: boolean): void {
+  RemoveChip(tag: string, add: boolean): void {
     
     if(add) {
       let index_A = this.addRoom.tags.indexOf(tag);

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Building, Tag } from '../objects'
+import { Building } from '../objects'
 import { ApiService } from '../api.service';
 import { MatDialog } from '@angular/material';
 import { ModalComponent } from '../modal/modal.component';
@@ -16,14 +16,12 @@ import { MatChipInputEvent } from '@angular/material';
 export class BuildingComponent implements OnInit {
   @Input() InStepper: boolean = false;
   @Input() buildingExists: boolean = false;
-  tagList: string[] = ["Red", "Yellow", "Blue"];
-  tags: string[] = [];
-  buildingList: Building[] = [];
-  addBuilding: Building;
-  @Input() editBuilding: Building;
-  message: string;
   tabIndex: number = 0;
 
+  buildingList: Building[] = [];
+  addBuilding: Building;  
+  @Input() editBuilding: Building;
+  
   buildingMatcher = new DBError();
   AddFormGroup: FormGroup;
   EditFormGroup: FormGroup;
@@ -41,13 +39,6 @@ export class BuildingComponent implements OnInit {
   removable = true;
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-  // addBuilding.tags: Tag[] = [
-  //   {name: 'Lemon'},
-  //   {name: 'Lime'},
-  //   {name: 'Apple'},
-  // ];
-  // addBuilding.tags: string[];
-  // editBuilding.tags: string[];
 
   constructor(private api: ApiService, public dialog: MatDialog, private _formBuilder: FormBuilder) { }
 
@@ -63,17 +54,17 @@ export class BuildingComponent implements OnInit {
     this.addBuilding = new Building();
     this.editBuilding = new Building();
     this.getBuildingList();
-    // this.addBuilding.tags = this.addBuilding.tags;
-    // this.editBuilding.tags = this.editBuilding.tags;
   }
 
   ngOnChanges() {
-    if(this.InStepper && this.buildingExists) {
-      this.tabIndex = 1;
-    }
-    else {
-      this.tabIndex = 0;
-    }
+    setTimeout(() => {
+      if(this.InStepper && this.buildingExists) {
+        this.tabIndex = 1;
+      }
+      else {
+        this.tabIndex = 0;
+      }
+    }, 100); 
   }
 
   getBuildingList() {
@@ -115,7 +106,7 @@ export class BuildingComponent implements OnInit {
     });
   }
 
-  add(event: MatChipInputEvent, add: boolean): void {
+  AddChip(event: MatChipInputEvent, add: boolean): void {
     if(add && (this.addBuilding.tags == null || this.addBuilding.tags.length == 0)) {
       this.addBuilding.tags = [];
     }
@@ -140,7 +131,7 @@ export class BuildingComponent implements OnInit {
     }
   }
 
-  remove(tag: string, add: boolean): void {
+  RemoveChip(tag: string, add: boolean): void {
     
     if(add) {
       let index_A = this.addBuilding.tags.indexOf(tag);

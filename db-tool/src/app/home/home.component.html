@@ -45,8 +45,8 @@
                     </div>
                 </div>
                 <div>
-                    <button mat-raised-button matStepperPrevious>Back</button>
-                    <button mat-raised-button matStepperNext>Next</button>
+                    <button mat-raised-button matStepperPrevious (click)="Check()">Back</button>
+                    <button mat-raised-button matStepperNext (click)="Check()">Next</button>
                 </div>
             </form>
         </mat-step>
@@ -57,7 +57,7 @@
                 <label style="padding-bottom: 25px; margin-left: 28%;">Which template for this room?</label>
                 <mat-form-field class="c">
                     <mat-label>Template</mat-label>
-                    <mat-select matInput [(ngModel)]="currentTemplate" (ngModelChange)="deviceListSize = currentTemplate.devices.length; extraDeviceList = currentTemplate.devices">
+                    <mat-select matInput [(ngModel)]="currentTemplate" (ngModelChange)="UpdateAccordion()">
                         <mat-option *ngFor="let t of templateList" [value]="t">{{t._id}}</mat-option>
                         <mat-option [value]="customTemplate">Custom</mat-option>
                     </mat-select>
@@ -72,7 +72,7 @@
                     <mat-expansion-panel-header>
                         <mat-panel-title>{{device._id}}</mat-panel-title>
                     </mat-expansion-panel-header>
-                    <app-device [InStepper]="true" [addDevice]="device" [addBuilding]="locBuilding" [addRoom]="locRoom"></app-device>
+                    <app-device [InStepper]="true" [addDevice]="device" [addBuilding]="locBuilding" [addRoom]="locRoom" [deviceTypeList]="deviceTypeList"></app-device>
                 </mat-expansion-panel>
             </mat-accordion>
             <div class="home-row">

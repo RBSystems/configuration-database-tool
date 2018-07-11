@@ -1,7 +1,9 @@
 <div class="device-container">
     <mat-tab-group mat-stretch-tabs="always">
+        <!-- ////////// -->
+        <!-- ADD DEVICE -->
+        <!-- ////////// -->
         <mat-tab label="ADD">
-
             <div class="device-row">
                 <!-- BUILDING -->
                 <mat-form-field class="a" style="margin-left: 23%;">
@@ -13,7 +15,7 @@
                 <!-- ROOM -->
                 <mat-form-field *ngIf="addBuilding._id != null" class="a">
                     <mat-label>Room</mat-label>
-                    <mat-select matInput placeholder="None" [(ngModel)]="addRoom" (selectionChange)="getAddDeviceList()">
+                    <mat-select matInput [(ngModel)]="addRoom" (selectionChange)="getAddDeviceList()">
                         <mat-option *ngFor="let r of addRoomList" [value]="r">{{r._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -24,60 +26,44 @@
                 <!-- ID -->
                 <mat-form-field class="a">
                     <mat-label>ID</mat-label>
-                    <input required matInput type="text" placeholder="ex. ITB-1108-CP1" [(ngModel)]="addDevice._id">
+                    <input required matInput type="text" [(ngModel)]="addDevice._id">
                 </mat-form-field>
                 <!-- NAME -->
                 <mat-form-field class="a">
                     <mat-label>Name</mat-label>
-                    <input required matInput type="text" placeholder="ex. CP1" [(ngModel)]="addDevice.name">
+                    <input required matInput type="text" [(ngModel)]="addDevice.name">
                 </mat-form-field>
                 <!-- DESCRIPTION -->
                 <mat-form-field class="a">
                     <mat-label>Description</mat-label>
-                    <input matInput type="text" placeholder="ex. Station 1" [(ngModel)]="addDevice.description">
+                    <input matInput type="text" [(ngModel)]="addDevice.description">
                 </mat-form-field>
             </div>
 
             <div *ngIf="addRoom._id != null" class="device-row">
                 <!-- ROLES -->
-                <mat-form-field class="a" ng-init="UpdateDeviceInfo()">
+                <mat-form-field class="a">
                     <mat-label>Roles</mat-label>
-                    <mat-select required matInput placeholder="None" [(ngModel)]="addDevice.roles" multiple (ngModelChange)="UpdateDeviceInfo()">
-                        <mat-option *ngFor="let a of addDevice.roles" [value]="a">{{a._id}}</mat-option>
-                        <ng-container *ngFor="let r of deviceRoleList">
-                            <mat-option *ngIf="!addDevice.roles.includes(r)" [value]="r">{{r._id}}</mat-option>
-                        </ng-container>
-
-                        <!-- <ng-container *ngFor="let r of addRoleList;">
-                            <mat-option *ngIf="!addDevice.roles.includes(r)" [value]="r">{{r._id}}</mat-option>
-                        </ng-container> -->
-                        <!-- <ng-container *ngFor="let r of deviceRoleList;">
-                            <mat-option *ngIf="!addDevice.roles.includes(r)" [value]="r">{{r._id}}</mat-option>
-                        </ng-container> -->
+                    <mat-select required matInput multiple [(ngModel)]="addDevice.roles" (selectionChange)="UpdateRoleLists(true)" (valueChange)="UpdateRoleLists(true)">
+                        <mat-option *ngFor="let r of addDevice.roles" [value]="r">{{r._id}}</mat-option>
+                        <mat-option *ngFor="let r of addRoleList" [value]="r">{{r._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- ADDRESS -->
                 <mat-form-field class="a">
                     <mat-label>Address</mat-label>
-                    <input matInput type="text" placeholder="IP address or <id>.byu.edu" [(ngModel)]="addDevice.address">
+                    <input matInput type="text" [(ngModel)]="addDevice.address">
                 </mat-form-field>
-                <!-- TAGS -->
-                <!-- <mat-form-field class="a">
-                    <mat-label>Tags</mat-label>
-                    <mat-select matInput placeholder="None" [(ngModel)]="addDevice.tags" multiple>
-                        <mat-option *ngFor="let tag of tagList" [value]="tag">{{tag}}</mat-option>
-                    </mat-select>
-                </mat-form-field> -->
                 <!-- TAGS -->
                 <mat-form-field class="device-chip-list">
                     <mat-label style="padding: 2px;">Tags</mat-label>
                     <mat-chip-list #deviceChipList>
-                        <mat-chip *ngFor="let tag of addDevice.tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag, true)">
+                        <mat-chip *ngFor="let tag of addDevice.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, true)">
                             {{tag}}
                             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                         </mat-chip>
 
-                        <input style="padding: 4px;" matInput [matChipInputFor]="deviceChipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, true)">
+                        <input style="padding: 4px;" matInput [matChipInputFor]="deviceChipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, true)">
                     </mat-chip-list>
                 </mat-form-field>
             </div>
@@ -86,15 +72,20 @@
                 <!-- TYPE -->
                 <mat-form-field class="a">
                     <mat-label>Device Type</mat-label>
-                    <mat-select required matInput placeholder="None" [(ngModel)]="addDevice.type._id" (ngModelChange)="UpdateDeviceInfo()">
+                    <mat-select required matInput [(ngModel)]="addDevice.type._id" (ngModelChange)="UpdateDeviceTypeInfo()">
                         <mat-option *ngFor="let type of deviceTypeList" [value]="type._id">{{type._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- DISPLAY_NAME -->
                 <mat-form-field class="a" *ngIf="addType != null && addType.input">
-                    <mat-label>Name Shown on UI</mat-label>
-                    <input matInput type="text" placeholder="ex. HDMI" [(ngModel)]="addDevice.display_name">
+                    <mat-label>Display Name</mat-label>
+                    <input matInput type="text" [(ngModel)]="addDevice.display_name">
                 </mat-form-field>
+                <!-- TEST -->
+                <!-- <mat-form-field class="a" *ngIf="addDevice.type != null">
+                    <mat-label>Type Name</mat-label>
+                    <input matInput type="text" [(ngModel)]="addDevice.type._id">
+                </mat-form-field> -->
             </div>
 
             <!-- PORTS -->
@@ -103,24 +94,28 @@
                     <mat-panel-title class="device-label-a">Ports:</mat-panel-title>
                 </mat-expansion-panel-header>
                 <div *ngFor="let port of addDevice.ports" class="port-container">
+                    <!-- PORT ID -->
                     <mat-form-field class="c">
                         <mat-label>ID</mat-label>
                         <input matInput readonly="true" type="text" [ngModel]="port._id">
                     </mat-form-field>
+                    <!-- FRIENDLY NAME -->
                     <mat-form-field class="c">
                         <mat-label>Friendly Name</mat-label>
-                        <input matInput type="text" [(ngModel)]="port.friendly_name" placeholder="Friendly Name">
+                        <input matInput type="text" [(ngModel)]="port.friendly_name">
                     </mat-form-field>
+                    <!-- SOURCE DEVICE -->
                     <mat-form-field class="c">
                         <mat-label>Source Device</mat-label>
-                        <mat-select matInput placeholder="None" [(ngModel)]="port.source_device">
+                        <mat-select matInput [(ngModel)]="port.source_device">
                             <mat-option [value]=null>None</mat-option>
                             <mat-option *ngFor="let i of addSourceDevices" [value]="i._id">{{i._id}}</mat-option>
                         </mat-select>
                     </mat-form-field>
+                    <!-- DESTINATION DEVICE -->
                     <mat-form-field class="c">
                         <mat-label>Destination Device</mat-label>
-                        <mat-select matInput placeholder="None" [(ngModel)]="port.destination_device">
+                        <mat-select matInput [(ngModel)]="port.destination_device">
                             <mat-option [value]=null>None</mat-option>
                             <mat-option *ngFor="let i of addDestinationDevices" [value]="i._id">{{i._id}}</mat-option>
                         </mat-select>
@@ -133,6 +128,10 @@
                 <button mat-raised-button class="device-button submit" (click)="CreateDevice()">Submit</button>
             </div>
         </mat-tab>
+
+        <!-- /////////// -->
+        <!-- EDIT DEVICE -->
+        <!-- /////////// -->
         <mat-tab label="EDIT" [disabled]="InStepper">
 
             <div class="device-row">
@@ -146,14 +145,14 @@
                 <!-- ROOM -->
                 <mat-form-field *ngIf="editBuilding._id != null && editRoomList.length > 0" class="a">
                     <mat-label>Room</mat-label>
-                    <mat-select matInput placeholder="None" [(ngModel)]="editRoom" (selectionChange)="getEditDeviceList()">
+                    <mat-select matInput [(ngModel)]="editRoom" (selectionChange)="getEditDeviceList()">
                         <mat-option *ngFor="let r of editRoomList" [value]="r">{{r._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- DEVICE -->
                 <mat-form-field *ngIf="editRoom._id != null && editRoomList.length > 0" class="a">
                     <mat-label>Device</mat-label>
-                    <mat-select matInput placeholder="None" [(ngModel)]="editDevice" (ngModelChange)="UpdateDeviceInfo()">
+                    <mat-select matInput [(ngModel)]="editDevice" (ngModelChange)="UpdateDeviceTypeInfo()">
                         <mat-option *ngFor="let d of editDeviceList" [value]="d">{{d._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -164,54 +163,44 @@
                 <!-- ID -->
                 <mat-form-field class="a">
                     <mat-label>ID</mat-label>
-                    <input required matInput type="text" placeholder="ex. ITB-1108-CP1" [(ngModel)]="editDevice._id">
+                    <input required matInput type="text" [(ngModel)]="editDevice._id">
                 </mat-form-field>
                 <!-- NAME -->
                 <mat-form-field class="a">
                     <mat-label>Name</mat-label>
-                    <input required matInput type="text" placeholder="ex. CP1" [(ngModel)]="editDevice.name">
+                    <input required matInput type="text" [(ngModel)]="editDevice.name">
                 </mat-form-field>
                 <!-- DESCRIPTION -->
                 <mat-form-field class="a">
                     <mat-label>Description</mat-label>
-                    <input matInput type="text" placeholder="ex. Station 1" [(ngModel)]="editDevice.description">
+                    <input matInput type="text" [(ngModel)]="editDevice.description">
                 </mat-form-field>
             </div>
+
             <div *ngIf="editDevice._id" class="device-row">
                 <!-- ROLES -->
                 <mat-form-field class="a">
                     <mat-label>Roles</mat-label>
-                    <mat-select required matInput placeholder="None" [(ngModel)]="editDevice.roles" multiple (ngModelChange)="UpdateDeviceInfo()">
-                        <mat-option *ngFor="let a of editDevice.roles" [value]="a">{{a._id}}</mat-option>
-                        <ng-container *ngIf="editDevice.roles != null && editDevice.roles.length > 0">
-                            <ng-container *ngFor="let r of deviceRoleList">
-                                <mat-option *ngIf="!editDevice.roles.includes(r)" [value]="r">{{r._id}}</mat-option>
-                            </ng-container>
-                        </ng-container>
+                    <mat-select required matInput multiple [(ngModel)]="editDevice.roles" (selectionChange)="UpdateRoleLists(false)" (valueChange)="UpdateRoleLists(false)">
+                        <mat-option *ngFor="let r of editDevice.roles" [value]="r">{{r._id}}</mat-option>
+                        <mat-option *ngFor="let r of editRoleList" [value]="r">{{r._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- ADDRESS -->
                 <mat-form-field class="a">
                     <mat-label>Address</mat-label>
-                    <input matInput type="text" placeholder="IP address or <id>.byu.edu" [(ngModel)]="editDevice.address">
+                    <input matInput type="text" [(ngModel)]="editDevice.address">
                 </mat-form-field>
-                <!-- TAGS -->
-                <!-- <mat-form-field class="a">
-                    <mat-label>Tags</mat-label>
-                    <mat-select matInput placeholder="None" [(ngModel)]="editDevice.tags" multiple>
-                        <mat-option *ngFor="let tag of tagList" [value]="tag">{{tag}}</mat-option>
-                    </mat-select>
-                </mat-form-field> -->
                 <!-- TAGS -->
                 <mat-form-field class="device-chip-list">
                     <mat-label style="padding: 2px;">Tags</mat-label>
                     <mat-chip-list #deviceChipList2>
-                        <mat-chip *ngFor="let tag of editDevice.tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag, false)">
+                        <mat-chip *ngFor="let tag of editDevice.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, false)">
                             {{tag}}
                             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                         </mat-chip>
 
-                        <input style="padding: 4px;" matInput [matChipInputFor]="deviceChipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event, false)">
+                        <input style="padding: 4px;" matInput [matChipInputFor]="deviceChipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, false)">
                     </mat-chip-list>
                 </mat-form-field>
             </div>
@@ -220,14 +209,14 @@
                 <!-- TYPE -->
                 <mat-form-field class="a">
                     <mat-label>Device Type</mat-label>
-                    <mat-select required matInput placeholder="None" [(ngModel)]="editDevice.type._id" (ngModelChange)="UpdateDeviceInfo()">
+                    <mat-select required matInput [(ngModel)]="editDevice.type._id" (ngModelChange)="UpdateDeviceTypeInfo()">
                         <mat-option *ngFor="let type of deviceTypeList" [value]="type._id">{{type._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- DISPLAY_NAME -->
                 <mat-form-field class="a" *ngIf="editType != null && (editDevice._id != null && editType.input)">
                     <mat-label>Name Shown on UI</mat-label>
-                    <input matInput type="text" placeholder="ex. HDMI" [(ngModel)]="editDevice.display_name">
+                    <input matInput type="text" [(ngModel)]="editDevice.display_name">
                 </mat-form-field>
             </div>
 
@@ -237,24 +226,28 @@
                     <mat-panel-title class="device-label-a">Ports:</mat-panel-title>
                 </mat-expansion-panel-header>
                 <div *ngFor="let port of editDevice.ports" class="port-container">
+                    <!-- PORT ID -->
                     <mat-form-field class="c">
                         <mat-label>ID</mat-label>
                         <input matInput readonly="true" type="text" [ngModel]="port._id">
                     </mat-form-field>
+                    <!-- FRIENDLY NAME -->
                     <mat-form-field class="c">
                         <mat-label>Friendly Name</mat-label>
-                        <input matInput type="text" [(ngModel)]="port.friendly_name" placeholder="Friendly Name">
+                        <input matInput type="text" [(ngModel)]="port.friendly_name">
                     </mat-form-field>
+                    <!-- SOURCE DEVICE -->
                     <mat-form-field class="c">
                         <mat-label>Source Device</mat-label>
-                        <mat-select matInput placeholder="None" [(ngModel)]="port.source_device">
+                        <mat-select matInput [(ngModel)]="port.source_device">
                             <mat-option [value]=null>None</mat-option>
                             <mat-option *ngFor="let i of editSourceDevices" [value]="i._id">{{i._id}}</mat-option>
                         </mat-select>
                     </mat-form-field>
+                    <!-- DESTINATION DEVICE -->
                     <mat-form-field class="c">
                         <mat-label>Destination Device</mat-label>
-                        <mat-select matInput placeholder="None" [(ngModel)]="port.destination_device">
+                        <mat-select matInput [(ngModel)]="port.destination_device">
                             <mat-option [value]=null>None</mat-option>
                             <mat-option *ngFor="let i of editDestinationDevices" [value]="i._id">{{i._id}}</mat-option>
                         </mat-select>
