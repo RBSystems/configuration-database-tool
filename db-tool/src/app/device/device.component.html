@@ -4,7 +4,7 @@
         <!-- ADD DEVICE -->
         <!-- ////////// -->
         <mat-tab label="ADD">
-            <div class="device-row">
+            <div class="device-row" *ngIf="!InStepper">
                 <!-- BUILDING -->
                 <mat-form-field class="a" style="margin-left: 23%;">
                     <mat-label>Building</mat-label>
@@ -26,7 +26,7 @@
                 <!-- ID -->
                 <mat-form-field class="a">
                     <mat-label>ID</mat-label>
-                    <input required matInput type="text" [(ngModel)]="addDevice._id">
+                    <input required matInput type="text" [(ngModel)]="addDevice._id" (blur)="UpdateName()">
                 </mat-form-field>
                 <!-- NAME -->
                 <mat-form-field class="a">
@@ -81,16 +81,11 @@
                     <mat-label>Display Name</mat-label>
                     <input matInput type="text" [(ngModel)]="addDevice.display_name">
                 </mat-form-field>
-                <!-- TEST -->
-                <!-- <mat-form-field class="a" *ngIf="addDevice.type != null">
-                    <mat-label>Type Name</mat-label>
-                    <input matInput type="text" [(ngModel)]="addDevice.type._id">
-                </mat-form-field> -->
             </div>
 
             <!-- PORTS -->
             <mat-expansion-panel *ngIf="addType != null && (addDevice.ports != null && addDevice.ports.length > 0)">
-                <mat-expansion-panel-header>
+                <mat-expansion-panel-header (click)="GetSourceAndDestinationLists(); SetDefaultPortConfigurations();">
                     <mat-panel-title class="device-label-a">Ports:</mat-panel-title>
                 </mat-expansion-panel-header>
                 <div *ngFor="let port of addDevice.ports" class="port-container">
@@ -107,7 +102,7 @@
                     <!-- SOURCE DEVICE -->
                     <mat-form-field class="c">
                         <mat-label>Source Device</mat-label>
-                        <mat-select matInput [(ngModel)]="port.source_device">
+                        <mat-select matInput [(ngModel)]="port.source_device" (click)="GetSourceAndDestinationLists();">
                             <mat-option [value]=null>None</mat-option>
                             <mat-option *ngFor="let i of addSourceDevices" [value]="i._id">{{i._id}}</mat-option>
                         </mat-select>
@@ -115,7 +110,7 @@
                     <!-- DESTINATION DEVICE -->
                     <mat-form-field class="c">
                         <mat-label>Destination Device</mat-label>
-                        <mat-select matInput [(ngModel)]="port.destination_device">
+                        <mat-select matInput [(ngModel)]="port.destination_device" (click)="GetSourceAndDestinationLists();">
                             <mat-option [value]=null>None</mat-option>
                             <mat-option *ngFor="let i of addDestinationDevices" [value]="i._id">{{i._id}}</mat-option>
                         </mat-select>
@@ -124,7 +119,7 @@
             </mat-expansion-panel>
 
             <!-- BUTTONS -->
-            <div *ngIf="addRoom._id" class="device-row-b">
+            <div *ngIf="addRoom._id && !InStepper" class="device-row-b">
                 <button mat-raised-button class="device-button submit" (click)="CreateDevice()">Submit</button>
             </div>
         </mat-tab>
@@ -134,7 +129,7 @@
         <!-- /////////// -->
         <mat-tab label="EDIT" [disabled]="InStepper">
 
-            <div class="device-row">
+            <div class="device-row" *ngIf="!InStepper">
                 <!-- BUILDING -->
                 <mat-form-field class="a">
                     <mat-label>Building</mat-label>
@@ -256,7 +251,7 @@
             </mat-expansion-panel>
 
             <!-- BUTTONS -->
-            <div *ngIf="editDevice._id" class="device-row-b">
+            <div *ngIf="editDevice._id && !InStepper" class="device-row-b">
                 <button mat-raised-button class="device-button submit" (click)="UpdateDevice()">Submit</button>
             </div>
         </mat-tab>

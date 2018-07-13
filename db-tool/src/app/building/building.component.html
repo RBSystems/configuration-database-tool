@@ -40,7 +40,7 @@
             </div>
 
             <!-- BUTTONS -->
-            <div class="bldg-row-b">
+            <div class="bldg-row-b" *ngIf="!InStepper">
                 <button mat-raised-button class="bldg-button submit" (click)="CreateBuilding()">Submit</button>
             </div>
 
@@ -50,7 +50,7 @@
         <!-- EDIT BUILDING -->
         <!-- ///////////// -->
         <mat-tab label="EDIT" [disabled]="InStepper && !buildingExists">
-            <div class="bldg-row">
+            <div class="bldg-row" *ngIf="!InStepper">
                 <!-- BUILDING -->
                 <mat-form-field class="a" style="margin-left: 39%;">
                     <mat-label>Building</mat-label>
@@ -98,7 +98,7 @@
             </div>
 
             <!-- BUTTONS -->
-            <div *ngIf="editBuilding._id != null" class="bldg-row-b">
+            <div *ngIf="editBuilding._id != null && !InStepper" class="bldg-row-b">
                 <button mat-raised-button class="bldg-button submit" (click)="UpdateBuilding()">Submit</button>
             </div>
         </mat-tab>

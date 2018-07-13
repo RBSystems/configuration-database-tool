@@ -83,16 +83,28 @@
     cursor: pointer;
 }
 
-.modal-header-a {
+.modal-header-success {
     padding: 2px 16px;
-    background-color: #d10c05;
+    background-color: #00E676;
+    color: black;
+}
+
+.modal-header-error {
+    padding: 2px 16px;
+    background-color: #D50000;
     color: white;
 }
 
-.modal-header-b {
+.modal-header-info {
     padding: 2px 16px;
-    background-color: #5cb85c;
+    background-color: #283593;
     color: white;
+}
+
+.modal-header-mixed {
+    padding: 2px 16px;
+    background-color: #FFEE58;
+    color: black;
 }
 
 .modal-body {

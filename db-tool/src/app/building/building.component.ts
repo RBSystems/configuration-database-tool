@@ -19,7 +19,7 @@ export class BuildingComponent implements OnInit {
   tabIndex: number = 0;
 
   buildingList: Building[] = [];
-  addBuilding: Building;  
+  @Input() addBuilding: Building;  
   @Input() editBuilding: Building;
   
   buildingMatcher = new DBError();
@@ -51,9 +51,12 @@ export class BuildingComponent implements OnInit {
     });
 
     this.tabIndex = 0;
-    this.addBuilding = new Building();
-    this.editBuilding = new Building();
     this.getBuildingList();
+
+    // if(!this.InStepper) {
+      this.addBuilding = new Building();
+      this.editBuilding = new Building();
+    // }
   }
 
   ngOnChanges() {
@@ -64,7 +67,7 @@ export class BuildingComponent implements OnInit {
       else {
         this.tabIndex = 0;
       }
-    }, 100); 
+    }, 0); 
   }
 
   getBuildingList() {

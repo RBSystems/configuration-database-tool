@@ -18,9 +18,9 @@ export class RoomComponent implements OnInit {
 
   buildingList: Building[] = [];
   roomList: Room[] = [];
-  addBuilding: Building;
+  @Input() addBuilding: Building;
   @Input() editBuilding: Building;
-  addRoom: Room;
+  @Input() addRoom: Room;
   @Input() editRoom: Room;
 
   configurationList: RoomConfiguration[] = [];
@@ -57,6 +57,14 @@ export class RoomComponent implements OnInit {
         this.roomtabIndex = 0;
       }
     }, 0); 
+
+    this.configurationList.forEach(c => {
+      if(this.addRoom != null && c._id == "Default") {
+        this.addRoom.configuration = c;
+      }
+    });
+
+    this.FixMissingName();
   }
 
   getBuildingList() {
@@ -101,6 +109,9 @@ export class RoomComponent implements OnInit {
   }
 
   FixMissingName() {
+    if(this.addRoom != null && this.addRoom._id != null && (this.addRoom.name == null || this.addRoom.name.length == 0)) {
+      this.addRoom.name = this.addRoom._id;
+    }
     if(this.editRoom != null && this.editRoom._id != null && (this.editRoom.name == null || this.editRoom.name.length == 0)) {
       this.editRoom.name = this.editRoom._id;
     }

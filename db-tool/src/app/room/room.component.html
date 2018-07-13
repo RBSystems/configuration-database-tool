@@ -4,7 +4,7 @@
         <!-- ADD ROOM -->
         <!-- //////// -->
         <mat-tab label="ADD" [disabled]="InStepper && roomExists">
-            <div class="room-row">
+            <div class="room-row" *ngIf="!InStepper">
                 <!-- BUILDING -->
                 <mat-form-field class="a" style="margin-left: 38%;">
                     <mat-label>Building</mat-label>
@@ -20,7 +20,7 @@
                 <!-- ID -->
                 <mat-form-field class="a">
                     <mat-label>ID</mat-label>
-                    <input required matInput type="text" [(ngModel)]="addRoom._id">
+                    <input required matInput type="text" [(ngModel)]="addRoom._id" (blur)="FixMissingName()">
                 </mat-form-field>
                 <!-- NAME -->
                 <mat-form-field class="a">
@@ -64,7 +64,7 @@
             </div>
 
             <!-- BUTTONS -->
-            <div *ngIf="addBuilding._id" class="room-row-b">
+            <div *ngIf="addBuilding._id && !InStepper" class="room-row-b">
                 <button mat-raised-button class="room-button submit" (click)="CreateRoom()">Submit</button>
             </div>
         </mat-tab>
@@ -73,7 +73,7 @@
         <!-- EDIT ROOM -->
         <!-- ///////// -->
         <mat-tab label="EDIT" [disabled]="InStepper && !roomExists">
-            <div class="room-row">
+            <div class="room-row" *ngIf="!InStepper">
                 <!-- BUILDING -->
                 <mat-form-field class="a" style="margin-left: 23%;">
                     <mat-label>Building</mat-label>
@@ -140,7 +140,7 @@
             </div>
 
             <!-- BUTTONS -->
-            <div *ngIf="editRoom._id" class="room-row-b">
+            <div *ngIf="editRoom._id && !InStepper" class="room-row-b">
                 <button mat-raised-button class="room-button submit" (click)="UpdateRoom()">Submit</button>
             </div>
         </mat-tab>
