@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/byuoitav/common/db"
@@ -44,7 +45,7 @@ func AddDevice(context echo.Context) error {
 	var device structs.Device
 	err := context.Bind(&device)
 	if err != nil {
-		log.L.Info("#1")
+		log.L.Info(err)
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
@@ -55,6 +56,28 @@ func AddDevice(context echo.Context) error {
 	}
 
 	return context.JSON(http.StatusOK, device)
+}
+
+// AddDevicesInBulk adds a list of devices to the database and returns a BulkUpdateResponse.
+func AddDevicesInBulk(context echo.Context) error {
+	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	// if err != nil {
+	// 	return context.JSON(http.StatusInternalServerError, err.Error())
+	// }
+	// if !ok {
+	// 	return context.JSON(http.StatusForbidden, alert)
+	// }
+
+	var devices []structs.Device
+	err := context.Bind(&devices)
+	if err != nil {
+		log.L.Error(err)
+		return context.JSON(http.StatusBadRequest, fmt.Sprintf("Invalid body. Failed to bind to a device list : %s", err.Error()))
+	}
+
+	results := db.GetDB().CreateBulkDevices(devices)
+
+	return context.JSON(http.StatusOK, results)
 }
 
 // UpdateDevice updates a device's information in the database.
@@ -70,12 +93,16 @@ func UpdateDevice(context echo.Context) error {
 	id := context.Param("device")
 	var device structs.Device
 
-	context.Bind(&device)
+	err := context.Bind(&device)
+	if err != nil {
+		log.L.Error(err)
+		return context.JSON(http.StatusBadRequest, fmt.Sprintf("Invalid body. Failed to bind to a device : %s", err.Error()))
+	}
 	if device.ID != id && len(device.ID) > 0 {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
-	device, err := db.GetDB().UpdateDevice(id, device)
+	device, err = db.GetDB().UpdateDevice(id, device)
 	if err != nil {
 		log.L.Error(err)
 		return context.JSON(http.StatusBadRequest, err.Error())

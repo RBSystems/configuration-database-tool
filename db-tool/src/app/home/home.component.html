@@ -58,23 +58,34 @@
                 <label style="padding-bottom: 25px; margin-left: 28%;">Which template for this room?</label>
                 <mat-form-field class="c">
                     <mat-label>Template</mat-label>
-                    <mat-select matInput [(ngModel)]="currentTemplate" (ngModelChange)="UpdateAccordion()">
-                        <mat-option *ngFor="let t of templateList" [value]="t">{{t._id}}</mat-option>
+                    <mat-select matInput [(ngModel)]="currentTemplate" (ngModelChange)="UpdateAccordion(true);">
+                        <mat-option *ngFor="let t of templateList" [value]="t">{{t._id}} ({{t.description}})</mat-option>
                         <mat-option [value]="customTemplate">Custom</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field class="num">
                     <mat-label># of devices</mat-label>
-                    <input matInput type="text" [(ngModel)]="deviceListSize" (blur)="UpdateAccordion()">
+                    <input matInput type="text" [(ngModel)]="deviceListSize" (blur)="UpdateAccordion(false)">
                 </mat-form-field>
             </div>
             <mat-accordion>
-                <mat-expansion-panel *ngFor="let device of fullRoomDeviceList">
+                <mat-expansion-panel *ngFor="let device of fullRoomDeviceList; let i = index;" [expanded]="step === i" (opened)="setStep(i)">
                     <mat-expansion-panel-header>
                         <mat-panel-title>{{device._id}}</mat-panel-title>
                         <mat-panel-description>Type: {{device.type._id}}</mat-panel-description>
                     </mat-expansion-panel-header>
                     <app-device [InStepper]="true" [addDevice]="device" [addBuilding]="locBuilding" [addRoom]="locRoom" [deviceTypeList]="deviceTypeList" [addDeviceList]="fullRoomDeviceList"></app-device>
+                    <mat-action-row *ngIf="i === 0">
+                        <button mat-button color="primary" (click)="nextStep()">Next</button>
+                    </mat-action-row>
+                    <mat-action-row *ngIf="i > 0 && i < fullRoomDeviceList.length-1">
+                        <button mat-button color="warn" (click)="prevStep()">Previous</button>
+                        <button mat-button color="primary" (click)="nextStep()">Next</button>
+                    </mat-action-row>
+                    <mat-action-row *ngIf="i === fullRoomDeviceList.length-1">
+                        <button mat-button color="warn" (click)="prevStep()">Previous</button>
+                        <button mat-button color="primary" (click)="nextStep()">End</button>
+                    </mat-action-row>
                 </mat-expansion-panel>
             </mat-accordion>
             <div class="home-row">

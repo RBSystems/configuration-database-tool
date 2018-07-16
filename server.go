@@ -37,6 +37,7 @@ func main() {
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 	secure.POST("/rooms/:room/add", handlers.AddRoom)
 	secure.POST("/devices/:device/add", handlers.AddDevice)
+	secure.POST("/devices/bulk/add", handlers.AddDevicesInBulk)
 
 	secure.PUT("/buildings/:building/update", handlers.UpdateBuilding)
 	secure.PUT("/rooms/:room/update", handlers.UpdateRoom)

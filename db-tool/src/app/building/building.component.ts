@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Building } from '../objects'
 import { ApiService } from '../api.service';
 import { MatDialog } from '@angular/material';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { DBError } from '../home/home.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -53,10 +53,8 @@ export class BuildingComponent implements OnInit {
     this.tabIndex = 0;
     this.getBuildingList();
 
-    // if(!this.InStepper) {
-      this.addBuilding = new Building();
-      this.editBuilding = new Building();
-    // }
+    this.addBuilding = new Building();
+    this.editBuilding = new Building();
   }
 
   ngOnChanges() {
@@ -79,32 +77,45 @@ export class BuildingComponent implements OnInit {
 
   CreateBuilding() {
     console.log(this.addBuilding);
+    let res: Result[] = [];
     this.api.AddBuilding(this.addBuilding).subscribe(
       success => {
-        this.openDialog(false, "Successfully added the building!");
+        res.push({message: this.addBuilding._id + " was successfully added.", success: true });
+        this.openDialog(MessageType.Success, "Building Added", null, res);
       },
       error => {
-        this.openDialog(true, error);
+        let errorMessage: string;
+        // if(error.status === 500) {
+        //   errorMessage = "Building already exists.";
+        // }
+        res.push({message: "Failed to add " + this.addBuilding._id, success: false, error: error});
+        this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
 
   UpdateBuilding() {
     console.log(this.editBuilding);
+    let res: Result[] = [];
     this.api.UpdateBuilding(this.editBuilding).subscribe(
       success => {
-        this.openDialog(false, "Successfully updated the building!");
+        res.push({message: this.editBuilding._id + " was successfully updated.", success: true });
+        this.openDialog(MessageType.Success, "", null, res);
       },
       error => {
-        this.openDialog(true, error);
+        res.push({message: "Failed to update " + this.editBuilding._id, success: false, error: error});
+        this.openDialog(MessageType.Error, "", null, res);
       });
   }
 
-  openDialog(status: boolean, message: string) {
+  openDialog(status: MessageType, subheader: string, message?: string, results?: Result[]) {
     let dialogRef = this.dialog.open(ModalComponent, {
-      data: {error: status, message: message}
+      data: {type: status, subheader: subheader, message: message, results: results}
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      // if(this.locationDone) {
+      //   this.locationDone = false;
+      // }
       console.log('The dialog was closed');
     });
   }

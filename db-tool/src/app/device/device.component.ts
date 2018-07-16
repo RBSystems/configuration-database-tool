@@ -203,7 +203,7 @@ export class DeviceComponent implements OnInit {
       this.addDeviceList.forEach(d => {
         // console.log("source time 3")
         this.deviceTypeList.forEach(t => {
-          if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id))) {
+          if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id) || d.type._id.includes("Gateway"))) {
             // console.log("source time 4a")
             this.addSourceDevices.push(d);
             // console.log(this.addSourceDevices)
@@ -220,7 +220,7 @@ export class DeviceComponent implements OnInit {
     if(this.editDeviceList != null) {
       this.editDeviceList.forEach(d => {
         this.deviceTypeList.forEach(t => {
-          if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id))) {
+          if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id) || d.type._id.includes("Gateway"))) {
             this.editSourceDevices.push(d);
           }
           if(d.type._id == t._id && (t.output || this.switcherTypes.includes(t._id))) {
@@ -300,12 +300,17 @@ export class DeviceComponent implements OnInit {
   UpdateDeviceTypeInfo() {
     this.deviceTypeList.forEach(type => {
       if(this.addDevice != null && this.addDevice.type != null && type._id == this.addDevice.type._id) {
-        this.addDevice.ports = type.ports;
+        if(this.addDevice.ports == null) {
+          this.addDevice.ports = type.ports;
+        }
+        
         this.addType = type;
 
         if(this.addDevice.type._id == "non-controllable") {
           this.addDevice.address = "0.0.0.0";
         }
+
+        this.GetSourceAndDestinationLists();
 
         this.UpdateDevicePorts(true);
       }
@@ -319,6 +324,7 @@ export class DeviceComponent implements OnInit {
 
   UpdateDevicePorts(add : boolean) {
     if(add && this.addType.ports != null) {
+      console.log(this.addDevice)
       let tempDevicePorts = this.addDevice.ports;
       this.addDevice.ports = [];
 
@@ -367,20 +373,29 @@ export class DeviceComponent implements OnInit {
     let index = IDEnd.search(NumRegex)
     let devNumber: string = IDEnd.substring(index);
 
-    // console.log(this.addSourceDevices)
-
+    
+    // Set Ports for output devices (i.e. displays)
     if(this.addType.output && this.addDevice.ports != null && this.addDevice.ports.length > 0) {
       this.addSourceDevices.forEach(source => {
-        if(source.name.includes(devNumber)) {
-          if(source.name.includes("HDMI") && this.addDevice.ports.length >= 2) {
-            // console.log("habajabawaba")
-            this.addDevice.ports[1].source_device = source._id;
+        if(this.addRoom.configuration._id.includes("Tiered") || this.addRoom.configuration._id.includes("Video")) {
+          if(source.name.includes("SW") && this.addDevice.ports.length >= 1) {
+            this.addDevice.ports[0].source_device = source._id;
+            for(let i = 1; i < this.addDevice.ports.length; i++) {
+              this.addDevice.ports[i].source_device = "";
+            }
           }
-          if(source.name.includes("VIA") && this.addDevice.ports.length >= 3) {
-            this.addDevice.ports[2].source_device = source._id;
-          }
-          if(source.name.includes("PC") && this.addDevice.ports.length >= 4) {
-            this.addDevice.ports[3].source_device = source._id;
+        }
+        else {
+          if(source.name.includes(devNumber)) {
+            if(source.name.includes("HDMI") && this.addDevice.ports.length >= 2) {
+              this.addDevice.ports[1].source_device = source._id;
+            }
+            if(source.name.includes("VIA") && this.addDevice.ports.length >= 3) {
+              this.addDevice.ports[2].source_device = source._id;
+            }
+            if(source.name.includes("PC") && this.addDevice.ports.length >= 4) {
+              this.addDevice.ports[3].source_device = source._id;
+            }
           }
         }
       });
@@ -388,6 +403,56 @@ export class DeviceComponent implements OnInit {
       this.addDevice.ports.forEach(port => {
         port.destination_device = this.addDevice._id;
       });
+    }
+
+    // Set Ports for video switchers and DSPs
+    if(this.switcherTypes.includes(this.addDevice.type._id) && this.addDevice.ports != null && this.addDevice.ports.length > 0) {
+      console.log(this.addDevice)
+      this.addDevice.ports.forEach(port => {
+        if(port._id.includes("IN")) {
+          
+          port.destination_device = this.addDevice._id;
+          
+          // if(port.source_device != null) {
+            let currentSource = port.source_device;
+            this.addSourceDevices.forEach(source => {
+              if(source._id.includes(currentSource)) {
+                port.source_device = source._id;
+              }
+            });
+          // }
+        }
+        else if(port._id.includes("OUT")) {
+
+          port.source_device = this.addDevice._id;
+
+          // if(port.destination_device != null) {
+            let currentDestination = port.destination_device;
+            this.addDestinationDevices.forEach(destination => {
+              if(destination._id.includes(currentDestination)) {
+                port.destination_device = destination._id;
+              }
+            });
+          // }
+        }
+        else {
+          port.destination_device = this.addDevice._id;
+        }
+      });
+    }
+
+    // Set Ports for gateway devices
+    if(this.addDevice.type._id == "Crestron RMC-3 Gateway") {
+      let port = this.addDevice.ports[0];
+      port.source_device = this.addDevice._id;
+      // if(port.destination_device != null) {
+        let currentDestination = port.destination_device;
+        this.addDestinationDevices.forEach(destination => {
+          if(destination._id.includes(currentDestination)) {
+            port.destination_device = destination._id;
+          }
+        });
+      // }
     }
   }
 

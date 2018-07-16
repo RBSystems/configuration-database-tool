@@ -74,6 +74,7 @@ export class Port {
 
 export class Template {
     _id?: string;
+    description?: string;
     uiconfig?: UIConfig;
     devices?: Device[];
 }
@@ -117,6 +118,8 @@ export class IOConfiguration   {
 	icon?: string 
 }
 
-export class Tag {
-    name: string
+export class BulkUpdateResponse {
+    _id?: string;
+    success?: boolean;
+    message?: string;
 }

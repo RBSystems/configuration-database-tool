@@ -3,7 +3,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { FormGroupDirective, FormControl, NgForm, Validators, FormGroup, FormBuilder, ControlValueAccessor } from '@angular/forms';
 import { MatStepper, MatDialog } from '@angular/material';
 import { ApiService } from '../api.service';
-import { Building, Room, Template, Device, DeviceType } from '../objects';
+import { Building, Room, Template, Device, DeviceType, BulkUpdateResponse } from '../objects';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 
 
@@ -45,8 +45,7 @@ export class HomeComponent implements OnInit {
   ]);
 
   deviceTypeList: DeviceType[];
-
-  typesOnTheTemplate: DeviceType[] = [];
+  step = 0;
 
   constructor(private _formBuilder: FormBuilder, private api: ApiService, public dialog: MatDialog) { }
 
@@ -149,13 +148,7 @@ export class HomeComponent implements OnInit {
     this.templateList = [];
     this.api.GetTemplates().subscribe(val => {
       this.templateList = val;
-
-      this.templateList.forEach(t => {
-        t.devices.forEach(d => {
-          this.typesOnTheTemplate.push(d.type);
-        })
-      })
-
+      console.log(this.templateList)
     });
   }
 
@@ -166,13 +159,20 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  UpdateAccordion() {
-    if(this.deviceListSize == null) {
+  UpdateDeviceListSize() {
+    // if(this.deviceListSize == null || this.deviceListSize) {
+    this.deviceListSize = this.currentTemplate.devices.length;
+    // }
+  }
+
+  UpdateAccordion(templateChange: boolean) {
+    if(this.deviceListSize == null || templateChange) {
       this.deviceListSize = this.currentTemplate.devices.length;
     }
-    
-    if(this.fullRoomDeviceList == null || this.fullRoomDeviceList.length == 0) {
+    console.log(this.currentTemplate.devices)
+    if(this.fullRoomDeviceList == null || this.fullRoomDeviceList.length == 0 || templateChange) {
       this.fullRoomDeviceList = [];
+      this.setStep(0);
 
       for (let i = 0; i < this.deviceListSize; i++) {
         if(i < this.currentTemplate.devices.length) {
@@ -248,6 +248,7 @@ export class HomeComponent implements OnInit {
 
   SubmitBuilding(results: Result[]) {
     if(!this.buildingExists) {
+      console.log("1A")
       this.api.AddBuilding(this.locBuilding).subscribe(
         success => {
           let message = this.locBuilding._id + " was successfully added.";
@@ -264,6 +265,7 @@ export class HomeComponent implements OnInit {
         });
     }
     else {
+      console.log("1B")
       this.api.UpdateBuilding(this.locBuilding).subscribe(
         success => {
           let message = this.locBuilding._id + " was successfully updated.";
@@ -282,6 +284,7 @@ export class HomeComponent implements OnInit {
 
   SubmitRoom(results: Result[]) {
     if(!this.roomExists) {
+      console.log("2A")
       this.api.AddRoom(this.locRoom).subscribe(
         success => {
           let message = this.locRoom._id + " was successfully added.";
@@ -298,6 +301,7 @@ export class HomeComponent implements OnInit {
         });
     }
     else {
+      console.log("2B")
       this.api.UpdateRoom(this.locRoom).subscribe(
         success => {
           let message = this.locRoom._id + " was successfully updated.";
@@ -315,29 +319,57 @@ export class HomeComponent implements OnInit {
   }
 
   SubmitDevices(results: Result[]) {
-    for(let i = 0; i < this.fullRoomDeviceList.length; i++) {
-      let device = this.fullRoomDeviceList[i];
-      this.api.AddDevice(device).subscribe(
+    console.log("3A")
+    this.api.CreateBulkDevices(this.fullRoomDeviceList).subscribe(
       success => {
-        let message = device._id + " was successfully added.";
-        let res: Result = {message: message, success: true}
-        results.push(res);
-        if((i+1) == this.fullRoomDeviceList.length) {
-          this.ShowResults(results);
-        }
+        console.log("3B")
+        let responses: BulkUpdateResponse[] = success;
+        responses.forEach(resp => {
+          let res: Result;
+          let m: string;
+          if(resp.success) {
+            m = resp._id + " was successfully added.";
+            res = {message: m, success: resp.success};
+          }
+          else {
+            m = "Failed to add " + resp._id;
+            res = {message: m, success: resp.success, error: resp.message};
+          }
+          results.push(res);
+        });
+        this.ShowResults(results);
       },
       error => {
-        let message = "Failed to add " + device._id;
-        let res: Result = {message: message, success: false, error: error}
+        console.log("3C")
+        let m: string = "Failed to add the devices in bulk.";
+        let res: Result = {message: m, success: false, error: error};
         results.push(res);
-        if((i+1) == this.fullRoomDeviceList.length) {
-          this.ShowResults(results);
-        }
+        this.ShowResults(results);
       });
-    }
+    // for(let i = 0; i < this.fullRoomDeviceList.length; i++) {
+    //   let device = this.fullRoomDeviceList[i];
+    //   this.api.AddDevice(device).subscribe(
+    //   success => {
+    //     let message = device._id + " was successfully added.";
+    //     let res: Result = {message: message, success: true}
+    //     results.push(res);
+    //     if((i+1) == this.fullRoomDeviceList.length) {
+    //       this.ShowResults(results);
+    //     }
+    //   },
+    //   error => {
+    //     let message = "Failed to add " + device._id;
+    //     let res: Result = {message: message, success: false, error: error}
+    //     results.push(res);
+    //     if((i+1) == this.fullRoomDeviceList.length) {
+    //       this.ShowResults(results);
+    //     }
+    //   });
+    // }
   }
 
   ShowResults(results: Result[]) {
+    console.log("4A")
     let pass: boolean = true;
     let mixed: boolean = false;
     let errorCount: number = 0;
@@ -377,5 +409,17 @@ export class HomeComponent implements OnInit {
       }
       // console.log('The dialog was closed');
     });
+  }
+
+  setStep(index: number) {
+    this.step = index;
+  }
+
+  nextStep() {
+    this.step++;
+  }
+
+  prevStep() {
+    this.step--;
   }
 }
