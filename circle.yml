@@ -2,9 +2,9 @@ version: 2
 jobs:
     build:
         docker:
-            - image: byuoitav/build-env:feature/couch-rework
+            - image: byuoitav/build-env:master
 
-        working_directory: /go/src/github.com/byuoitav/touchpanel-ui-microservice
+        working_directory: /go/src/github.com/byuoitav/configuration-database-tool
 
         steps:
             - checkout
