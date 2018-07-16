@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/authmiddleware"
+	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/handlers"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
@@ -17,30 +18,47 @@ func main() {
 	router.Use(middleware.CORS())
 
 	// Use the `secure` routing group to require authentication
+	// secure := router.Group("", echo.WrapMiddleware(mid.AuthenticateCASUser))
 	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	secure.GET("/buildings", handlers.GetBuildings)
 	secure.GET("/buildings/:building/rooms", handlers.GetRoomsByBuilding)
-	secure.GET("/buildings/:building", handlers.GetBuildingByShortname)
-	secure.GET("/buildings/:building/rooms/:room", handlers.GetRoomByBuildingAndName)
-	secure.GET("/buildings/:building/rooms/:room/devices", handlers.GetDevicesByRoom)
-	secure.GET("/configuration", handlers.GetConfiguration)
+	secure.GET("/buildings/:building", handlers.GetBuildingByID)
+	secure.GET("/rooms", handlers.GetAllRooms)
+	secure.GET("/rooms/:room", handlers.GetRoomByID)
+	secure.GET("/rooms/:room/devices", handlers.GetDevicesByRoom)
 	secure.GET("/roomconfigurations", handlers.GetRoomConfigurations)
+	secure.GET("/roomdesignations", handlers.GetRoomDesignations)
+	secure.GET("/devicetypes", handlers.GetDeviceTypes)
+	secure.GET("/deviceroles", handlers.GetDeviceRoles)
+	secure.GET("/templates", handlers.GetAllTemplates)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
-	secure.POST("/buildings/:building/rooms/:room", handlers.AddRoom)
-	secure.POST("buildings/:building/rooms/:room/devices/:device", handlers.AddDevice)
+	secure.POST("/rooms/:room/add", handlers.AddRoom)
+	secure.POST("/devices/:device/add", handlers.AddDevice)
+	secure.POST("/devices/bulk/add", handlers.AddDevicesInBulk)
 
-	secure.POST("/devices/ports/:port", handlers.AddPort)
-	secure.POST("/devices/types/:devicetype", handlers.AddDeviceType)
-	secure.POST("/devices/endpoints/:endpoint", handlers.AddEndpoint)
-	secure.POST("/devices/commands/:command", handlers.AddCommand)
-	secure.POST("/devices/powerstates/:powerstate", handlers.AddPowerState)
-	secure.POST("/devices/microservices/:microservice", handlers.AddMicroservice)
-	secure.POST("/devices/roledefinitions/:deviceroledefinition", handlers.AddRoleDefinition)
+	secure.PUT("/buildings/:building/update", handlers.UpdateBuilding)
+	secure.PUT("/rooms/:room/update", handlers.UpdateRoom)
+	secure.PUT("/devices/:device/update", handlers.UpdateDevice)
 
-	secure.Static("/", "dist")
+	secure.PUT("/log-level/:level", log.SetLogLevel)
+	secure.GET("/log-level", log.GetLogLevel)
+
+	// secure.POST("/devices/ports/:port", handlers.AddPort)
+	// secure.POST("/devices/types/:devicetype", handlers.AddDeviceType)
+	// secure.POST("/devices/endpoints/:endpoint", handlers.AddEndpoint)
+	// secure.POST("/devices/commands/:command", handlers.AddCommand)
+	// secure.POST("/devices/powerstates/:powerstate", handlers.AddPowerState)
+	// secure.POST("/devices/microservices/:microservice", handlers.AddMicroservice)
+	// secure.POST("/devices/roledefinitions/:deviceroledefinition", handlers.AddRoleDefinition)
+
+	secure.Static("/", "db-tool/dist")
+	secure.Static("/home", "db-tool/dist")
+	secure.Static("/building", "db-tool/dist")
+	secure.Static("/room", "db-tool/dist")
+	secure.Static("/device", "db-tool/dist")
 
 	server := http.Server{
 		Addr:           port,

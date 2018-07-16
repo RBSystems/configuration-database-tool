@@ -1,0 +1,148 @@
+<div [ngClass]="{ 'room-container': !InStepper, 'room-container-half': InStepper }">
+    <mat-tab-group mat-stretch-tabs="always" [(selectedIndex)]="roomtabIndex" #roomtabs>
+        <!-- //////// -->
+        <!-- ADD ROOM -->
+        <!-- //////// -->
+        <mat-tab label="ADD" [disabled]="InStepper && roomExists">
+            <div class="room-row" *ngIf="!InStepper">
+                <!-- BUILDING -->
+                <mat-form-field class="a" style="margin-left: 38%;">
+                    <mat-label>Building</mat-label>
+                    <mat-select matInput [(ngModel)]="addBuilding" (selectionChange)="getRoomList(true)">
+                        <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-divider *ngIf="addBuilding._id != null"></mat-divider>
+            </div>
+
+
+            <div *ngIf="addBuilding._id" class="room-row">
+                <!-- ID -->
+                <mat-form-field class="a">
+                    <mat-label>ID</mat-label>
+                    <input required matInput type="text" [(ngModel)]="addRoom._id" (blur)="FixMissingName()">
+                </mat-form-field>
+                <!-- NAME -->
+                <mat-form-field class="a">
+                    <mat-label>Name</mat-label>
+                    <input required matInput type="text" [(ngModel)]="addRoom.name">
+                </mat-form-field>
+                <!-- DESCRIPTION -->
+                <mat-form-field class="a">
+                    <mat-label>Description</mat-label>
+                    <input matInput type="text" [(ngModel)]="addRoom.description">
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="addBuilding._id" class="room-row">
+                <!-- CONFIGURATION -->
+                <mat-form-field class="a">
+                    <mat-label>Configuration</mat-label>
+                    <mat-select required matInput [(ngModel)]="addRoom.configuration">
+                        <mat-option *ngFor="let c of configurationList" [value]="c">{{c._id}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- DESIGNATION -->
+                <mat-form-field class="a">
+                    <mat-label>Designation</mat-label>
+                    <mat-select required matInput [(ngModel)]="addRoom.designation">
+                        <mat-option *ngFor="let d of designationList" [value]="d">{{d}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- TAGS -->
+                <mat-form-field class="room-chip-list">
+                    <mat-label style="padding: 2px;">Tags</mat-label>
+                    <mat-chip-list #roomChipList>
+                        <mat-chip *ngFor="let tag of addRoom.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, true)">
+                            {{tag}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+
+                        <input style="padding: 4px;" matInput [matChipInputFor]="roomChipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, true)">
+                    </mat-chip-list>
+                </mat-form-field>
+            </div>
+
+            <!-- BUTTONS -->
+            <div *ngIf="addBuilding._id && !InStepper" class="room-row-b">
+                <button mat-raised-button class="room-button submit" (click)="CreateRoom()">Submit</button>
+            </div>
+        </mat-tab>
+
+        <!-- ///////// -->
+        <!-- EDIT ROOM -->
+        <!-- ///////// -->
+        <mat-tab label="EDIT" [disabled]="InStepper && !roomExists">
+            <div class="room-row" *ngIf="!InStepper">
+                <!-- BUILDING -->
+                <mat-form-field class="a" style="margin-left: 23%;">
+                    <mat-label>Building</mat-label>
+                    <mat-select matInput [(ngModel)]="editBuilding" (selectionChange)="getRoomList(false)">
+                        <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- ROOM -->
+                <mat-form-field class="a" *ngIf="editBuilding._id != null && roomList.length > 0">
+                    <mat-label>Room</mat-label>
+                    <mat-select matInput [(ngModel)]="editRoom" (selectionChange)="FixMissingName()">
+                        <mat-option *ngFor="let r of roomList" [value]="r">{{r._id}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-divider *ngIf="editRoom._id != null"></mat-divider>
+            </div>
+
+
+            <div *ngIf="editRoom._id" class="room-row">
+                <!-- ID -->
+                <mat-form-field class="a">
+                    <mat-label>ID</mat-label>
+                    <input required matInput type="text" [(ngModel)]="editRoom._id">
+                </mat-form-field>
+                <!-- NAME -->
+                <mat-form-field class="a">
+                    <mat-label>Name</mat-label>
+                    <input required matInput type="text" [(ngModel)]="editRoom.name">
+                </mat-form-field>
+                <!-- DESCRIPTION -->
+                <mat-form-field class="a">
+                    <mat-label>Description</mat-label>
+                    <input matInput type="text" [(ngModel)]="editRoom.description">
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="editRoom._id" class="room-row">
+                <!-- CONFIGURATION -->
+                <mat-form-field class="a">
+                    <mat-label>Configuration</mat-label>
+                    <mat-select required matInput [(ngModel)]="editRoom.configuration._id" (ngModelChange)="UpdateConfiguration()">
+                        <mat-option *ngFor="let c of configurationList" [value]="c._id">{{c._id}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- DESIGNATION -->
+                <mat-form-field class="a">
+                    <mat-label>Designation</mat-label>
+                    <mat-select required matInput [(ngModel)]="editRoom.designation">
+                        <mat-option *ngFor="let d of designationList" [value]="d">{{d}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- TAGS -->
+                <mat-form-field class="room-chip-list">
+                    <mat-label style="padding: 2px;">Tags</mat-label>
+                    <mat-chip-list #roomChipList2>
+                        <mat-chip *ngFor="let tag of editRoom.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, false)">
+                            {{tag}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+
+                        <input style="padding: 4px;" matInput [matChipInputFor]="roomChipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, false)">
+                    </mat-chip-list>
+                </mat-form-field>
+            </div>
+
+            <!-- BUTTONS -->
+            <div *ngIf="editRoom._id && !InStepper" class="room-row-b">
+                <button mat-raised-button class="room-button submit" (click)="UpdateRoom()">Submit</button>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
