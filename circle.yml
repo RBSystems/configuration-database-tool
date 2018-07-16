@@ -1,56 +1,14 @@
-machine:
-    node:
-        version: 7.10.0
-    services:
-        - docker
-    environment:
-        GOROOT: ""
-        GOPATH: "${HOME}/.go_project"
-        PATH: "${GOPATH}/bin:${PATH}"
-        BUILD_PATH: "${GOPATH}/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-    post:
-        - rm -r ~/.gradle || true
+version: 2
+jobs:
+    build:
+        docker:
+            - image: byuoitav/build-env:feature/couch-rework
 
-dependencies:
-    pre:
-        - rm -rf ~/.go_workspace
-        - go get -u github.com/FiloSottile/gvt
-    override:
-        - mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
-        - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${HOME}/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-        - cd ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-        - go get -d -v
+        working_directory: /go/src/github.com/byuoitav/touchpanel-ui-microservice
 
-compile:
-    override:
-        - cd $BUILD_PATH && go build -v
-
-test:
-    override:
-        - cd $BUILD_PATH && go test -v -race $(go list ./... | grep -v /vendor/)
-        - npm install -g @angular/core 
-        - npm install -g @angular/cli 
-        - cd db-tool && npm install && ng build --prod --base-href="./"
-        - mv db-tool/dist/ dist && rm -r db-tool
-
-deployment:
-    development:
-        branch: master
-        commands:
-            - docker build -f Dockerfile-development -t byuoitav/${CIRCLE_PROJECT_REPONAME}:development .
-            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:development
-    stage:
-        branch: stage
-        commands:
-            - gvt delete github.com/byuoitav/configuration-database-microservice
-            - docker build --build-arg GITHUB_BRANCH=stage -f Dockerfile-branch -t byuoitav/${CIRCLE_PROJECT_REPONAME}:stage .
-            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:stage
-    production:
-        branch: production
-        commands:
-            - gvt delete github.com/byuoitav/configuration-database-microservice
-            - docker build --build-arg GITHUB_BRANCH=production -f Dockerfile-branch -t byuoitav/${CIRCLE_PROJECT_REPONAME}:latest .
-            - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push byuoitav/${CIRCLE_PROJECT_REPONAME}:latest
+        steps:
+            - checkout
+            - setup_remote_docker
+            - run: make deps
+            - run: make build
+            - run: make docker
