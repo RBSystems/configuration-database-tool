@@ -40,7 +40,7 @@ NPM_INSTALL=$(NPM) install
 NG_BUILD=ng build --prod --aot --build-optimizer 
 NG1=db-tool
 
-build: build-x86 build-arm build-web
+build: build-x86 build-web
 
 build-x86:
 	env GOOS=linux CGO_ENABLED=0 $(GOBUILD) -o $(NAME)-bin -v
