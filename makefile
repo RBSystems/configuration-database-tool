@@ -29,7 +29,6 @@ DOCKER_BUILD=$(DOCKER) build
 DOCKER_LOGIN=$(DOCKER) login -u $(UNAME) -p $(PASS)
 DOCKER_PUSH=$(DOCKER) push
 DOCKER_FILE=dockerfile
-DOCKER_FILE_ARM=dockerfile-arm
 
 UNAME=$(shell echo $(DOCKER_USERNAME))
 EMAIL=$(shell echo $(DOCKER_EMAIL))
@@ -85,18 +84,6 @@ endif
 	@echo logging in to dockerhub...
 	@$(DOCKER_LOGIN)
 	$(DOCKER_PUSH) $(ORG)/$(NAME):$(BRANCH)
-ifeq "$(BRANCH)" "development"
-	$(eval BRANCH=master)
-endif
-
-docker-arm: $(NAME)-arm $(NG1)-dist
-ifeq "$(BRANCH)" "master"
-	$(eval BRANCH=development)
-endif
-	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE_ARM) -t $(ORG)/rpi-$(NAME):$(BRANCH) .
-	@echo logging in to dockerhub...
-	@$(DOCKER_LOGIN)
-	$(DOCKER_PUSH) $(ORG)/rpi-$(NAME):$(BRANCH)
 ifeq "$(BRANCH)" "development"
 	$(eval BRANCH=master)
 endif
