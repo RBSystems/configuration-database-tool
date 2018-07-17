@@ -1,14 +1,18 @@
 <div class="main-wrapper">
-    <header class='header'>
-        <h1>TEC Pi Setup</h1>
-    </header>
+    <mat-toolbar>
+        <mat-toolbar-row class='header'>
+            <h1>Database Tool</h1>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
 
     <nav class="navbar" id="NavBar">
         <a routerLink="/home" routerLinkActive="active">Home</a>
+        <a routerLink="/walkthrough" routerLinkActive="active">Walkthrough</a>
         <a routerLink="/building" routerLinkActive="active">Building</a>
         <a routerLink="/room" routerLinkActive="active">Room</a>
         <a routerLink="/device" routerLinkActive="active">Device</a>
-        <a href="http://localhost:9900" class="right">UI Config</a>
+        <a routerLink="/uiconfig" routerLinkActive="active">UI Config</a>
     </nav>
 
     <body>
