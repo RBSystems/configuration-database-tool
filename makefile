@@ -45,9 +45,6 @@ build: build-x86 build-arm build-web
 build-x86:
 	env GOOS=linux CGO_ENABLED=0 $(GOBUILD) -o $(NAME)-bin -v
 
-build-arm: 
-	env GOOS=linux GOARCH=arm $(GOBUILD) -o $(NAME)-arm -v
-
 build-web: $(NG1)
 	# ng1
 	cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
@@ -59,7 +56,6 @@ test:
 clean: 
 	$(GOCLEAN)
 	rm -f $(NAME)-bin
-	rm -f $(NAME)-arm
 	rm -rf $(NG1)-dist
 
 run: $(NAME)-bin $(NG1)-dist
@@ -74,7 +70,7 @@ ifneq "$(BRANCH)" "master"
 	$(VENDOR) github.com/byuoitav/common
 endif
 
-docker: docker-x86 docker-arm
+docker: docker-x86
 
 docker-x86: $(NAME)-bin $(NG1)-dist
 ifeq "$(BRANCH)" "master"
@@ -91,9 +87,6 @@ endif
 ### deps
 $(NAME)-bin:
 	$(MAKE) build-x86
-
-$(NAME)-arm:
-	$(MAKE) build-arm
 
 $(NG1)-dist:
 	$(MAKE) build-web
