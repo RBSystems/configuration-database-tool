@@ -1,17 +1,13 @@
-FROM golang:alpine
+FROM byuoitav/amd64-alpine
+MAINTAINER Daniel Randall <danny_randall@byu.edu>
 
-ARG GITHUB_BRANCH
+ARG NAME
+ENV name=${NAME}
 
-RUN apk update && apk add git
-RUN go get -u github.com/FiloSottile/gvt
+COPY ${name}-bin ${name}-bin 
+COPY version.txt version.txt
 
-RUN mkdir -p /go/src/github.com/byuoitav
-ADD . /go/src/github.com/byuoitav/configuration-database-tool
+# add any required files/folders here
+COPY db-tool-dist db-tool-dist
 
-WORKDIR /go/src/github.com/byuoitav/configuration-database-tool
-RUN go get -d -v
-RUN go install -v
-
-CMD ["/go/bin/configuration-database-tool"]
-
-EXPOSE 9999
+ENTRYPOINT ./${name}-bin
