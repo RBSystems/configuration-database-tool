@@ -17,4 +17,8 @@ export class AppComponent {
     // Set active tab to be the page that we are currently on.
     this.activeLink = window.location.pathname.split("/", 2)[1];
   }
+
+  SetActiveLink(link: string) {
+    this.activeLink = link;
+  }
 }
