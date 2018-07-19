@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule, MatDialog, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule } from '@angular/material';
+import { MatInputModule, MatDialog, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -14,6 +14,7 @@ import { WalkthroughComponent } from './walkthrough/walkthrough.component';
 import { BuildingComponent } from './building/building.component';
 import { AppRouterModule } from './app-router.module';
 import { ApiService } from './api.service'
+import { Strings } from './strings.service'
 import { HttpModule } from '@angular/http';
 import { RoomComponent } from './room/room.component';
 import { DeviceComponent } from './device/device.component';
@@ -52,10 +53,14 @@ import { UIConfigComponent } from './uiconfig/uiconfig.component';
     MatStepperModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatGridListModule,
+    MatTooltipModule,
+    MatCheckboxModule
   ],
   providers: [
-    ApiService
+    ApiService,
+    Strings
   ],
   bootstrap: [AppComponent]
 })

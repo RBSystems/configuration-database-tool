@@ -1,45 +1,42 @@
 .home-button-a {
-    color: #ffffff !important;
+    /* color: #ffffff !important; */
     text-transform: uppercase;
-    background: #1d9c43;
+    /* background: #1d9c43; */
     padding: 15px;
     /* border: 1px solid #494949 !important; */
     border-radius: 6px;
     display: inline-block;
-    margin-left: 42%;
-    margin-bottom: 20px;
-    cursor: pointer;
+    /* cursor: pointer; */
     width: 280px;
 }
 
 .home-button-a:hover {
-    color: #000000 !important;
-    background: #f6513b;
-    border-color: #f6513b !important;
-    transition: all 0.2s ease 0s;
-    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
+    /* color: #000000 !important; */
+    /* background: #f6513b; */
+    /* border-color: #f6513b !important; */
+    /* transition: all 0.2s ease 0s; */
+    /* box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19); */
 }
 
 .home-button-b {
-    color: #ffffff !important;
+    /* color: #ffffff !important; */
     text-transform: uppercase;
-    background: #0066ff;
+    /* background: #0066ff; */
     padding: 15px;
     /* border: 1px solid #494949 !important; */
     border-radius: 6px;
     display: inline-block;
-    margin-left: 45%;
-    margin-bottom: 20px;
-    cursor: pointer;
+    margin: auto;
+    /* cursor: pointer; */
     width: 180px;
 }
 
 .home-button-b:hover {
-    color: #ffffff !important;
-    background: #f6b93b;
-    border-color: #f6b93b !important;
-    transition: all 0.2s ease 0s;
-    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
+    /* color: #ffffff !important; */
+    /* background: #f6b93b; */
+    /* border-color: #f6b93b !important; */
+    /* transition: all 0.2s ease 0s; */
+    /* box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19); */
 }
 
 .home-container {
@@ -69,11 +66,12 @@
     position: relative;
     float: left;
     margin: auto;
-    margin-top: 1%;
-    /* margin-bottom: 10px; */
+    margin-top: 2%;
+    margin-bottom: 5%;
     width: 100%;
     align-items: flex-start;
     display: flex;
+    justify-content: space-evenly;
 }
 
 .home-row-half {

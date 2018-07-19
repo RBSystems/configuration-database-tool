@@ -51,6 +51,8 @@
     overflow: auto;
     max-width: 2000px;
     min-height: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .walk-container-half {
@@ -97,6 +99,7 @@
     width: 100%;
     align-items: flex-end;
     display: flex;
+    justify-content: center;
 }
 
 mat-select {
@@ -118,6 +121,11 @@ mat-form-field.c {
     margin-left: 2%;
     width: 25%;
     padding-bottom: 2px;
+}
+
+mat-horizontal-stepper {
+    width: 86%;
+    max-width: 86%;
 }
 
 .num {

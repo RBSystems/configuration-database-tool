@@ -1,15 +1,11 @@
 <div class="home-container">
-    <a routerLink="/walkthrough"><button class="home-button-a">
-      Full Walkthrough Process
-  </button></a>
-    <a routerLink="/building"><button class="home-button-b">
-          Add/Edit a Building
-        </button></a>
-    <a routerLink="/room"><button class="home-button-b">
-            Add/Edit a Room
-          </button></a>
-    <a routerLink="/device"><button class="home-button-b">
-              Add/Edit a Device
-            </button></a>
-
+    <div class="home-row">
+        <a (click)="_parent.Route(S.Links[1])" mat-raised-button matTooltip="{{S.HomeTips['walkthrough']}}" [matTooltipShowDelay]=S.Slow color="primary" class="home-button-a">Walkthrough</a>
+    </div>
+    <div class="home-row">
+        <a (click)="_parent.Route(S.Links[2])" mat-raised-button matTooltip="{{S.HomeTips['building']}}" [matTooltipShowDelay]=S.Slow color="accent" class="home-button-b">Building</a>
+        <a (click)="_parent.Route(S.Links[3])" mat-raised-button matTooltip="{{S.HomeTips['room']}}" [matTooltipShowDelay]=S.Slow color="accent" class="home-button-b">Room</a>
+        <a (click)="_parent.Route(S.Links[4])" mat-raised-button matTooltip="{{S.HomeTips['device']}}" [matTooltipShowDelay]=S.Slow color="accent" class="home-button-b">Device</a>
+        <a (click)="_parent.Route(S.Links[5])" mat-raised-button matTooltip="{{S.HomeTips['uiconfig']}}" [matTooltipShowDelay]=S.Slow color="accent" class="home-button-b">UI Config</a>
+    </div>
 </div>

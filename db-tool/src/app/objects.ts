@@ -87,7 +87,7 @@ export class UIConfig   {
 	presets?:             Preset[] = [];
 	inputConfiguration?:  IOConfiguration[] = [];
 	outputConfiguration?: IOConfiguration[] = [];
-	audioConfiguration?:  AudioConfiguration[] = [];
+    audioConfiguration?:  AudioConfiguration[] = [];
 }
 
 export class Preset   {
@@ -97,7 +97,8 @@ export class Preset   {
 	shareableDisplays?:       string[] = [];
 	audioDevices?:            string[] = [];
 	inputs?:                  string[] = [];
-	independentAudioDevices?: string[] = [];
+    independentAudioDevices?: string[] = [];
+    // commands?: Commands;
 }
 
 export class Panel   {
@@ -116,6 +117,18 @@ export class AudioConfiguration   {
 export class IOConfiguration   {
 	name?: string 
 	icon?: string 
+}
+
+export class Commands {
+    powerOn?: ConfigCommand[];
+    powerOff?: ConfigCommand[];
+} 
+
+export class ConfigCommand {
+	method?: string
+	port?:   number
+	endpoint?: string
+	body?: Map<string, any>
 }
 
 export class BulkUpdateResponse {

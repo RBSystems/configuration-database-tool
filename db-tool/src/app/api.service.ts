@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { Http, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { MatDialog } from '@angular/material';
 
 import 'rxjs/add/operator/map';
-import { Building, Room, RoomConfiguration, Device, DeviceType, Template, BulkUpdateResponse } from './objects';
-import { ModalComponent, MessageType, Result } from './modal/modal.component';
+import { Building, Room, RoomConfiguration, Device, DeviceType, Template, BulkUpdateResponse, UIConfig } from './objects';
 
 @Injectable()
 export class ApiService {
@@ -88,5 +87,9 @@ export class ApiService {
 
   CreateBulkDevices(devices: Device[]): Observable<BulkUpdateResponse[]> {
     return this.http.post(this.url + "/devices/bulk/add", devices, this.options).map(response => response.json());
+  }
+
+  GetUIConfig(roomID: string): Observable<UIConfig> {
+    return this.http.get(this.url + "/uiconfig/" + roomID, this.options).map(response => response.json());
   }
 }

@@ -7,6 +7,7 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
 import { DBError } from '../home/home.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material';
+import { Strings } from '../strings.service';
 
 @Component({
   selector: 'app-building',
@@ -40,7 +41,7 @@ export class BuildingComponent implements OnInit {
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private api: ApiService, public dialog: MatDialog, private _formBuilder: FormBuilder) { }
+  constructor(private api: ApiService, public dialog: MatDialog, private _formBuilder: FormBuilder, public S: Strings) { }
 
   ngOnInit() {
     this.AddFormGroup = this._formBuilder.group({

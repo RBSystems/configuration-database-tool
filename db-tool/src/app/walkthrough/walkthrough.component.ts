@@ -25,7 +25,7 @@ export class WalkthroughComponent implements OnInit {
   allRoomList: Room[];
   buildingExists: boolean;
   roomExists: boolean;
-  locationDone: boolean;
+  step1Complete: boolean;
   locBuilding: Building;
   locRoom: Room;
   theType: DeviceType;
@@ -46,7 +46,6 @@ export class WalkthroughComponent implements OnInit {
 
   deviceTypeList: DeviceType[];
   deviceStep = 0;
-  wizardStep = 1;
 
   constructor(private _formBuilder: FormBuilder, private api: ApiService, public dialog: MatDialog) { }
 
@@ -54,9 +53,6 @@ export class WalkthroughComponent implements OnInit {
     this.locationFormGroup = this._formBuilder.group({
       locationCtrl: ['', Validators.required]
     });
-    this.verifyLocationFormGroup = this._formBuilder.group({
-      verifyCtrl: ['', Validators.required]
-    })
 
     this.getBuildingList();
     this.getAllRooms();
@@ -74,7 +70,7 @@ export class WalkthroughComponent implements OnInit {
   ValidateLocation(stepper: MatStepper) {
     this.buildingExists = false;
     this.roomExists = false;
-    this.locationDone = false;
+    this.step1Complete = false;
     let roomID : string = this.locationFormControl.value;
     let buildingID = roomID.split("-", 2)[0];
 
@@ -105,14 +101,15 @@ export class WalkthroughComponent implements OnInit {
     }
 
     if(this.buildingExists && this.roomExists) {
-      this.locationDone = true;
+      
       let header: string = this.locationFormControl.value + " already exists.";
       let information: string = "Please add or modify the information you need for that room in the individual building, room, and device pages."
       this.openDialog(MessageType.Info, header, information)
       return;
     }
 
-    this.nextStep(true);
+    this.step1Complete = true;
+    this.locationFormGroup.updateValueAndValidity();
     stepper.next();
   }
 
@@ -174,7 +171,7 @@ export class WalkthroughComponent implements OnInit {
     console.log(this.currentTemplate.devices)
     if(this.fullRoomDeviceList == null || this.fullRoomDeviceList.length == 0 || templateChange) {
       this.fullRoomDeviceList = [];
-      this.setStep(0, false);
+      this.setStep(0);
 
       for (let i = 0; i < this.deviceListSize; i++) {
         if(i < this.currentTemplate.devices.length) {
@@ -406,39 +403,22 @@ export class WalkthroughComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(this.locationDone) {
-        this.locationDone = false;
+      if(this.step1Complete) {
+        this.step1Complete = false;
       }
       // console.log('The dialog was closed');
     });
   }
 
-  setStep(index: number, stepperStep: boolean) {
-    if(stepperStep) {
-      this.wizardStep = index;
-    }
-    else {
-      this.deviceStep = index;
-    }
+  setStep(index: number) {
+    this.deviceStep = index;
   }
 
-  nextStep(stepperStep: boolean) {
-    if(stepperStep) {
-      this.wizardStep++;
-    }
-    else {
-      this.deviceStep++;
-    }
-
-    
+  nextStep() {
+    this.deviceStep++;    
   }
 
-  prevStep(stepperStep: boolean) {
-    if(stepperStep) {
-      this.wizardStep--;
-    }
-    else {
-      this.deviceStep--;
-    }
+  prevStep() {
+    this.deviceStep--;
   }
 }

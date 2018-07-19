@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material';
 import { ModalComponent } from '../modal/modal.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material';
+import { Strings } from '../strings.service';
 
 @Component({
   selector: 'app-device',
@@ -45,7 +46,7 @@ export class DeviceComponent implements OnInit {
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private api: ApiService, public dialog: MatDialog) {}
+  constructor(private api: ApiService, public dialog: MatDialog, public S: Strings) {}
 
   ngOnInit() {
     
@@ -300,7 +301,9 @@ export class DeviceComponent implements OnInit {
   UpdateDeviceTypeInfo() {
     this.deviceTypeList.forEach(type => {
       if(this.addDevice != null && this.addDevice.type != null && type._id == this.addDevice.type._id) {
-        if(this.addDevice.ports == null) {
+        this.addDevice.ports = [];
+        
+        if(type.ports != null) {
           this.addDevice.ports = type.ports;
         }
         

@@ -2,11 +2,11 @@
     border-radius: 5px;
     background-color: #ffffff;
     padding: 20px;
+    margin: auto;
     margin-top: 2%;
-    margin-left: 15%;
-    margin-right: 15%;
     max-height: 100%;
-    max-width: 70%;
+    width: 76%;
+    max-width: 76%;
 }
 
 .device-row {
@@ -16,11 +16,8 @@
     margin-top: 1%;
     /* margin-bottom: 10px; */
     width: 100%;
-}
-
-.device-label-a {
-    margin-left: 6%;
-    /* width: 15%; */
+    display: flex;
+    justify-content: space-evenly;
 }
 
 .device-row-b {
@@ -48,17 +45,17 @@ mat-select {
 }
 
 mat-form-field.a {
-    margin-left: 8%;
+    /* margin-left: 8%; */
     width: 22%;
 }
 
 mat-form-field.b {
-    margin-left: 8%;
+    /* margin-left: 8%; */
     width: 10%;
 }
 
 mat-form-field.c {
-    margin-left: auto;
+    /* margin-left: auto; */
     width: 16%;
 }
 
@@ -86,6 +83,7 @@ mat-form-field.c {
 .port-container {
     position: relative;
     display: flex;
+    justify-content: space-evenly;
     align-items: flex-end;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -94,11 +92,11 @@ mat-form-field.c {
 }
 
 .port-select {
-    width: 18%;
+    /* width: 18%; */
     margin-left: 5%;
 }
 
 .device-chip-list {
-    margin-left: 8%;
+    /* margin-left: 8%; */
     width: 22%;
 }

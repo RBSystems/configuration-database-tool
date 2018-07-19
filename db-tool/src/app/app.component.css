@@ -16,7 +16,7 @@ body {
 .header {
     padding: 10px;
     text-align: left;
-    background: #002255;
+    background: #3F51B5;
     color: white;
 }
 
@@ -29,20 +29,12 @@ body {
 
 .navbar {
     overflow: hidden;
-    background-color: #bfbfbf;
+    background-color: #E0E0E0;
 }
 
 .navbar a {
-    float: left;
-    display: block;
     color: black;
-    text-align: center;
-    padding: 14px 20px;
-    text-decoration: none;
-}
-
-.navbar a.right {
-    float: right;
+    text-transform: capitalize;
 }
 
 .navbar a:hover {
@@ -59,7 +51,7 @@ body {
     text-align: center;
     line-height: 12px;
     color: #595959;
-    background-color: #bfbfbf;
+    background-color: #E0E0E0;
     left: 0;
     bottom: 0;
     width: 100%;

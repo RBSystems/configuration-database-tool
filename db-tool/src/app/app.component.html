@@ -5,14 +5,8 @@
         </mat-toolbar-row>
     </mat-toolbar>
 
-
-    <nav class="navbar" id="NavBar">
-        <a routerLink="/home" routerLinkActive="active">Home</a>
-        <a routerLink="/walkthrough" routerLinkActive="active">Walkthrough</a>
-        <a routerLink="/building" routerLinkActive="active">Building</a>
-        <a routerLink="/room" routerLinkActive="active">Room</a>
-        <a routerLink="/device" routerLinkActive="active">Device</a>
-        <a routerLink="/uiconfig" routerLinkActive="active">UI Config</a>
+    <nav mat-tab-nav-bar class="navbar" id="NavBar">
+        <a mat-tab-link *ngFor="let link of S.Links" routerLink="/{{link}}" (click)="activeLink = link" [active]="activeLink == link" matTooltip="{{S.HomeTips[link]}}" [matTooltipShowDelay]=S.VerySlow> {{S.LinkTitles[link]}} </a>
     </nav>
 
     <body>

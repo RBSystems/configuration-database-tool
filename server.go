@@ -33,6 +33,7 @@ func main() {
 	secure.GET("/devicetypes", handlers.GetDeviceTypes)
 	secure.GET("/deviceroles", handlers.GetDeviceRoles)
 	secure.GET("/templates", handlers.GetAllTemplates)
+	secure.GET("/uiconfig/:room", handlers.GetUIConfig)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 	secure.POST("/rooms/:room/add", handlers.AddRoom)

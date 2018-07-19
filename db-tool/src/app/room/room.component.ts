@@ -4,12 +4,13 @@ import { ApiService } from '../api.service';
 import { MatDialog } from '@angular/material';
 import { ModalComponent } from '../modal/modal.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipInputEvent } from '@angular/material';
+import { MatChipInputEvent, TooltipPosition } from '@angular/material';
+import { Strings } from '../strings.service';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
-  styleUrls: ['./room.component.css']
+  styleUrls: ['./room.component.css'],
 })
 export class RoomComponent implements OnInit {
   @Input() InStepper: boolean = false;
@@ -35,7 +36,7 @@ export class RoomComponent implements OnInit {
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private api: ApiService, public dialog: MatDialog) { }
+  constructor(private api: ApiService, public dialog: MatDialog, public S: Strings) { }
 
   ngOnInit() {
     this.addBuilding = new Building();

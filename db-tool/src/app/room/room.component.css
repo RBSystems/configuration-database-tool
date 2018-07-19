@@ -2,37 +2,29 @@
     border-radius: 5px;
     background-color: #ffffff;
     padding: 20px;
+    margin: auto;
     margin-top: 2%;
-    margin-left: 15%;
-    margin-right: 15%;
     max-height: 100%;
-    max-width: 70%;
+    width: 76%;
+    max-width: 76%;
 }
 
 .room-container-half {
-    /* border-radius: 5px; */
     background-color: #ffffff;
     padding: 20px;
-    /* margin-top: 2%;
-    margin-left: 15%;
-    margin-right: 15%; */
     height: 100%;
     overflow: auto;
-    /* max-width: 70%; */
 }
 
 .room-row {
     position: relative;
     float: left;
     margin: auto;
-    margin-top: 1%;
-    /* margin-bottom: 10px; */
+    margin-top: 2%;
+    margin-bottom: 3%;
     width: 100%;
-}
-
-.room-label-a {
-    margin-left: 6%;
-    /* width: 15%; */
+    display: flex;
+    justify-content: space-evenly;
 }
 
 .room-row-b {
@@ -60,17 +52,14 @@ mat-select {
 }
 
 mat-form-field.a {
-    margin-left: 8%;
     width: 22%;
 }
 
 mat-form-field.b {
-    margin-left: 8%;
     width: 10%;
 }
 
 mat-form-field.c {
-    margin-left: 8%;
     width: 16%;
 }
 
@@ -96,6 +85,5 @@ mat-form-field.c {
 }
 
 .room-chip-list {
-    margin-left: 8%;
     width: 22%;
 }
