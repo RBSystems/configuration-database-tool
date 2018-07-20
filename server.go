@@ -47,19 +47,11 @@ func main() {
 	secure.PUT("/log-level/:level", log.SetLogLevel)
 	secure.GET("/log-level", log.GetLogLevel)
 
-	// secure.POST("/devices/ports/:port", handlers.AddPort)
-	// secure.POST("/devices/types/:devicetype", handlers.AddDeviceType)
-	// secure.POST("/devices/endpoints/:endpoint", handlers.AddEndpoint)
-	// secure.POST("/devices/commands/:command", handlers.AddCommand)
-	// secure.POST("/devices/powerstates/:powerstate", handlers.AddPowerState)
-	// secure.POST("/devices/microservices/:microservice", handlers.AddMicroservice)
-	// secure.POST("/devices/roledefinitions/:deviceroledefinition", handlers.AddRoleDefinition)
-
-	secure.Static("/", "db-tool/dist")
-	secure.Static("/home", "db-tool/dist")
-	secure.Static("/building", "db-tool/dist")
-	secure.Static("/room", "db-tool/dist")
-	secure.Static("/device", "db-tool/dist")
+	secure.Static("/", "db-tool-dist")
+	secure.Static("/home", "db-tool-dist")
+	secure.Static("/building", "db-tool-dist")
+	secure.Static("/room", "db-tool-dist")
+	secure.Static("/device", "db-tool-dist")
 
 	server := http.Server{
 		Addr:           port,
