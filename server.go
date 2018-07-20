@@ -33,6 +33,7 @@ func main() {
 	secure.GET("/devicetypes", handlers.GetDeviceTypes)
 	secure.GET("/deviceroles", handlers.GetDeviceRoles)
 	secure.GET("/templates", handlers.GetAllTemplates)
+	secure.GET("/icons", handlers.GetIcons)
 	secure.GET("/uiconfig/:room", handlers.GetUIConfig)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
@@ -57,9 +58,11 @@ func main() {
 
 	secure.Static("/", "db-tool/dist")
 	secure.Static("/home", "db-tool/dist")
+	secure.Static("/walkthrough", "db-tool/dist")
 	secure.Static("/building", "db-tool/dist")
 	secure.Static("/room", "db-tool/dist")
 	secure.Static("/device", "db-tool/dist")
+	secure.Static("/uiconfig", "db-tool/dist")
 
 	server := http.Server{
 		Addr:           port,

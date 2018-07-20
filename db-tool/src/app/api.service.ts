@@ -8,8 +8,8 @@ import { Building, Room, RoomConfiguration, Device, DeviceType, Template, BulkUp
 
 @Injectable()
 export class ApiService {
-  // url: string = "http://localhost:9999";
-  url: string = '';
+  url: string = "http://localhost:9999";
+  // url: string = '';
   options: RequestOptions;
   headers: Headers;
   constructor(private http: Http, public dialog: MatDialog) {
@@ -91,5 +91,9 @@ export class ApiService {
 
   GetUIConfig(roomID: string): Observable<UIConfig> {
     return this.http.get(this.url + "/uiconfig/" + roomID, this.options).map(response => response.json());
+  }
+
+  GetIcons(): Observable<string[]> {
+    return this.http.get(this.url + "/icons", this.options).map(response => response.json());
   }
 }

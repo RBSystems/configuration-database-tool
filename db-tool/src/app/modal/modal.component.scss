@@ -74,41 +74,51 @@
     float: right;
     font-size: 28px;
     font-weight: bold;
+    &:hover,
+    &:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
 }
 
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.modal-header-success {
+.modal-header {
     padding: 2px 16px;
-    background-color: #5cb85c;
-    color: black;
-}
-
-.modal-header-error {
-    padding: 2px 16px;
-    background-color: #D50000;
-    color: white;
-}
-
-.modal-header-info {
-    padding: 2px 16px;
-    background-color: #283593;
-    color: white;
-}
-
-.modal-header-mixed {
-    padding: 2px 16px;
-    background-color: #FFEE58;
-    color: black;
+    &.success {
+        background-color: #5cb85c;
+        color: black;
+    }
+    &.error {
+        background-color: #D50000;
+        color: white;
+    }
+    &.info {
+        background-color: #283593;
+        color: white;
+    }
+    &.mixed {
+        background-color: #FFEE58;
+        color: black;
+    }
+    &.icons {
+        background-color: #283593;
+        color: white;
+    }
 }
 
 .modal-body {
     padding: 2px 16px;
+}
+
+.row {
+    position: relative;
+    margin: auto;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-evenly;
+    overflow: hidden;
 }
 
 .modal-footer {
