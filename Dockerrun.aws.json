@@ -5,7 +5,7 @@
         "Key": ".dockercfg"
     },
     "Image": {
-        "Name": "byuoitav/configuration-database-tool:latest",
+        "Name": "byuoitav/configuration-database-tool:<TAG>",
         "Update": "true"
     },
     "Ports": [{
