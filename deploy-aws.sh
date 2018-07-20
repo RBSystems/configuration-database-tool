@@ -9,7 +9,7 @@ DOCKERRUN_FILE=$SHA1-Dockerrun.aws.json
 echo $BRANCH
 
 # Update Elastic Beanstalk environment to new version
-if [ "$BRANCH" == "master" ]; then 
+if [ "$BRANCH" == "production" ]; then 
 
 	sed "s/<TAG>/$BRANCH/" < Dockerrun.aws.json > $DOCKERRUN_FILE
 	aws configure set default.region us-west-2

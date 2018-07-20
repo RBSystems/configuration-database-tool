@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { ApiService } from '../api.service';
 import { Strings } from '../strings.service';
 import { Building, Room, Device, Template, UIConfig, Panel, IOConfiguration, DeviceType, Preset } from '../objects';
+import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 
 @Component({
   selector: 'app-uiconfig',
   templateUrl: './uiconfig.component.html',
-  styleUrls: ['./uiconfig.component.css']
+  styleUrls: ['./uiconfig.component.scss']
 })
 export class UIConfigComponent implements OnInit {
   building: Building = new Building();
@@ -24,10 +26,12 @@ export class UIConfigComponent implements OnInit {
   config: UIConfig = new UIConfig();
   configExists: boolean = false;
   panelStep: number;
+  currentIOCaller: IOConfiguration;
+  currentPresetCaller: Preset;
 
   NumRegex = /[0-9]/;
 
-  constructor(private api: ApiService, public S: Strings) { }
+  constructor(private api: ApiService, public dialog: MatDialog, public S: Strings) { }
 
   ngOnInit() {
     this.getBuildingList();
@@ -53,6 +57,7 @@ export class UIConfigComponent implements OnInit {
 
   getRoomList() {
     this.roomList = [];
+    this.room = new Room();
 
     this.api.GetRoomList(this.building._id).subscribe(val => {
       this.roomList = val;
@@ -68,7 +73,19 @@ export class UIConfigComponent implements OnInit {
     this.api.GetDeviceList(this.room._id).subscribe(val => {
       this.deviceList = val;
 
-      
+      let AddToInputs: boolean = false;
+      let AddToOutputs: boolean = false;
+     
+      if(this.config.inputConfiguration == null) {
+        this.config.inputConfiguration = [];
+        AddToInputs = true;
+      }
+      if(this.config.outputConfiguration == null) {
+        this.config.outputConfiguration = [];
+        AddToOutputs = true;
+      }
+
+
       this.deviceList.forEach(d => {
         d.roles.forEach(role => {
           // Find all the ControlProcessors and make a Panel for each.
@@ -91,6 +108,10 @@ export class UIConfigComponent implements OnInit {
               io.name = d.name;
               io.icon = this.S.DefaultIcons[NameSansNum];
               this.inputs.push(io);
+
+              if(AddToInputs) {
+                this.config.inputConfiguration.push(io);
+              } 
             }
 
             // Find the displays and make an IOConfiguration for each.
@@ -98,7 +119,10 @@ export class UIConfigComponent implements OnInit {
               io.name = d.name;
               io.icon = this.S.DefaultIcons[d.type._id];
               this.displays.push(io);
-              console.log(this.displays);
+
+              if(AddToOutputs) {
+                this.config.outputConfiguration.push(io);
+              }              
             }
           }
         });
@@ -170,6 +194,34 @@ export class UIConfigComponent implements OnInit {
 
       console.log(preset);
     }
+  }
+
+  ChangeIcon(io?: IOConfiguration, preset?: Preset) {
+    if(io != null) {
+      this.currentIOCaller = io;
+      this.openDialog(MessageType.Icons, "", "io");
+    }
+    if(preset != null) {
+      this.currentPresetCaller = preset;
+      this.openDialog(MessageType.Icons, "", "preset");
+    }
+  }
+
+  openDialog(status: MessageType, subheader?: string, message?: string, results?: Result[]) {
+    let dialogRef = this.dialog.open(ModalComponent, {
+      data: {type: status, subheader: subheader, message: message, results: results}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      if(message === "io") {
+        this.currentIOCaller.icon = result;
+      }
+      if(message === "preset") {
+        this.currentPresetCaller.icon = result;
+      }
+      console.log(this.config);
+    });
   }
 
   setStep(index: number) {

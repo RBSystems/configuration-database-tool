@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 
@@ -12,13 +13,13 @@ import (
 
 //GetRoomsByBuilding returns all the rooms in a building
 func GetRoomsByBuilding(context echo.Context) error {
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if !ok {
+		return context.JSON(http.StatusForbidden, alert)
+	}
 
 	building := context.Param("building")
 	rooms, err := db.GetDB().GetRoomsByBuilding(building)
@@ -31,13 +32,13 @@ func GetRoomsByBuilding(context echo.Context) error {
 
 // GetRoomByID returns all info about a room
 func GetRoomByID(context echo.Context) error {
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if !ok {
+		return context.JSON(http.StatusForbidden, alert)
+	}
 
 	id := context.Param("room")
 
@@ -51,13 +52,13 @@ func GetRoomByID(context echo.Context) error {
 
 // GetAllRooms returns all rooms from the database.
 func GetAllRooms(context echo.Context) error {
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if !ok {
+		return context.JSON(http.StatusForbidden, alert)
+	}
 
 	rooms, err := db.GetDB().GetAllRooms()
 	if err != nil {
@@ -69,23 +70,20 @@ func GetAllRooms(context echo.Context) error {
 
 // AddRoom adds a room to the database
 func AddRoom(context echo.Context) error {
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	// if err != nil {
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if !ok {
+		return context.JSON(http.StatusForbidden, alert)
+	}
 
 	var room structs.Room
-	err := context.Bind(&room)
+	err = context.Bind(&room)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	log.L.Info(room)
-	log.L.Info(context.Param("room"))
-	log.L.Info(room.ID)
 	if context.Param("room") != room.ID {
 		return context.JSON(http.StatusBadRequest, "Endpoint and room name must match!")
 	}
@@ -100,13 +98,13 @@ func AddRoom(context echo.Context) error {
 
 // UpdateRoom updates a room in the database.
 func UpdateRoom(context echo.Context) error {
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	// if err != nil {
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if !ok {
+		return context.JSON(http.StatusForbidden, alert)
+	}
 
 	id := context.Param("room")
 	var room structs.Room
@@ -114,7 +112,7 @@ func UpdateRoom(context echo.Context) error {
 	if room.ID != id && len(room.ID) > 0 {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
-	room, err := db.GetDB().UpdateRoom(id, room)
+	room, err = db.GetDB().UpdateRoom(id, room)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -123,13 +121,13 @@ func UpdateRoom(context echo.Context) error {
 
 // GetRoomConfigurations returns a list of all the RoomConfigurations from the database.
 func GetRoomConfigurations(context echo.Context) error {
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if !ok {
+		return context.JSON(http.StatusForbidden, alert)
+	}
 
 	configurations, err := db.GetDB().GetAllRoomConfigurations()
 	if err != nil {
@@ -141,13 +139,13 @@ func GetRoomConfigurations(context echo.Context) error {
 
 // GetRoomDesignations returns a list of all the RoomDesignations from the database.
 func GetRoomDesignations(context echo.Context) error {
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if !ok {
+		return context.JSON(http.StatusForbidden, alert)
+	}
 
 	designations, err := db.GetDB().GetRoomDesignations()
 	if err != nil {

@@ -26,17 +26,23 @@
             </mat-select>
         </mat-form-field>
     </div>
-    <mat-accordion>
+    <mat-accordion *ngIf="room._id != null && config.panels != null && config.panels.length > 0">
         <mat-expansion-panel *ngFor="let p of config.panels; let i = index;" [expanded]="panelStep === i" (opened)="setStep(i)">
             <mat-expansion-panel-header>
                 <mat-panel-title>{{p.hostname}}</mat-panel-title>
                 <mat-panel-description>Preset: {{p.preset}} UIPath: {{p.uipath}}</mat-panel-description>
             </mat-expansion-panel-header>
             <div class="ui-row">
+                <!-- <div *ngIf="p.preset != null && p.uipath != '/cherry'"> -->
                 <mat-form-field class="a">
                     <mat-label>Panel Display Name</mat-label>
                     <input matInput type="text" [(ngModel)]="p.preset">
                 </mat-form-field>
+                <div class="icon preset" *ngIf="p.preset != null && p.uipath != '/cherry'">
+                    <mat-label>Main Icon: </mat-label>
+                    <button mat-icon-button (click)="ChangeIcon(null, GetPreset(p.preset))"><mat-icon>{{GetPreset(p.preset).icon}}</mat-icon></button>
+                </div>
+                <!-- </div> -->
                 <mat-form-field class="a">
                     <mat-label>UI Path</mat-label>
                     <mat-select matInput [(ngModel)]="p.uipath">
@@ -47,13 +53,22 @@
             </div>
 
             <div class="ui-row">
-                <ng-container *ngFor="let d of displays">
-                    <mat-checkbox [checked]="GetPreset(p.preset).displays.includes(d.name)" (change)="UpdatePresetDisplays(GetPreset(p.preset), d.name, $event.checked);">
-                        {{d.name}}
-                    </mat-checkbox>
-                    <button mat-icon-button><mat-icon>{{d.icon}}</mat-icon></button>
-                </ng-container>
+                <div class="ui-row disp">
+                    <p>Displays</p>
+                    <div class="display-list">
+                        <div class="icon display" *ngFor="let d of config.outputConfiguration">
+                            <mat-checkbox [checked]="GetPreset(p.preset).displays.includes(d.name)" (change)="UpdatePresetDisplays(GetPreset(p.preset), d.name, $event.checked);">
+                                {{d.name}}
+                            </mat-checkbox>
+                            <ng-container *ngIf="p.uipath === '/cherry'">
+                                <mat-label>Icon: </mat-label>
+                                <button mat-icon-button (click)="ChangeIcon(d)"><mat-icon>{{d.icon}}</mat-icon></button>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
             </div>
+
 
             <mat-action-row *ngIf="i === 0 && panels.length != 1">
                 <button mat-button color="primary" (click)="nextStep()">Next</button>

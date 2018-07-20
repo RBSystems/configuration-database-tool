@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Strings } from '../strings.service';
 
 export interface DialogData {
   type: MessageType;
@@ -14,16 +15,16 @@ export interface Result {
   error?: string;
 }
 
-export enum MessageType {Success, Error, Info, Mixed}
+export enum MessageType {Success, Error, Info, Mixed, Icons}
 
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.css']
+  styleUrls: ['./modal.component.scss']
 })
 export class ModalComponent implements OnInit {
   messageType = MessageType;
-  constructor(public dialogRef: MatDialogRef<ModalComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
+  constructor(public dialogRef: MatDialogRef<ModalComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData, public S: Strings) { }
 
   ngOnInit() {
   }
@@ -34,5 +35,9 @@ export class ModalComponent implements OnInit {
 
   closeX() {
     this.dialogRef.close();
+  }
+  
+  IconReturn(icon: string) {
+    this.dialogRef.close(icon);
   }
 }

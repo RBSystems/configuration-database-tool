@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { FormGroupDirective, FormControl, NgForm, Validators, FormGroup, FormBuilder, ControlValueAccessor } from '@angular/forms';
+import { FormGroupDirective, FormControl, NgForm, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { MatStepper, MatDialog } from '@angular/material';
 import { ApiService } from '../api.service';
 import { Building, Room, Template, Device, DeviceType, BulkUpdateResponse } from '../objects';
@@ -168,7 +168,7 @@ export class WalkthroughComponent implements OnInit {
     if(this.deviceListSize == null || templateChange) {
       this.deviceListSize = this.currentTemplate.devices.length;
     }
-    console.log(this.currentTemplate.devices)
+    // console.log(this.currentTemplate.devices)
     if(this.fullRoomDeviceList == null || this.fullRoomDeviceList.length == 0 || templateChange) {
       this.fullRoomDeviceList = [];
       this.setStep(0);
@@ -227,18 +227,18 @@ export class WalkthroughComponent implements OnInit {
 
   Check() {
     // console.log(this.templateList[0].devices[0])
-    console.log(this.locationFormControl.value)
-    console.log(this.locBuilding)
-    console.log(this.locRoom)
-    console.log(this.fullRoomDeviceList)
+    // console.log(this.locationFormControl.value)
+    // console.log(this.locBuilding)
+    // console.log(this.locRoom)
+    // console.log(this.fullRoomDeviceList)
   }
 
   Check2(d: Device) {
-    console.log(d);
+    // console.log(d);
   }
 
   Finish() {
-    console.log(this.fullRoomDeviceList)
+    // console.log(this.fullRoomDeviceList)
     // this.api.SubmitNewData(this.locBuilding, this.buildingExists, this.locRoom, this.fullRoomDeviceList, this.api.ShowResults);
     let results: Result[] = [];
     
@@ -247,7 +247,7 @@ export class WalkthroughComponent implements OnInit {
 
   SubmitBuilding(results: Result[]) {
     if(!this.buildingExists) {
-      console.log("1A")
+      // console.log("1A")
       this.api.AddBuilding(this.locBuilding).subscribe(
         success => {
           let message = this.locBuilding._id + " was successfully added.";
@@ -264,7 +264,7 @@ export class WalkthroughComponent implements OnInit {
         });
     }
     else {
-      console.log("1B")
+      // console.log("1B")
       this.api.UpdateBuilding(this.locBuilding).subscribe(
         success => {
           let message = this.locBuilding._id + " was successfully updated.";
@@ -283,7 +283,7 @@ export class WalkthroughComponent implements OnInit {
 
   SubmitRoom(results: Result[]) {
     if(!this.roomExists) {
-      console.log("2A")
+      // console.log("2A")
       this.api.AddRoom(this.locRoom).subscribe(
         success => {
           let message = this.locRoom._id + " was successfully added.";
@@ -300,7 +300,7 @@ export class WalkthroughComponent implements OnInit {
         });
     }
     else {
-      console.log("2B")
+      // console.log("2B")
       this.api.UpdateRoom(this.locRoom).subscribe(
         success => {
           let message = this.locRoom._id + " was successfully updated.";
@@ -318,10 +318,10 @@ export class WalkthroughComponent implements OnInit {
   }
 
   SubmitDevices(results: Result[]) {
-    console.log("3A")
+    // console.log("3A")
     this.api.CreateBulkDevices(this.fullRoomDeviceList).subscribe(
       success => {
-        console.log("3B")
+        // console.log("3B")
         let responses: BulkUpdateResponse[] = success;
         responses.forEach(resp => {
           let res: Result;
@@ -339,7 +339,7 @@ export class WalkthroughComponent implements OnInit {
         this.ShowResults(results);
       },
       error => {
-        console.log("3C")
+        // console.log("3C")
         let m: string = "Failed to add the devices in bulk.";
         let res: Result = {message: m, success: false, error: error};
         results.push(res);
@@ -368,7 +368,7 @@ export class WalkthroughComponent implements OnInit {
   }
 
   ShowResults(results: Result[]) {
-    console.log("4A")
+    // console.log("4A")
     let pass: boolean = true;
     let mixed: boolean = false;
     let errorCount: number = 0;
