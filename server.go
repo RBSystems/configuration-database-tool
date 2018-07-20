@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/byuoitav/authmiddleware"
+	auth "github.com/byuoitav/common/auth/middleware"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/handlers"
 	"github.com/jessemillar/health"
@@ -18,8 +18,8 @@ func main() {
 	router.Use(middleware.CORS())
 
 	// Use the `secure` routing group to require authentication
-	// secure := router.Group("", echo.WrapMiddleware(mid.AuthenticateCASUser))
-	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
+	secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
+	// secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	secure.GET("/buildings", handlers.GetBuildings)
@@ -33,6 +33,7 @@ func main() {
 	secure.GET("/devicetypes", handlers.GetDeviceTypes)
 	secure.GET("/deviceroles", handlers.GetDeviceRoles)
 	secure.GET("/templates", handlers.GetAllTemplates)
+	secure.GET("/icons", handlers.GetIcons)
 	secure.GET("/uiconfig/:room", handlers.GetUIConfig)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
@@ -47,19 +48,13 @@ func main() {
 	secure.PUT("/log-level/:level", log.SetLogLevel)
 	secure.GET("/log-level", log.GetLogLevel)
 
-	// secure.POST("/devices/ports/:port", handlers.AddPort)
-	// secure.POST("/devices/types/:devicetype", handlers.AddDeviceType)
-	// secure.POST("/devices/endpoints/:endpoint", handlers.AddEndpoint)
-	// secure.POST("/devices/commands/:command", handlers.AddCommand)
-	// secure.POST("/devices/powerstates/:powerstate", handlers.AddPowerState)
-	// secure.POST("/devices/microservices/:microservice", handlers.AddMicroservice)
-	// secure.POST("/devices/roledefinitions/:deviceroledefinition", handlers.AddRoleDefinition)
-
 	secure.Static("/", "db-tool/dist")
 	secure.Static("/home", "db-tool/dist")
+	secure.Static("/walkthrough", "db-tool/dist")
 	secure.Static("/building", "db-tool/dist")
 	secure.Static("/room", "db-tool/dist")
 	secure.Static("/device", "db-tool/dist")
+	secure.Static("/uiconfig", "db-tool/dist")
 
 	server := http.Server{
 		Addr:           port,

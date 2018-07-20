@@ -9,16 +9,27 @@ import { Strings } from './strings.service';
   providers: [ApiService, Strings],
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'app';
   activeLink: string;
 
-  constructor(public S: Strings) {
+  constructor(private api: ApiService, public S: Strings) {
     // Set active tab to be the page that we are currently on.
     this.activeLink = window.location.pathname.split("/", 2)[1];
   }
 
+  ngOnInit() {
+    // Update the icon list from the database.
+    this.UpdateIcons()
+  }
+
   SetActiveLink(link: string) {
     this.activeLink = link;
+  }
+
+  UpdateIcons() {
+    this.api.GetIcons().subscribe(val => {
+      this.S.Icons = val;
+    });
   }
 }

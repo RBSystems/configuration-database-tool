@@ -92,4 +92,8 @@ export class ApiService {
   GetUIConfig(roomID: string): Observable<UIConfig> {
     return this.http.get(this.url + "/uiconfig/" + roomID, this.options).map(response => response.json());
   }
+
+  GetIcons(): Observable<string[]> {
+    return this.http.get(this.url + "/icons", this.options).map(response => response.json());
+  }
 }

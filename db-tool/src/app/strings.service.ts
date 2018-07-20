@@ -107,6 +107,30 @@ export class Strings {
 
     DefaultIcons = {
         "SonyXBR": "tv",
-        "SonyVPL": "projector"
+        "SonyVPL": "videocam"
     }
+
+    Icons = [
+        "tv",
+        "videocam",
+        "settings_input_antenna",
+        "settings_input_hdmi",
+        "airplay",
+        "hd",
+        "add_to_queue",
+        "video_label",
+        "wifi_tethering",
+        "usb",
+        "cast",
+        "computer",
+        "desktop_mac",
+        "desktop_windows",
+        "laptop_chromebook",
+        "phone_android",
+        "videogame_asset",
+        "switch_video",
+        "ondemand_video",
+        "tap_and_play",
+        "share"
+    ]
 }
