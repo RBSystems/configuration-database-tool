@@ -31,6 +31,6 @@ elif [ "$BRANCH" == "master" ]; then
 	aws elasticbeanstalk create-application-version --application-name $PROJECT_NAME-stg --version-label $SHA1 --source-bundle S3Bucket=$EB_BUCKET,S3Key=Dockerrun.aws.json
 	
 	# Update Elastic Beanstalk environment to new version
-	aws elasticbeanstalk update-environment --environment-name $PROJECT_NAME-env --version-label $SHA1
+	aws elasticbeanstalk update-environment --environment-name $PROJECT_NAME-stg --version-label $SHA1
 
 fi
