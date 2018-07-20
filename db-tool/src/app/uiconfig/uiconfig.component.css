@@ -1,0 +1,37 @@
+.ui-container {
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 20px;
+    margin: auto;
+    margin-top: 2%;
+    max-height: 100%;
+    width: 76%;
+    max-width: 76%;
+    overflow: auto;
+}
+
+.ui-row {
+    position: relative;
+    /* float: left; */
+    margin: auto;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-evenly;
+    overflow: auto;
+}
+
+mat-select {
+    padding: 5px;
+}
+
+mat-form-field.a {
+    width: 22%;
+}
+
+mat-form-field.template {
+    width: 22%;
+    padding-bottom: 2px;
+}

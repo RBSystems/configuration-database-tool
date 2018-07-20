@@ -1,15 +1,22 @@
-<nav class="navbar navbar-default">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="#">AV-DB-Tool</a>
-		</div>
-		<ul class="nav navbar-nav">
-			<li [routerLinkActive]="['active']"><a routerLink="/room-selection" routerLinkActive="active">room selection</a></li>
-			<li [routerLinkActive]="['active']"><a routerLink="/config" routerLinkActive="active">config</a></li>
-		</ul>
-		<ul class="nav navbar-nav navbar-right">
-			<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-		</ul>
-	</div>
-</nav>
-<router-outlet></router-outlet>
+<div class="main-wrapper">
+    <mat-toolbar>
+        <mat-toolbar-row class='header'>
+            <h1>Database Tool</h1>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <nav mat-tab-nav-bar class="navbar" id="NavBar">
+        <a mat-tab-link *ngFor="let link of S.Links" routerLink="/{{link}}" (click)="activeLink = link" [active]="activeLink == link" matTooltip="{{S.HomeTips[link]}}" [matTooltipShowDelay]=S.VerySlow> {{S.LinkTitles[link]}} </a>
+    </nav>
+
+    <body>
+        <div class="wrapper">
+            <router-outlet></router-outlet>
+            <div class="push"></div>
+        </div>
+    </body>
+
+    <footer class="footer">
+        <h5>Brigham Young University - OIT</h5>
+    </footer>
+</div>
