@@ -56,7 +56,6 @@ test:
 clean: 
 	$(GOCLEAN)
 	rm -f $(NAME)-bin
-	rm -rf $(NG1)-dist
 
 run: $(NAME)-bin $(NG1)-dist
 	./$(NAME)-bin

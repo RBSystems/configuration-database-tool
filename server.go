@@ -48,11 +48,11 @@ func main() {
 	secure.PUT("/log-level/:level", log.SetLogLevel)
 	secure.GET("/log-level", log.GetLogLevel)
 
-	secure.Static("/", "db-tool-dist")
-	secure.Static("/home", "db-tool-dist")
-	secure.Static("/building", "db-tool-dist")
-	secure.Static("/room", "db-tool-dist")
-	secure.Static("/device", "db-tool-dist")
+	secure.Static("/", "db-tool/dist")
+	secure.Static("/home", "db-tool/dist")
+	secure.Static("/building", "db-tool/dist")
+	secure.Static("/room", "db-tool/dist")
+	secure.Static("/device", "db-tool/dist")
 
 	server := http.Server{
 		Addr:           port,
