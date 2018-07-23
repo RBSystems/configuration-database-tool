@@ -30,7 +30,7 @@ export class Strings {
         "building", 
         "room", 
         "device", 
-        "uiconfig"
+        // "uiconfig"
     ];
 
     LinkTitles = {
@@ -39,7 +39,7 @@ export class Strings {
         "building": "Building", 
         "room": "Room", 
         "device": "Device", 
-        "uiconfig": "UI Config"
+        // "uiconfig": "UI Config"
     }
 
     HomeTips = {
