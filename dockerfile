@@ -8,6 +8,6 @@ COPY ${name}-bin ${name}-bin
 COPY version.txt version.txt
 
 # add any required files/folders here
-#COPY db-tool-dist db-tool-dist
+COPY db-tool-dist db-tool-dist
 
 ENTRYPOINT ./${name}-bin
