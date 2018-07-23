@@ -11,3 +11,5 @@ COPY version.txt version.txt
 COPY db-tool-dist db-tool-dist
 
 ENTRYPOINT ./${name}-bin
+
+EXPOSE 9999
