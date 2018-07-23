@@ -47,7 +47,8 @@ build-x86:
 
 build-web: $(NG1)
 	# ng1
-	cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD) --base-href="./$(NG1)/"
+	cd $(NG1) && $(NPM_INSTALL) && $(NG_BUILD)
+	mv $(NG1)/dist $(NG1)-dist
 
 test: 
 	$(GOTEST) -v -race $(go list ./... | grep -v /vendor/) 
@@ -55,6 +56,7 @@ test:
 clean: 
 	$(GOCLEAN)
 	rm -f $(NAME)-bin
+	rm -rf $(NG1)-dist
 
 run: $(NAME)-bin $(NG1)-dist
 	./$(NAME)-bin
@@ -65,7 +67,7 @@ deps:
 ifneq "$(BRANCH)" "master"
 	# put vendored packages in here
 	# e.g. $(VENDOR) github.com/byuoitav/event-router-microservice
-	$(VENDOR) github.com/byuoitav/common
+	$(VENDOR) github.com/byuoitav/authmiddleware
 endif
 
 docker: docker-x86
@@ -74,10 +76,16 @@ docker-x86: $(NAME)-bin $(NG1)-dist
 ifeq "$(BRANCH)" "master"
 	$(eval BRANCH=development)
 endif
+ifeq "$(BRANCH)" "production"
+	$(eval BRANCH=latest)
+endif
 	$(DOCKER_BUILD) --build-arg NAME=$(NAME) -f $(DOCKER_FILE) -t $(ORG)/$(NAME):$(BRANCH) .
 	@echo logging in to dockerhub...
 	@$(DOCKER_LOGIN)
 	$(DOCKER_PUSH) $(ORG)/$(NAME):$(BRANCH)
+ifeq "$(BRANCH)" "latest"
+	$(eval BRANCH=production)
+endif
 ifeq "$(BRANCH)" "development"
 	$(eval BRANCH=master)
 endif
