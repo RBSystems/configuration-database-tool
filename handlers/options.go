@@ -12,13 +12,18 @@ import (
 
 // GetAllTemplates returns a list of all templates from the database.
 func GetAllTemplates(context echo.Context) error {
+	log.L.Debug("Attempting to get all templates")
 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
 	if err != nil {
+		log.L.Errorf("User had an error : %v", err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	if !ok {
+		log.L.Errorf("User no good : %v", err.Error())
 		return context.JSON(http.StatusForbidden, alert)
 	}
+
+	log.L.Debug("User seems ok")
 
 	templates, err := db.GetDB().GetAllTemplates()
 	if err != nil {
@@ -26,18 +31,24 @@ func GetAllTemplates(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 
+	log.L.Debug("Successfully got all templates")
 	return context.JSON(http.StatusOK, templates)
 }
 
 // GetIcons returns the list of possible icons from the database.
 func GetIcons(context echo.Context) error {
+	log.L.Debug("Attempting to get all icons")
 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
 	if err != nil {
+		log.L.Errorf("User had an error : %v", err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	if !ok {
+		log.L.Errorf("User no good : %v", err.Error())
 		return context.JSON(http.StatusForbidden, alert)
 	}
+
+	log.L.Debug("User seems ok")
 
 	icons, err := db.GetDB().GetIcons()
 	if err != nil {
@@ -45,5 +56,6 @@ func GetIcons(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 
+	log.L.Debug("Successfully got all icons")
 	return context.JSON(http.StatusOK, icons)
 }
