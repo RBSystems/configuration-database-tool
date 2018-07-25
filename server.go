@@ -2,8 +2,9 @@ package main
 
 import (
 	"net/http"
+	"time"
 
-	auth "github.com/byuoitav/common/auth/middleware"
+	"github.com/byuoitav/authmiddleware"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/handlers"
 	"github.com/jessemillar/health"
@@ -18,10 +19,11 @@ func main() {
 	router.Use(middleware.CORS())
 
 	// Use the `secure` routing group to require authentication
-	secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
-	// secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
+	// secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
+	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
+	router.GET("/status", handlers.Status)
 	secure.GET("/buildings", handlers.GetBuildings)
 	secure.GET("/buildings/:building/rooms", handlers.GetRoomsByBuilding)
 	secure.GET("/buildings/:building", handlers.GetBuildingByID)
@@ -61,5 +63,6 @@ func main() {
 		MaxHeaderBytes: 1024 * 10,
 	}
 
+	handlers.Start = time.Now()
 	router.StartServer(&server)
 }

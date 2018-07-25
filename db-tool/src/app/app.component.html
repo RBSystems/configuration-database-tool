@@ -7,6 +7,8 @@
 
     <nav mat-tab-nav-bar class="navbar" id="NavBar">
         <a mat-tab-link *ngFor="let link of S.Links" routerLink="/{{link}}" (click)="activeLink = link" [active]="activeLink == link" matTooltip="{{S.HomeTips[link]}}" [matTooltipShowDelay]=S.VerySlow> {{S.LinkTitles[link]}} </a>
+        <a mat-tab-link href="https://docs.google.com/document/d/1Lpn82blaL20IS1goGGZWzPDTLcCdiGbNEOP6H41xYnA/edit?usp=sharing" target="_blank">Instructions</a>
+        <a mat-tab-link href="https://docs.google.com/spreadsheets/d/1NO0sru6iFE8zVzjtwGtCMDbnnueeuvotI0cpLsL9ypw/edit?usp=sharing" target="_blank">Tables</a>
     </nav>
 
     <body>

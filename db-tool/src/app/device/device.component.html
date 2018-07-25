@@ -110,7 +110,7 @@
                         </mat-select>
                     </mat-form-field>
                     <!-- DESTINATION DEVICE -->
-                    <mat-form-field class="c" matTooltip="{{S.DeviceTips['destination_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
+                    <mat-form-field class="c" *ngIf="port.destination_device != addDevice._id" matTooltip="{{S.DeviceTips['destination_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                         <mat-label>Destination Device</mat-label>
                         <mat-select matInput [(ngModel)]="port.destination_device" (click)="GetSourceAndDestinationLists();">
                             <mat-option [value]=null>None</mat-option>
@@ -236,7 +236,7 @@
                         <input matInput type="text" [(ngModel)]="port.friendly_name">
                     </mat-form-field>
                     <!-- SOURCE DEVICE -->
-                    <mat-form-field class="c" matTooltip="{{S.DeviceTips['source_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
+                    <mat-form-field class="c" *ngIf="port.source_device != editDevice._id" matTooltip="{{S.DeviceTips['source_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                         <mat-label>Source Device</mat-label>
                         <mat-select matInput [(ngModel)]="port.source_device">
                             <mat-option [value]=null>None</mat-option>
@@ -244,7 +244,7 @@
                         </mat-select>
                     </mat-form-field>
                     <!-- DESTINATION DEVICE -->
-                    <mat-form-field class="c" matTooltip="{{S.DeviceTips['destination_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
+                    <mat-form-field class="c" *ngIf="!editType.output || port.destination_device != editDevice._id" matTooltip="{{S.DeviceTips['destination_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                         <mat-label>Destination Device</mat-label>
                         <mat-select matInput [(ngModel)]="port.destination_device">
                             <mat-option [value]=null>None</mat-option>

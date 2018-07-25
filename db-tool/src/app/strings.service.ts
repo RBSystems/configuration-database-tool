@@ -133,4 +133,25 @@ export class Strings {
         "tap_and_play",
         "share"
     ]
+
+    DefaultPorts = {
+        "SonyXBR": {
+                "hdmi!1":  {
+                    "source":"bogus",
+                    "destination": "D"
+                },
+                "hdmi!2":  {
+                    "source":"HDMI",
+                    "destination": "D"
+                },
+                "hdmi!3":  {
+                    "source":"VIA",
+                    "destination": "D"
+                },
+                "hdmi!4":  {
+                    "source":"PC",
+                    "destination": "D"
+                }
+            }
+        }
 }
