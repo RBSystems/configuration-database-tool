@@ -22,6 +22,7 @@ func main() {
 	// secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
+	router.GET("/status", handlers.Status)
 	secure.GET("/buildings", handlers.GetBuildings)
 	secure.GET("/buildings/:building/rooms", handlers.GetRoomsByBuilding)
 	secure.GET("/buildings/:building", handlers.GetBuildingByID)
@@ -47,8 +48,6 @@ func main() {
 
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)
-
-	// router.GET("/health", handlers.Health)
 
 	secure.Static("/", "db-tool-dist")
 	secure.Static("/home", "db-tool-dist")
