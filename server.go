@@ -48,10 +48,11 @@ func main() {
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)
 
-	router.GET("/health", handlers.Health)
+	// router.GET("/health", handlers.Health)
 
 	secure.Static("/", "db-tool-dist")
 	secure.Static("/home", "db-tool-dist")
+	secure.Static("/walkthrough", "db-tool-dist")
 	secure.Static("/building", "db-tool-dist")
 	secure.Static("/room", "db-tool-dist")
 	secure.Static("/device", "db-tool-dist")
