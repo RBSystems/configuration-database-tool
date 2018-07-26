@@ -9,9 +9,9 @@ DOCKERRUN_FILE=$SHA1-Dockerrun.aws.json
 echo $BRANCH
 
 # Update Elastic Beanstalk environment to new version
-if [ "$BRANCH" == "latest" ]; then 
+if [ "$BRANCH" == "production" ]; then 
 
-	sed "s/<TAG>/$BRANCH/" < Dockerrun.aws.json > $DOCKERRUN_FILE
+	sed "s/<TAG>/latest/" < Dockerrun.aws.json > $DOCKERRUN_FILE
 	aws configure set default.region us-west-2
 	aws configure set region us-west-2
 	aws s3 cp $DOCKERRUN_FILE s3://$EB_BUCKET/$DOCKERRUN_FILE # Copy the Dockerrun file to the S3 bucket
