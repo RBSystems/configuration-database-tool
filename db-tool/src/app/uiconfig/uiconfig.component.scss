@@ -1,0 +1,66 @@
+.ui-container {
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 20px;
+    margin: auto;
+    margin-top: 2%;
+    max-height: 100%;
+    width: 76%;
+    max-width: 76%;
+    overflow: auto;
+}
+
+.ui-row {
+    position: relative;
+    /* float: left; */
+    margin: auto;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-evenly;
+    overflow: auto;
+    &.disp {
+        justify-self: center;
+        justify-content: center;
+        align-items: flex-start;
+        padding-left: 15%;
+        padding-right: 2%;
+    }
+}
+
+.display-list {
+    margin: auto;
+    overflow: hidden;
+    align-content: space-evenly;
+    width: 70%;
+}
+
+.icon {
+    display: inline-block;
+    align-items: space-between;
+    &.display {
+        margin-right: 2%;
+        margin-left: 2%;
+    }
+    &.preset {
+        // margin-left: 2%;
+        padding: 15px;
+    }
+}
+
+mat-select {
+    padding: 5px;
+    .a {
+        width: 22%;
+    }
+    .template {
+        width: 22%;
+        padding-bottom: 2px;
+    }
+}
+
+mat-checkbox {
+    padding-bottom: 10px;
+}

@@ -1,0 +1,102 @@
+.device-container {
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 20px;
+    margin: auto;
+    margin-top: 2%;
+    max-height: 100%;
+    width: 76%;
+    max-width: 76%;
+}
+
+.device-row {
+    position: relative;
+    float: left;
+    margin: auto;
+    margin-top: 1%;
+    /* margin-bottom: 10px; */
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.device-row-b {
+    position: relative;
+    float: left;
+    margin: auto;
+    margin-top: 3%;
+    width: 100%;
+}
+
+.device-box {
+    margin: auto;
+    margin-top: 5px;
+    width: 18%;
+}
+
+.device-box-large {
+    margin: auto;
+    margin-top: 5px;
+    width: 30%;
+}
+
+mat-select {
+    padding: 5px;
+}
+
+mat-form-field.a {
+    /* margin-left: 8%; */
+    width: 22%;
+}
+
+mat-form-field.b {
+    /* margin-left: 8%; */
+    width: 10%;
+}
+
+mat-form-field.c {
+    /* margin-left: auto; */
+    width: 16%;
+}
+
+.device-button.submit {
+    float: right;
+    color: #ffffff !important;
+    text-transform: uppercase;
+    background: #1d9c43;
+    /* border: 1px solid #494949 !important; */
+    border-radius: 6px;
+    margin-bottom: 20px;
+    margin-right: 5%;
+    cursor: pointer;
+    width: wrap;
+}
+
+.device-button.submit:hover {
+    color: #ffffff !important;
+    background: #f6513b;
+    border-color: #f6513b !important;
+    transition: all 0.2s ease 0s;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
+}
+
+.port-container {
+    position: relative;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: auto;
+    width: 100%;
+}
+
+.port-select {
+    /* width: 18%; */
+    margin-left: 5%;
+}
+
+.device-chip-list {
+    /* margin-left: 8%; */
+    width: 22%;
+}
