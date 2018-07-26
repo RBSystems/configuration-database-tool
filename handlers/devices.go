@@ -15,17 +15,21 @@ import (
 // GetDevicesByRoom returns all of the devices in a room.
 func GetDevicesByRoom(context echo.Context) error {
 	log.L.Debug("Attemping to get devices by room")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
+
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
 	}
 
-	log.L.Debug("User seems ok")
 	roomID := context.Param("room")
 
 	log.L.Debugf("Getting devices in %s", roomID)
@@ -42,19 +46,23 @@ func GetDevicesByRoom(context echo.Context) error {
 // AddDevice adds a device to the database.
 func AddDevice(context echo.Context) error {
 	log.L.Debug("Attemping to add a device")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
+
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
 	}
 
-	log.L.Debug("User seems ok")
 	var device structs.Device
-	err = context.Bind(&device)
+	err := context.Bind(&device)
 	if err != nil {
 		log.L.Info(err)
 		return context.JSON(http.StatusBadRequest, err.Error())
@@ -75,20 +83,23 @@ func AddDevice(context echo.Context) error {
 // AddDevicesInBulk adds a list of devices to the database and returns a BulkUpdateResponse.
 func AddDevicesInBulk(context echo.Context) error {
 	log.L.Debug("Attemping to add a bulk amount of devices")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	var devices []structs.Device
-	err = context.Bind(&devices)
+	err := context.Bind(&devices)
 	if err != nil {
 		log.L.Error(err)
 		return context.JSON(http.StatusBadRequest, fmt.Sprintf("Invalid body. Failed to bind to a device list : %s", err.Error()))
@@ -105,21 +116,25 @@ func AddDevicesInBulk(context echo.Context) error {
 // UpdateDevice updates a device's information in the database.
 func UpdateDevice(context echo.Context) error {
 	log.L.Debug("Attemping to update a device")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
+
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
 	}
 
-	log.L.Debug("User seems ok")
 	id := context.Param("device")
 	var device structs.Device
 
-	err = context.Bind(&device)
+	err := context.Bind(&device)
 	if err != nil {
 		log.L.Error(err)
 		return context.JSON(http.StatusBadRequest, fmt.Sprintf("Invalid body. Failed to bind to a device : %s", err.Error()))
@@ -144,17 +159,20 @@ func UpdateDevice(context echo.Context) error {
 // GetDeviceTypes returns a list of all device types in the database.
 func GetDeviceTypes(context echo.Context) error {
 	log.L.Debug("Attempting to get all device types")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	deviceTypes, err := db.GetDB().GetAllDeviceTypes()
 	if err != nil {
@@ -169,17 +187,20 @@ func GetDeviceTypes(context echo.Context) error {
 // GetDeviceRoles returns a list of all device roles in the database.
 func GetDeviceRoles(context echo.Context) error {
 	log.L.Debug("Attempting to get all device roles")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	deviceRoles, err := db.GetDB().GetDeviceRoles()
 	if err != nil {

@@ -17,9 +17,14 @@ func main() {
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
 
+	handlers.Dev = false
+
 	// Use the `secure` routing group to require authentication
-	secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
 	// secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
+
+	// if !handlers.Dev {
+	secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
+	// }
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	router.GET("/status", handlers.Status)
@@ -48,6 +53,7 @@ func main() {
 
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)
+	// router.PUT("/dev/:state", handlers.SetDev)
 
 	secure.Static("/", "db-tool-dist")
 	secure.Static("/home", "db-tool-dist")

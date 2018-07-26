@@ -14,17 +14,20 @@ import (
 //GetRoomsByBuilding returns all the rooms in a room
 func GetRoomsByBuilding(context echo.Context) error {
 	log.L.Debug("Attemping to get rooms by room")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	building := context.Param("building")
 	log.L.Debugf("Getting rooms in %s", building)
@@ -42,17 +45,20 @@ func GetRoomsByBuilding(context echo.Context) error {
 // GetRoomByID returns all info about a room
 func GetRoomByID(context echo.Context) error {
 	log.L.Debug("Attempting to get a room")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	id := context.Param("room")
 
@@ -71,17 +77,20 @@ func GetRoomByID(context echo.Context) error {
 // GetAllRooms returns all rooms from the database.
 func GetAllRooms(context echo.Context) error {
 	log.L.Debug("Attempting to get all buildings")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	rooms, err := db.GetDB().GetAllRooms()
 	if err != nil {
@@ -96,20 +105,23 @@ func GetAllRooms(context echo.Context) error {
 // AddRoom adds a room to the database
 func AddRoom(context echo.Context) error {
 	log.L.Debug("Attempting to add a room")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	var room structs.Room
-	err = context.Bind(&room)
+	err := context.Bind(&room)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -132,17 +144,20 @@ func AddRoom(context echo.Context) error {
 // UpdateRoom updates a room in the database.
 func UpdateRoom(context echo.Context) error {
 	log.L.Debug("Attempting to update a room")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	id := context.Param("room")
 	var room structs.Room
@@ -153,7 +168,7 @@ func UpdateRoom(context echo.Context) error {
 
 	log.L.Debugf("Updating the room %s", id)
 
-	room, err = db.GetDB().UpdateRoom(id, room)
+	room, err := db.GetDB().UpdateRoom(id, room)
 	if err != nil {
 		log.L.Errorf("Failed to update the room %s : %v", id, err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
@@ -165,17 +180,20 @@ func UpdateRoom(context echo.Context) error {
 // GetRoomConfigurations returns a list of all the RoomConfigurations from the database.
 func GetRoomConfigurations(context echo.Context) error {
 	log.L.Debug("Attempting to get all room configurations")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	configurations, err := db.GetDB().GetAllRoomConfigurations()
 	if err != nil {
@@ -190,17 +208,20 @@ func GetRoomConfigurations(context echo.Context) error {
 // GetRoomDesignations returns a list of all the RoomDesignations from the database.
 func GetRoomDesignations(context echo.Context) error {
 	log.L.Debug("Attempting to get all room designations")
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	if err != nil {
-		log.L.Errorf("User had an error : %v", err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Errorf("User no good : %v", err.Error())
-		return context.JSON(http.StatusForbidden, alert)
-	}
 
-	log.L.Debug("User seems ok")
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("User had an error : %v", err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Errorf("User no good : %v", err.Error())
+			return context.JSON(http.StatusForbidden, alert)
+		}
+
+		log.L.Debug("User seems ok")
+	}
 
 	designations, err := db.GetDB().GetRoomDesignations()
 	if err != nil {

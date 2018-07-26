@@ -72,6 +72,7 @@ export class WalkthroughComponent implements OnInit {
     this.roomExists = false;
     this.step1Complete = false;
     let roomID : string = this.locationFormControl.value;
+    roomID = roomID.toUpperCase();
     let buildingID = roomID.split("-", 2)[0];
 
     this.buildingList.forEach(b => {
@@ -102,7 +103,7 @@ export class WalkthroughComponent implements OnInit {
 
     if(this.buildingExists && this.roomExists) {
       
-      let header: string = this.locationFormControl.value + " already exists.";
+      let header: string = roomID + " already exists.";
       let information: string = "Please add or modify the information you need for that room in the individual building, room, and device pages."
       this.openDialog(MessageType.Info, header, information)
       return;
