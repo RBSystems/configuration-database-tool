@@ -26,16 +26,16 @@ func GetRoomsByBuilding(context echo.Context) error {
 
 	log.L.Debug("User seems ok")
 
-	room := context.Param("room")
-	log.L.Debugf("Getting rooms in %s", room)
+	building := context.Param("building")
+	log.L.Debugf("Getting rooms in %s", building)
 
-	rooms, err := db.GetDB().GetRoomsByBuilding(room)
+	rooms, err := db.GetDB().GetRoomsByBuilding(building)
 	if err != nil {
 		log.L.Errorf("[error] An error occurred: %v", err)
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	log.L.Debugf("Successfully got all rooms in %s", room)
+	log.L.Debugf("Successfully got all rooms in %s", building)
 	return context.JSON(http.StatusOK, rooms)
 }
 
