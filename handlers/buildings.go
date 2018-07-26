@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/structs"
@@ -15,15 +16,17 @@ var alert = "This action is not allowed."
 func GetBuildings(context echo.Context) error {
 	log.L.Debug("[bldg] Starting GetBuildings...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[bldg] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[bldg] User %s is not allowed to get all buildings.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[bldg] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[bldg] User %s is not allowed to get all buildings.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	log.L.Debug("[bldg] Attempting to get all buildings")
 
@@ -41,15 +44,17 @@ func GetBuildings(context echo.Context) error {
 func AddBuilding(context echo.Context) error {
 	log.L.Debug("[bldg] Starting AddBuilding...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	// if err != nil {
-	// 	log.L.Errorf("[bldg] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[bldg] User %s is not allowed to add a building.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("[bldg] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[bldg] User %s is not allowed to add a building.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	id := context.Param("building")
 
@@ -79,15 +84,17 @@ func AddBuilding(context echo.Context) error {
 func GetBuildingByID(context echo.Context) error {
 	log.L.Debug("[bldg] Starting GetBuildingByID...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[bldg] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[bldg] User %s is not allowed to get a building by ID.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[bldg] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[bldg] User %s is not allowed to get a building by ID.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	id := context.Param("building")
 
@@ -107,15 +114,17 @@ func GetBuildingByID(context echo.Context) error {
 func UpdateBuilding(context echo.Context) error {
 	log.L.Debug("[bldg] Starting UpdateBuilding...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	// if err != nil {
-	// 	log.L.Errorf("[bldg] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[bldg] User %s is not allowed to update a building.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("[bldg] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[bldg] User %s is not allowed to update a building.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	id := context.Param("building")
 

@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 
@@ -14,15 +15,17 @@ import (
 func GetDevicesByRoom(context echo.Context) error {
 	log.L.Debug("[device] Starting GetDevicesByRoom...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[device] User %s is not allowed to get all devices in a room.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[device] User %s is not allowed to get all devices in a room.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	roomID := context.Param("room")
 
@@ -42,15 +45,17 @@ func GetDevicesByRoom(context echo.Context) error {
 func AddDevice(context echo.Context) error {
 	log.L.Debug("[device] Starting AddDevice...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	// if err != nil {
-	// 	log.L.Errorf("[device] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[device] User %s is not allowed to add a device.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("[device] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[device] User %s is not allowed to add a device.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	var device structs.Device
 	err := context.Bind(&device)
@@ -78,15 +83,17 @@ func AddDevice(context echo.Context) error {
 func AddDevicesInBulk(context echo.Context) error {
 	log.L.Debug("[device] Starting AddDevicesInBulk...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	// if err != nil {
-	// 	log.L.Errorf("[device] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[device] User %s is not allowed to add devices in bulk.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("[device] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[device] User %s is not allowed to add devices in bulk.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	var devices []structs.Device
 	err := context.Bind(&devices)
@@ -114,15 +121,17 @@ func AddDevicesInBulk(context echo.Context) error {
 func UpdateDevice(context echo.Context) error {
 	log.L.Debug("[device] Starting UpdateDevice...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-	// if err != nil {
-	// 	log.L.Errorf("[device] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[device] User %s is not allowed to update a device.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("[device] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[device] User %s is not allowed to update a device.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	id := context.Param("device")
 	log.L.Debugf("[device] Attempting to update the device %s", id)
@@ -155,15 +164,17 @@ func UpdateDevice(context echo.Context) error {
 func GetDeviceTypes(context echo.Context) error {
 	log.L.Debug("[device] Starting GetDeviceTypes...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[device] User %s is not allowed to get all device types.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[device] User %s is not allowed to get all device types.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	log.L.Debug("[device] Attempting to get all device types")
 
@@ -181,15 +192,17 @@ func GetDeviceTypes(context echo.Context) error {
 func GetDeviceRoles(context echo.Context) error {
 	log.L.Debug("[device] Starting GetDeviceRoles...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[device] User %s is not allowed to get all device roles.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[device] User %s is not allowed to get all device roles.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	log.L.Debug("[device] Attempting to get all device roles")
 

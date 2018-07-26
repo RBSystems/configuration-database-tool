@@ -48,3 +48,22 @@ type ServerStatus struct {
 	UIConfigsUpdated int    `json:"uiconfigs_updated"`
 	Message          string `json:"message"`
 }
+
+// Dev tracks if the server is being used for development or not at the moment.
+var Dev bool
+
+// SetDev allows the server to be set into a "development" state, or takes it out of said state.
+func SetDev(context echo.Context) error {
+	state := context.Param("state")
+
+	var msg string
+	if state == "true" {
+		Dev = true
+		msg = "Development state = true"
+	} else {
+		Dev = false
+		msg = "Development state = false"
+	}
+
+	return context.JSON(http.StatusOK, msg)
+}

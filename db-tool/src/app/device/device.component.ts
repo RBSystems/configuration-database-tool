@@ -10,7 +10,7 @@ import { Strings } from '../strings.service';
 @Component({
   selector: 'app-device',
   templateUrl: './device.component.html',
-  styleUrls: ['./device.component.css']
+  styleUrls: ['./device.component.scss']
 })
 export class DeviceComponent implements OnInit {
   @Input() InStepper: boolean = false;
@@ -348,30 +348,30 @@ export class DeviceComponent implements OnInit {
     let index = IDEnd.search(NumRegex)
     let devNumber: string = IDEnd.substring(index);
 
-    this.addDevice.ports.forEach(port => {
-      if(port.source_device == null) {
-        console.log("the most hello")
-        this.addSourceDevices.forEach(source => {
-          console.log(port._id)
-          console.log(this.S.DefaultPorts[this.addDevice.type._id][port._id].source)
-          if(source.name.includes(devNumber) && source.name.includes(this.S.DefaultPorts[this.addDevice.type._id][port._id].source)) {
-            port.source_device = source._id
-          }
-        });
-      }
+    // this.addDevice.ports.forEach(port => {
+    //   if(port.source_device == null) {
+    //     console.log("the most hello")
+    //     this.addSourceDevices.forEach(source => {
+    //       console.log(port._id)
+    //       console.log(this.S.DefaultPorts[this.addDevice.type._id][port._id].source)
+    //       if(source.name.includes(devNumber) && source.name.includes(this.S.DefaultPorts[this.addDevice.type._id][port._id].source)) {
+    //         port.source_device = source._id
+    //       }
+    //     });
+    //   }
 
-      if(port.destination_device == null && this.addType.output) {
-        port.destination_device = this.addDevice._id
-      }
+    //   if(port.destination_device == null && this.addType.output) {
+    //     port.destination_device = this.addDevice._id
+    //   }
       
-      if(port.destination_device == null && this.switcherTypes.includes(this.addDevice.type._id)) {
-        this.addDestinationDevices.forEach(dest => {
-          if(dest.name.includes(devNumber) && dest.name.includes(this.S.DefaultPorts[this.addDevice.type._id][port._id].destination)) {
-            port.destination_device = dest._id
-          }
-        });
-      }
-    });
+    //   if(port.destination_device == null && this.switcherTypes.includes(this.addDevice.type._id)) {
+    //     this.addDestinationDevices.forEach(dest => {
+    //       if(dest.name.includes(devNumber) && dest.name.includes(this.S.DefaultPorts[this.addDevice.type._id][port._id].destination)) {
+    //         port.destination_device = dest._id
+    //       }
+    //     });
+    //   }
+    // });
     // Set Ports for output devices (i.e. displays)
     // if(this.addType.output && this.addDevice.ports != null && this.addDevice.ports.length > 0) {
     //   this.addSourceDevices.forEach(source => {

@@ -2,9 +2,8 @@ package main
 
 import (
 	"net/http"
-	"time"
 
-	"github.com/byuoitav/authmiddleware"
+	auth "github.com/byuoitav/common/auth/middleware"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/handlers"
 	"github.com/jessemillar/health"
@@ -18,9 +17,14 @@ func main() {
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
 
+	handlers.Dev = false
+
 	// Use the `secure` routing group to require authentication
-	// secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
-	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
+	// secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
+
+	// if !handlers.Dev {
+	secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
+	// }
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 	router.GET("/status", handlers.Status)
@@ -47,22 +51,21 @@ func main() {
 	secure.PUT("/rooms/:room/update", handlers.UpdateRoom)
 	secure.PUT("/devices/:device/update", handlers.UpdateDevice)
 
-	secure.PUT("/log-level/:level", log.SetLogLevel)
-	secure.GET("/log-level", log.GetLogLevel)
+	router.PUT("/log-level/:level", log.SetLogLevel)
+	router.GET("/log-level", log.GetLogLevel)
+	// router.PUT("/dev/:state", handlers.SetDev)
 
-	secure.Static("/", "db-tool/dist")
-	secure.Static("/home", "db-tool/dist")
-	secure.Static("/walkthrough", "db-tool/dist")
-	secure.Static("/building", "db-tool/dist")
-	secure.Static("/room", "db-tool/dist")
-	secure.Static("/device", "db-tool/dist")
-	secure.Static("/uiconfig", "db-tool/dist")
+	secure.Static("/", "db-tool-dist")
+	secure.Static("/home", "db-tool-dist")
+	secure.Static("/walkthrough", "db-tool-dist")
+	secure.Static("/building", "db-tool-dist")
+	secure.Static("/room", "db-tool-dist")
+	secure.Static("/device", "db-tool-dist")
 
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,
 	}
 
-	handlers.Start = time.Now()
 	router.StartServer(&server)
 }

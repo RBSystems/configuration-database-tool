@@ -12,7 +12,7 @@ import { Strings } from '../strings.service';
 @Component({
   selector: 'app-building',
   templateUrl: './building.component.html',
-  styleUrls: ['./building.component.css']
+  styleUrls: ['./building.component.scss']
 })
 export class BuildingComponent implements OnInit {
   @Input() InStepper: boolean = false;

@@ -17,7 +17,7 @@ export class DBError implements ErrorStateMatcher {
 @Component({
   selector: 'app-walkthrough',
   templateUrl: './walkthrough.component.html',
-  styleUrls: ['./walkthrough.component.css']
+  styleUrls: ['./walkthrough.component.scss']
 })
 export class WalkthroughComponent implements OnInit {
   buildingList: Building[];

@@ -10,7 +10,7 @@ import { Strings } from '../strings.service';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
-  styleUrls: ['./room.component.css'],
+  styleUrls: ['./room.component.scss'],
 })
 export class RoomComponent implements OnInit {
   @Input() InStepper: boolean = false;

@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/labstack/echo"
@@ -12,15 +13,17 @@ import (
 func GetAllTemplates(context echo.Context) error {
 	log.L.Debug("[options] Starting GetAllTemplates...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[options] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[options] User %s is not allowed to get all templates.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[options] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[options] User %s is not allowed to get all templates.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	log.L.Debug("[options] Attempting to get all templates")
 
@@ -38,15 +41,17 @@ func GetAllTemplates(context echo.Context) error {
 func GetIcons(context echo.Context) error {
 	log.L.Debug("[options] Starting GetIcons...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[options] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[options] User %s is not allowed to get the icon list.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[options] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[options] User %s is not allowed to get the icon list.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	log.L.Debug("[options] Attempting to get the icon list")
 
@@ -64,15 +69,17 @@ func GetIcons(context echo.Context) error {
 func GetRoomDesignations(context echo.Context) error {
 	log.L.Debug("[options] Starting GetRoomDesignations...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[options] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[options] User %s is not allowed to get all room designations.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[options] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[options] User %s is not allowed to get all room designations.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	log.L.Debug("[options] Attempting to get all room designations")
 

@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/structs"
@@ -13,15 +14,17 @@ import (
 func GetUIConfig(context echo.Context) error {
 	log.L.Debug("[uiconfig] Starting GetUIConfig...")
 
-	// ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-	// if err != nil {
-	// 	log.L.Errorf("[uiconfig] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-	// 	return context.JSON(http.StatusInternalServerError, err.Error())
-	// }
-	// if !ok {
-	// 	log.L.Warnf("[uiconfig] User %s is not allowed to get a UI Config.", context.Request().Context().Value("user").(string))
-	// 	return context.JSON(http.StatusForbidden, alert)
-	// }
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[uiconfig] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[uiconfig] User %s is not allowed to get a UI Config.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
 
 	var config structs.UIConfig
 
