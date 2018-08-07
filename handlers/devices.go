@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
@@ -69,6 +71,11 @@ func AddDevice(context echo.Context) error {
 	device, err = db.GetDB().CreateDevice(device)
 	if err != nil {
 		log.L.Errorf("[device] An error occurred while adding the device %s : %v", device.ID, err.Error())
+
+		if strings.Contains(err.Error(), "already exists") {
+			return context.JSON(http.StatusConflict, fmt.Sprintf("Failed to add the device %s because it already exists.", device.ID))
+		}
+
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
@@ -142,7 +149,7 @@ func UpdateDevice(context echo.Context) error {
 		log.L.Debugf("[device] Failed to bind body to a device : %v", err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
-	if device.ID != id && len(device.ID) > 0 {
+	if len(device.ID) == 0 {
 		log.L.Error("[device] Invalid body. Param ID: %s - Body ID: %s", id, device.ID)
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
@@ -188,9 +195,9 @@ func GetDeviceTypes(context echo.Context) error {
 	return context.JSON(http.StatusOK, deviceTypes)
 }
 
-// GetDeviceRoles returns a list of all device roles in the database.
-func GetDeviceRoles(context echo.Context) error {
-	log.L.Debug("[device] Starting GetDeviceRoles...")
+// GetDevicesByRoomAndRole returns all of the devices in a room of a certain role.
+func GetDevicesByRoomAndRole(context echo.Context) error {
+	log.L.Debug("[device] Starting GetDevicesByRoom...")
 
 	if !Dev {
 		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
@@ -199,19 +206,53 @@ func GetDeviceRoles(context echo.Context) error {
 			return context.JSON(http.StatusInternalServerError, err.Error())
 		}
 		if !ok {
-			log.L.Warnf("[device] User %s is not allowed to get all device roles.", context.Request().Context().Value("user").(string))
+			log.L.Warnf("[device] User %s is not allowed to get all devices in a room.", context.Request().Context().Value("user").(string))
 			return context.JSON(http.StatusForbidden, alert)
 		}
 	}
 
-	log.L.Debug("[device] Attempting to get all device roles")
+	roomID := context.Param("room")
+	role := context.Param("role")
 
-	deviceRoles, err := db.GetDB().GetDeviceRoles()
+	log.L.Debugf("[device] Attempting to get all devices in %s with the role %s", roomID, role)
+
+	devices, err := db.GetDB().GetDevicesByRoomAndRole(roomID, role)
 	if err != nil {
-		log.L.Errorf("[device] An error occurred while getting device roles: %v", err.Error())
+		log.L.Errorf("[device] An error occurred while getting all devices in the room %s with the role %s: %v", roomID, role, err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	log.L.Debug("[device] Successfully got all device roles!")
-	return context.JSON(http.StatusOK, deviceRoles)
+	log.L.Debugf("[device] Successfully got all devices in the room %s with the role %s!", roomID, role)
+	return context.JSON(http.StatusOK, devices)
+}
+
+// GetDevicesByRoleAndType returns all of the devices of a certain role and type.
+func GetDevicesByRoleAndType(context echo.Context) error {
+	log.L.Debug("[device] Starting GetDevicesByRoom...")
+
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[device] User %s is not allowed to get all devices in a room.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
+
+	typeID := context.Param("type")
+	role := context.Param("role")
+
+	log.L.Debugf("[device] Attempting to get all devices with the role %s and the type %s", role, typeID)
+
+	devices, err := db.GetDB().GetDevicesByRoleAndType(role, typeID)
+	if err != nil {
+		log.L.Errorf("[device] An error occurred while getting all devices with the role %s and the type %s: %v", role, typeID, err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	log.L.Debugf("[device] Successfully got all devices with the role %s and the type %s!", role, typeID)
+	return context.JSON(http.StatusOK, devices)
 }

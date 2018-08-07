@@ -2,9 +2,9 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Building, Room, RoomConfiguration } from '../objects';
 import { ApiService } from '../api.service'; 
 import { MatDialog } from '@angular/material';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipInputEvent, TooltipPosition } from '@angular/material';
+import { MatChipInputEvent } from '@angular/material';
 import { Strings } from '../strings.service';
 
 @Component({
@@ -23,6 +23,8 @@ export class RoomComponent implements OnInit {
   @Input() editBuilding: Building;
   @Input() addRoom: Room;
   @Input() editRoom: Room;
+
+  IDToUpdate: string;
 
   configurationList: RoomConfiguration[] = [];
   configNameList: string[] = [];
@@ -131,29 +133,40 @@ export class RoomComponent implements OnInit {
 
   CreateRoom() {
     console.log(this.addRoom);
+    let res: Result[] = [];
     this.api.AddRoom(this.addRoom).subscribe(
       success => {
-        this.openDialog(false, "Successfully added the room!");
+        res.push({message: this.addRoom._id + " was successfully added.", success: true });
+        this.openDialog(MessageType.Success, "Room Added", null, res);
       },
       error => {
-        this.openDialog(true, error);
+        let errorMessage = this.S.ErrorCodeMessages[error.status]
+
+        res.push({message: error.json(), success: false, error: error});
+        this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
 
   UpdateRoom() {
     console.log(this.editRoom);
-    this.api.UpdateRoom(this.editRoom).subscribe(
+    let res: Result[] = [];
+    this.api.UpdateRoom(this.IDToUpdate, this.editRoom).subscribe(
       success => {
-        this.openDialog(false, "Successfully updated the room!");
+        res.push({message: this.editRoom._id + " was successfully updated.", success: true });
+        this.openDialog(MessageType.Success, "Room Updated", null, res);
+        this.IDToUpdate = this.editRoom._id;
       },
       error => {
-        this.openDialog(true, error);
+        let errorMessage = this.S.ErrorCodeMessages[error.status]
+
+        res.push({message: error.json(), success: false, error: error});
+        this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
 
-  openDialog(status: boolean, message: string) {
+  openDialog(status: MessageType, subheader: string, message?: string, results?: Result[]) {
     let dialogRef = this.dialog.open(ModalComponent, {
-      data: {error: status, message: message}
+      data: {type: status, subheader: subheader, message: message, results: results}
     });
 
     dialogRef.afterClosed().subscribe(result => {

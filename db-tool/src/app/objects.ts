@@ -51,8 +51,13 @@ export class Device {
 
 export class DeviceType {
     _id?: string;
+    description?: string;
+    display_name?: string;
     input?: boolean;
     output?: boolean;
+    source?: boolean;
+    destination?: boolean;
+    roles?: Role[];
     ports?: Port[];
     tags?: string[];
 }
@@ -117,18 +122,6 @@ export class AudioConfiguration   {
 export class IOConfiguration   {
 	name?: string 
 	icon?: string 
-}
-
-export class Commands {
-    powerOn?: ConfigCommand[];
-    powerOff?: ConfigCommand[];
-} 
-
-export class ConfigCommand {
-	method?: string
-	port?:   number
-	endpoint?: string
-	body?: Map<string, any>
 }
 
 export class BulkUpdateResponse {

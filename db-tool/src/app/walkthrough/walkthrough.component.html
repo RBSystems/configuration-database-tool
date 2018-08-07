@@ -2,7 +2,7 @@
     <mat-horizontal-stepper [linear]="true" #setupStepper>
         <mat-step [completed]="locationFormControl.valid">
             <form [formGroup]="locationFormGroup">
-                <ng-template matStepLabel>Location information</ng-template>
+                <ng-template matStepLabel>Choose a location</ng-template>
                 <mat-form-field style="margin: auto; display: block; width: 15%;">
                     <input matInput type="text" placeholder="BLDG-ROOM" [formControl]="locationFormControl" [errorStateMatcher]="locationMatcher">
                     <mat-error *ngIf="locationFormControl.hasError('pattern') && !locationFormControl.hasError('required')">
@@ -19,7 +19,7 @@
         </mat-step>
         <mat-step>
             <form>
-                <ng-template matStepLabel>Verify location</ng-template>
+                <ng-template matStepLabel>Location information</ng-template>
 
                 <div class="walk-row">
                     <div class="walk-container-half">
@@ -55,7 +55,7 @@
             <mat-accordion>
                 <mat-expansion-panel *ngFor="let device of fullRoomDeviceList; let i = index;" [expanded]="deviceStep === i" (opened)="setStep(i)">
                     <mat-expansion-panel-header>
-                        <mat-panel-title>{{device._id}}</mat-panel-title>
+                        <mat-panel-title style="font-weight: 550">{{device._id}}</mat-panel-title>
                         <mat-panel-description>Type: {{device.type._id}}</mat-panel-description>
                     </mat-expansion-panel-header>
                     <app-device [InStepper]="true" [addDevice]="device" [addBuilding]="locBuilding" [addRoom]="locRoom" [deviceTypeList]="deviceTypeList" [addDeviceList]="fullRoomDeviceList"></app-device>
@@ -74,7 +74,23 @@
             </mat-accordion>
             <div style="margin-top: 2%;">
                 <button mat-raised-button matStepperPrevious (click)="prevStep()">Back</button>
-                <button mat-raised-button (click)="Finish()">Finish</button>
+                <button mat-raised-button matStepperNext (click)="nextStep()">Next</button>
+            </div>
+        </mat-step>
+        <mat-step>
+            <ng-template matStepLabel>UI Configuration</ng-template>
+            <app-uiconfig [InStepper]="true" [building]="locBuilding" [room]="locRoom" [deviceList]="fullRoomDeviceList" [currentTemplate]="currentTemplate"></app-uiconfig>
+            <div style="margin-top: 2%;">
+                <button mat-raised-button matStepperPrevious (click)="prevStep()">Back</button>
+                <button mat-raised-button matStepperNext (click)="nextStep()">Next</button>
+            </div>
+        </mat-step>
+        <mat-step>
+            <ng-template matStepLabel>Verify & Submit</ng-template>
+            <app-summary [InStepper]="true" [building]="locBuilding" [room]="locRoom" [deviceList]="fullRoomDeviceList" [config]="currentTemplate.uiconfig"></app-summary>
+            <div style="margin-top: 2%;">
+                <button mat-raised-button matStepperPrevious (click)="prevStep()">Back</button>
+                <button mat-raised-button matStepperNext class="button finish" (click)="Finish()">Finish</button>
             </div>
         </mat-step>
     </mat-horizontal-stepper>

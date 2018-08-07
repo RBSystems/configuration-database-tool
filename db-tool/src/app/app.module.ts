@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule, MatDialog, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule } from '@angular/material';
+import { MatInputModule, MatDialog, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -20,6 +20,8 @@ import { RoomComponent } from './room/room.component';
 import { DeviceComponent } from './device/device.component';
 import { ModalComponent } from './modal/modal.component';
 import { UIConfigComponent } from './uiconfig/uiconfig.component';
+import { PanelComponent } from './panel/panel.component';
+import { SummaryComponent } from './summary/summary.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,8 @@ import { UIConfigComponent } from './uiconfig/uiconfig.component';
     RoomComponent,
     DeviceComponent,
     UIConfigComponent,
+    PanelComponent,
+    SummaryComponent,
     ModalComponent
   ],
   imports: [
@@ -56,7 +60,10 @@ import { UIConfigComponent } from './uiconfig/uiconfig.component';
     MatToolbarModule,
     MatGridListModule,
     MatTooltipModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSlideToggleModule,
+    MatRadioModule,
+    MatTableModule
   ],
   providers: [
     ApiService,

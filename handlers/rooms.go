@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
@@ -122,17 +124,35 @@ func AddRoom(context echo.Context) error {
 	var room structs.Room
 	err := context.Bind(&room)
 	if err != nil {
-		return context.JSON(http.StatusBadRequest, err.Error())
+		log.L.Errorf("[room] Couldn't bind body to a room for %s : %s", id, err.Error())
+		return context.JSON(http.StatusBadRequest, fmt.Sprintf("Failed to add the room %s because some information may be missing.", id))
 	}
 
 	if id != room.ID {
-		log.L.Error("[room] Invalid body. Param ID: %s - Body ID: %s", id, room.ID)
+		log.L.Errorf("[room] Invalid body. Param ID: %s - Body ID: %s", id, room.ID)
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
 	room, err = db.GetDB().CreateRoom(room)
 	if err != nil {
 		log.L.Errorf("[room] Failed to add the room %s : %v", id, err.Error())
+
+		if strings.Contains(err.Error(), "already exists") {
+			return context.JSON(http.StatusConflict, fmt.Sprintf("Failed to add the room %s because it already exists.", id))
+		}
+
+		if strings.Contains(err.Error(), "_id") {
+			return context.JSON(http.StatusBadRequest, fmt.Sprintf("Failed to add the room %s because it has an invalid ID.", id))
+		}
+
+		if strings.Contains(err.Error(), "name") {
+			return context.JSON(http.StatusBadRequest, fmt.Sprintf("Failed to add the room %s because it is missing a name.", id))
+		}
+
+		if strings.Contains(err.Error(), "designation") {
+			return context.JSON(http.StatusBadRequest, fmt.Sprintf("Failed to add the room %s because it is missing a designation.", id))
+		}
+
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
@@ -165,7 +185,7 @@ func UpdateRoom(context echo.Context) error {
 
 	var room structs.Room
 	context.Bind(&room)
-	if room.ID != id && len(room.ID) > 0 {
+	if len(room.ID) == 0 {
 		log.L.Error("[room] Invalid body. Param ID: %s - Body ID: %s", id, room.ID)
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
@@ -173,6 +193,11 @@ func UpdateRoom(context echo.Context) error {
 	room, err := db.GetDB().UpdateRoom(id, room)
 	if err != nil {
 		log.L.Errorf("[room] Failed to update the room %s : %v", id, err.Error())
+
+		if strings.Contains(err.Error(), "unable to get") {
+			return context.JSON(http.StatusNotFound, fmt.Sprintf("Failed to update the room %s because it does not exist.", id))
+		}
+
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 

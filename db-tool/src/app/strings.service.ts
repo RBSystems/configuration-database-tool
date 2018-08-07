@@ -3,6 +3,7 @@ import { TooltipPosition } from '@angular/material';
 
 @Injectable()
 export class Strings {
+    Fast = 300;
     Slow = 750;
     VerySlow = 1000;
 
@@ -30,7 +31,8 @@ export class Strings {
         "building", 
         "room", 
         "device", 
-        "uiconfig"
+        "uiconfig",
+        "summary"
     ];
 
     LinkTitles = {
@@ -39,7 +41,8 @@ export class Strings {
         "building": "Building", 
         "room": "Room", 
         "device": "Device", 
-        "uiconfig": "UI Config"
+        "uiconfig": "UI Config",
+        "summary": "Summary"
     }
 
     HomeTips = {
@@ -48,7 +51,8 @@ export class Strings {
         "building": "Add/Edit a Building",
         "room": "Add/Edit a Room",
         "device": "Add/Edit a Device",
-        "uiconfig": "Add/Edit a UI Config"
+        "uiconfig": "Add/Edit a UI Config",
+        "summary": "View all the information for a room, its devices, and its ui configuration"
     }
 
     BuildingTips = {
@@ -72,8 +76,12 @@ export class Strings {
         "update": "Update this room in the database"
     }
 
+    DeviceStrings = {
+        "type_roles": "Required roles"
+    }
+
     DeviceTips = {
-        "id": "ex: CTB-410-D1",
+        "id": "READ ONLY! The part after the second hyphen is whatever the device name is.",
         "name": "ex: D1",
         "description": "ex: Sony TV",
         "roles": "What this device does in this room",
@@ -93,21 +101,42 @@ export class Strings {
         "update": "Update this device in the database"
     }
 
+    UIStrings = {
+        "slave?": "Does this panel mirror another one?",
+        "master?": "Which panel should this one mirror?",
+        "no preset": "N/A"
+    }
+
     UITips = {
         "bldg_list": "Choose from the list of buildings",
         "room_list": "Choose from the list of rooms in the building",
-        "create": "Add this UI Config to the database",
-        "update": "Update this UI Config in the database"
+        "submit": "Submit this UI Config to the database",
+        "delete": "Delete this UI Config from the database"
     }
 
     UIPaths = {
-        "/blueberry": "Blueberry (wheel UI)",
-        "/cherry": "Cherry (multi-display, dark UI)" 
+        "/blueberry": {
+            "title": "Blueberry",
+            "description": "(wheel UI)"
+        },
+        "/cherry": {
+            "title": "Cherry",
+            "description": "(multi-display, dark UI)" 
+        }  
+    }
+
+    UISharing = {
+        true: "Sharing enabled",
+        false: "Sharing disabled"
     }
 
     DefaultIcons = {
         "SonyXBR": "tv",
-        "SonyVPL": "videocam"
+        "SonyVPL": "videocam",
+        "Shure Microphone": "mic",
+        "HDMI": "settings_input_hdmi",
+        "VIA": "settings_input_antenna",
+        "PC": "desktop_windows"
     }
 
     Icons = [
@@ -131,27 +160,50 @@ export class Strings {
         "switch_video",
         "ondemand_video",
         "tap_and_play",
-        "share"
+        "share",
+        "mic"
     ]
 
     DefaultPorts = {
         "SonyXBR": {
-                "hdmi!1":  {
-                    "source":"bogus",
-                    "destination": "D"
-                },
-                "hdmi!2":  {
-                    "source":"HDMI",
-                    "destination": "D"
-                },
-                "hdmi!3":  {
-                    "source":"VIA",
-                    "destination": "D"
-                },
-                "hdmi!4":  {
-                    "source":"PC",
-                    "destination": "D"
-                }
+            "hdmi!1":  {
+                "source":"bogus",
+                "destination": "D"
+            },
+            "hdmi!2":  {
+                "source":"HDMI",
+                "destination": "D"
+            },
+            "hdmi!3":  {
+                "source":"VIA",
+                "destination": "D"
+            },
+            "hdmi!4":  {
+                "source":"PC",
+                "destination": "D"
+            }
+        },
+        "ADCP Sony VPL": {
+            "hdmi1": {
+                "source":"HDMI",
+                "destination":"D"
+            },
+            "hdbaset1": {
+                "source":"VIA",
+                "destination":"D"
+            },
+            "dvi1": {
+                "source":"PC",
+                "destination":"D"
             }
         }
+    }
+
+    ErrorCodeMessages = {
+        500: "Something is wrong internally...",
+        409: "Item Already Exists",
+        404: "Item Does Not Exist",
+        403: "Action Not Allowed",
+        400: "Incorrect Information Sent",
+    }
 }

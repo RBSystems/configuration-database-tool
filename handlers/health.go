@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/log"
 	"github.com/labstack/echo"
 )
@@ -66,4 +67,19 @@ func SetDev(context echo.Context) error {
 	}
 
 	return context.JSON(http.StatusOK, msg)
+}
+
+// HasAdminRights verifies whether or not the user has administrative rights.
+func HasAdminRights(context echo.Context) error {
+	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "admin")
+	if err != nil {
+		log.L.Errorf("[health] Failed to verify admin role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if !ok {
+		log.L.Warnf("[health] User %s does not have admin rights.", context.Request().Context().Value("user").(string))
+		return context.JSON(http.StatusForbidden, alert)
+	}
+
+	return context.JSON(http.StatusOK, ok)
 }

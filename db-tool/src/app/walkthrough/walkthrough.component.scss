@@ -54,9 +54,9 @@
     background-color: #f2f2f2;
     padding: 20px;
     margin: auto;
-    width: 100%;
+    width: 99%;
     overflow: auto;
-    max-width: 2000px;
+    max-width: 99%;
     min-height: 100%;
     display: flex;
     justify-content: center;
@@ -139,4 +139,14 @@ mat-horizontal-stepper {
     margin-left: 2%;
     width: 100px;
     padding-bottom: 2px;
+}
+
+.button {
+    &.finish {
+        background: $accent;
+        &:hover {
+            background: #f6b93b;
+            transition: all 0.2s ease 0s;
+        }
+    }
 }

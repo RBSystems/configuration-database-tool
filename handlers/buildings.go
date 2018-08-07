@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
@@ -70,6 +72,11 @@ func AddBuilding(context echo.Context) error {
 	building, err := db.GetDB().CreateBuilding(building)
 	if err != nil {
 		log.L.Errorf("[bldg] Failed to add the building %s : %v", id, err.Error())
+
+		if strings.Contains(err.Error(), "already exists") {
+			return context.JSON(http.StatusConflict, fmt.Sprintf("Failed to add the building %s because it already exists.", id))
+		}
+
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
@@ -132,7 +139,7 @@ func UpdateBuilding(context echo.Context) error {
 
 	var building structs.Building
 	context.Bind(&building)
-	if building.ID != id && len(building.ID) > 0 {
+	if len(building.ID) == 0 {
 		log.L.Error("[bldg] Invalid body. Param ID: %s - Body ID: %s", id, building.ID)
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}

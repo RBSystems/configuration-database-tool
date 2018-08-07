@@ -3,7 +3,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { FormGroupDirective, FormControl, NgForm, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { MatStepper, MatDialog } from '@angular/material';
 import { ApiService } from '../api.service';
-import { Building, Room, Template, Device, DeviceType, BulkUpdateResponse } from '../objects';
+import { Building, Room, Template, Device, DeviceType, BulkUpdateResponse, UIConfig } from '../objects';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 
 
@@ -25,10 +25,14 @@ export class WalkthroughComponent implements OnInit {
   allRoomList: Room[];
   buildingExists: boolean;
   roomExists: boolean;
+  configExists: boolean = false;
   step1Complete: boolean;
   locBuilding: Building;
   locRoom: Room;
   theType: DeviceType;
+
+  BuildingIDToUpdate: string;
+  RoomIDToUpdate: string;
 
   templateList: Template[];
   currentTemplate: Template;
@@ -78,6 +82,7 @@ export class WalkthroughComponent implements OnInit {
       if(b._id == buildingID) {
         this.buildingExists = true;
         this.locBuilding = b;
+        this.BuildingIDToUpdate = this.locBuilding._id;
       }
     });
 
@@ -91,6 +96,7 @@ export class WalkthroughComponent implements OnInit {
       if(r._id == roomID) {
         this.roomExists = true;
         this.locRoom = r;
+        this.RoomIDToUpdate = this.locRoom._id;
       }
     });
 
@@ -139,6 +145,7 @@ export class WalkthroughComponent implements OnInit {
       this.locRoom = val;
       if(this.locRoom._id == roomID) {
         this.roomExists = true;
+        this.RoomIDToUpdate = this.locRoom._id;
       }
     });
   }
@@ -159,16 +166,13 @@ export class WalkthroughComponent implements OnInit {
   }
 
   UpdateDeviceListSize() {
-    // if(this.deviceListSize == null || this.deviceListSize) {
     this.deviceListSize = this.currentTemplate.devices.length;
-    // }
   }
 
   UpdateAccordion(templateChange: boolean) {
     if(this.deviceListSize == null || templateChange) {
       this.deviceListSize = this.currentTemplate.devices.length;
     }
-    // console.log(this.currentTemplate.devices)
     if(this.fullRoomDeviceList == null || this.fullRoomDeviceList.length == 0 || templateChange) {
       this.fullRoomDeviceList = [];
       this.setStep(0);
@@ -226,20 +230,16 @@ export class WalkthroughComponent implements OnInit {
   }
 
   Check() {
-    // console.log(this.templateList[0].devices[0])
-    // console.log(this.locationFormControl.value)
-    // console.log(this.locBuilding)
-    // console.log(this.locRoom)
-    // console.log(this.fullRoomDeviceList)
+    console.log(this.locBuilding)
+    console.log(this.locRoom)
+    console.log(this.currentTemplate)
+    console.log(this.fullRoomDeviceList)
   }
 
   Check2(d: Device) {
-    // console.log(d);
   }
 
   Finish() {
-    // console.log(this.fullRoomDeviceList)
-    // this.api.SubmitNewData(this.locBuilding, this.buildingExists, this.locRoom, this.fullRoomDeviceList, this.api.ShowResults);
     let results: Result[] = [];
     
     this.SubmitBuilding(results);
@@ -247,25 +247,23 @@ export class WalkthroughComponent implements OnInit {
 
   SubmitBuilding(results: Result[]) {
     if(!this.buildingExists) {
-      // console.log("1A")
       this.api.AddBuilding(this.locBuilding).subscribe(
         success => {
           let message = this.locBuilding._id + " was successfully added.";
           let res: Result = {message: message, success: true}
           results.push(res);
           this.buildingExists = true;
+          this.BuildingIDToUpdate = this.locBuilding._id;
           this.SubmitRoom(results);
         },
         error => {
-          let message = "Failed to add " + this.locBuilding._id;
-          let res: Result = {message: message, success: false, error: error}
+          let res: Result = {message: error.json(), success: false, error: error}
           results.push(res);
           this.SubmitRoom(results);
         });
     }
     else {
-      // console.log("1B")
-      this.api.UpdateBuilding(this.locBuilding).subscribe(
+      this.api.UpdateBuilding(this.BuildingIDToUpdate, this.locBuilding).subscribe(
         success => {
           let message = this.locBuilding._id + " was successfully updated.";
           let res: Result = {message: message, success: true}
@@ -273,8 +271,7 @@ export class WalkthroughComponent implements OnInit {
           this.SubmitRoom(results);
         },
         error => {
-          let message = "Failed to update " + this.locBuilding._id;
-          let res: Result = {message: message, success: false, error: error}
+          let res: Result = {message: error.json(), success: false, error: error}
           results.push(res);
           this.SubmitRoom(results);
         });
@@ -283,34 +280,31 @@ export class WalkthroughComponent implements OnInit {
 
   SubmitRoom(results: Result[]) {
     if(!this.roomExists) {
-      // console.log("2A")
       this.api.AddRoom(this.locRoom).subscribe(
         success => {
           let message = this.locRoom._id + " was successfully added.";
           let res: Result = {message: message, success: true}
           results.push(res);
           this.roomExists = true;
+          this.RoomIDToUpdate = this.locRoom._id;
           this.SubmitDevices(results);
         },
         error => {
-          let message = "Failed to add " + this.locRoom._id;
-          let res: Result = {message: message, success: false, error: error}
+          let res: Result = {message: error.json(), success: false, error: error}
           results.push(res);
           this.SubmitDevices(results);
         });
     }
     else {
-      // console.log("2B")
-      this.api.UpdateRoom(this.locRoom).subscribe(
+      this.api.UpdateRoom(this.RoomIDToUpdate, this.locRoom).subscribe(
         success => {
           let message = this.locRoom._id + " was successfully updated.";
           let res: Result = {message: message, success: true}
           results.push(res);
           this.SubmitDevices(results);
         },
-        error => {
-          let message = "Failed to update " + this.locRoom._id;
-          let res: Result = {message: message, success: false, error: error}
+        error => {;
+          let res: Result = {message: error.json(), success: false, error: error}
           results.push(res);
           this.SubmitDevices(results);
         });
@@ -318,10 +312,8 @@ export class WalkthroughComponent implements OnInit {
   }
 
   SubmitDevices(results: Result[]) {
-    // console.log("3A")
     this.api.CreateBulkDevices(this.fullRoomDeviceList).subscribe(
       success => {
-        // console.log("3B")
         let responses: BulkUpdateResponse[] = success;
         responses.forEach(resp => {
           let res: Result;
@@ -336,39 +328,51 @@ export class WalkthroughComponent implements OnInit {
           }
           results.push(res);
         });
-        this.ShowResults(results);
+        this.SubmitUIConfig(results);
       },
       error => {
-        // console.log("3C")
         let m: string = "Failed to add the devices in bulk.";
         let res: Result = {message: m, success: false, error: error};
         results.push(res);
-        this.ShowResults(results);
+        this.SubmitUIConfig(results);
       });
-    // for(let i = 0; i < this.fullRoomDeviceList.length; i++) {
-    //   let device = this.fullRoomDeviceList[i];
-    //   this.api.AddDevice(device).subscribe(
-    //   success => {
-    //     let message = device._id + " was successfully added.";
-    //     let res: Result = {message: message, success: true}
-    //     results.push(res);
-    //     if((i+1) == this.fullRoomDeviceList.length) {
-    //       this.ShowResults(results);
-    //     }
-    //   },
-    //   error => {
-    //     let message = "Failed to add " + device._id;
-    //     let res: Result = {message: message, success: false, error: error}
-    //     results.push(res);
-    //     if((i+1) == this.fullRoomDeviceList.length) {
-    //       this.ShowResults(results);
-    //     }
-    //   });
-    // }
+  }
+
+  SubmitUIConfig(results: Result[]) {
+    if(!this.configExists) {
+      this.api.AddUIConfig(this.locRoom._id, this.currentTemplate.uiconfig).subscribe(
+        success => {
+          let message = "Successfully added a UI Config for " + this.locRoom._id + "."
+          let res: Result = {message: message, success: true };
+          results.push(res);
+          this.configExists = true;
+          this.ShowResults(results);
+        },
+        error => {
+          let res: Result = {message: error.json(), success: false, error: error}
+          results.push(res);
+          this.ShowResults(results);
+        }
+      )
+    }
+    else {
+      this.api.UpdateUIConfig(this.locRoom._id, this.currentTemplate.uiconfig).subscribe(
+        success => {
+          let message = "Successfully updated a UI Config for " + this.locRoom._id + "."
+          let res: Result = {message: message, success: true };
+          results.push(res);
+          this.ShowResults(results);
+        },
+        error => {
+          let res: Result = {message: error.json(), success: false, error: error}
+          results.push(res);
+          this.ShowResults(results);
+        }
+      )
+    }
   }
 
   ShowResults(results: Result[]) {
-    // console.log("4A")
     let pass: boolean = true;
     let mixed: boolean = false;
     let errorCount: number = 0;
@@ -406,7 +410,6 @@ export class WalkthroughComponent implements OnInit {
       if(this.step1Complete) {
         this.step1Complete = false;
       }
-      // console.log('The dialog was closed');
     });
   }
 

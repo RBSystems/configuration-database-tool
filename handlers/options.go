@@ -92,3 +92,31 @@ func GetRoomDesignations(context echo.Context) error {
 	log.L.Debug("[options] Successfully got all room designations!")
 	return context.JSON(http.StatusOK, designations)
 }
+
+// GetDeviceRoles returns a list of all device roles in the database.
+func GetDeviceRoles(context echo.Context) error {
+	log.L.Debug("[options] Starting GetDeviceRoles...")
+
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+		if err != nil {
+			log.L.Errorf("[options] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[options] User %s is not allowed to get all device roles.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
+
+	log.L.Debug("[options] Attempting to get all device roles")
+
+	deviceRoles, err := db.GetDB().GetDeviceRoles()
+	if err != nil {
+		log.L.Errorf("[options] An error occurred while getting device roles: %v", err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	log.L.Debug("[options] Successfully got all device roles!")
+	return context.JSON(http.StatusOK, deviceRoles)
+}

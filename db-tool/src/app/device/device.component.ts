@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Building, Room, Device, DeviceType, Role } from '../objects';
 import { ApiService } from '../api.service'; 
 import { MatDialog } from '@angular/material';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material';
 import { Strings } from '../strings.service';
@@ -23,6 +23,8 @@ export class DeviceComponent implements OnInit {
   @Input() editDevice: Device;
   @Input() addType: DeviceType;
   editType: DeviceType;
+
+  IDToUpdate: string;
 
   addBuildingList: Building[] = [];
   editBuildingList: Building[] = [];
@@ -179,10 +181,10 @@ export class DeviceComponent implements OnInit {
     if(this.addDeviceList != null) {
       this.addDeviceList.forEach(d => {
         this.deviceTypeList.forEach(t => {
-          if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id) || d.type._id.includes("Gateway"))) {
+          if(d.type._id == t._id && t.source) {
             this.addSourceDevices.push(d);
           }
-          if(d.type._id == t._id && (t.output || this.switcherTypes.includes(t._id))) {
+          if(d.type._id == t._id && t.destination) {
             this.addDestinationDevices.push(d);
           }
         });
@@ -192,10 +194,10 @@ export class DeviceComponent implements OnInit {
     if(this.editDeviceList != null) {
       this.editDeviceList.forEach(d => {
         this.deviceTypeList.forEach(t => {
-          if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id) || d.type._id.includes("Gateway"))) {
+          if(d.type._id == t._id && t.source) {
             this.editSourceDevices.push(d);
           }
-          if(d.type._id == t._id && (t.output || this.switcherTypes.includes(t._id))) {
+          if(d.type._id == t._id && t.destination) {
             this.editDestinationDevices.push(d);
           }
         });
@@ -213,29 +215,31 @@ export class DeviceComponent implements OnInit {
   getDeviceRoleList() {
     this.deviceRoleList = [];
     this.api.GetDeviceRolesList().subscribe(val => {
-      let tempList: string[] = val;
-      tempList.forEach(r => {
-        let role = new Role();
-        role._id = r;
-        role.description = r;
-        role.tags = [];
-        this.deviceRoleList.push(role);
-      });    
+      this.deviceRoleList = val;  
       this.UpdateRoleLists(true);
     });
   }
 
   UpdateID() {
-    if(this.addDevice != null && (this.addDevice._id == null || this.addDevice._id.length == 0)) {
-      let id = this.addRoom._id.concat("-");
-      this.addDevice._id = id;
+    if(this.addDevice != null) {
+      if (this.addRoom != null && this.addRoom._id != null) {
+        let id = this.addRoom._id.concat("-");
+        if(this.addDevice.name != null) {
+          id = id + this.addDevice.name;
+        }
+        this.addDevice._id = id;
+      }
     }
-  }
 
-  UpdateName() {
-    // if(this.addDevice.name == null || this.addDevice.name.length == 0) {
-      this.addDevice.name = this.addDevice._id.split("-")[2];
-    // }
+    if(this.editDevice != null) {
+      if (this.editRoom != null && this.editRoom._id != null) {
+        let id = this.editRoom._id.concat("-");
+        if(this.editDevice.name != null) {
+          id = id + this.editDevice.name;
+        }
+        this.editDevice._id = id;
+      }
+    }
   }
 
   UpdateRoleLists(add: boolean) {
@@ -243,6 +247,7 @@ export class DeviceComponent implements OnInit {
       this.addRoleList = [];
       this.deviceRoleList.forEach(role => {
         let PushToAddList : boolean = true;
+        
         this.addDevice.roles.forEach(dRole => {
           if(role._id == dRole._id) {
             PushToAddList = false;
@@ -257,6 +262,7 @@ export class DeviceComponent implements OnInit {
       this.editRoleList = [];
       this.deviceRoleList.forEach(role => {
         let PushToEditList : boolean = true;
+        
         this.editDevice.roles.forEach(dRole => {
           if(role._id == dRole._id) {
             PushToEditList = false;
@@ -286,11 +292,22 @@ export class DeviceComponent implements OnInit {
 
         this.GetSourceAndDestinationLists();
 
+        this.addDevice.roles = [];
+        this.addDevice.roles = this.addType.roles;
+        this.UpdateRoleLists(true);
         this.UpdateDevicePorts(true);
       }
       if(this.editDevice != null && type._id == this.editDevice.type._id) {
         this.editType = type;
+
+        this.editDevice.ports = [];
         
+        if(type.ports != null) {
+          this.editDevice.ports = type.ports;
+        }
+        
+        this.editDevice.roles = this.editType.roles;
+        this.UpdateRoleLists(false);
         this.UpdateDevicePorts(false);
       }
     });
@@ -348,6 +365,26 @@ export class DeviceComponent implements OnInit {
     let index = IDEnd.search(NumRegex)
     let devNumber: string = IDEnd.substring(index);
 
+    if(this.addDevice.ports != null) {
+      let defaultPorts = this.S.DefaultPorts[this.addDevice.type._id];
+      console.log(defaultPorts);
+
+      this.addDevice.ports.forEach(port => {  
+        let sourceName = defaultPorts[port._id].source;
+        this.addSourceDevices.forEach(source => {
+          if(source.name.includes(sourceName) && source.name.includes(devNumber)) {
+            port.source_device = source._id;
+          }
+        });
+
+        let destName = defaultPorts[port._id].destination;
+        this.addDestinationDevices.forEach(dest => {
+          if(dest.name.includes(destName) && dest.name.includes(devNumber)) {
+            port.destination_device = dest._id;
+          }
+        });
+      });
+    }
     // this.addDevice.ports.forEach(port => {
     //   if(port.source_device == null) {
     //     console.log("the most hello")
@@ -455,28 +492,38 @@ export class DeviceComponent implements OnInit {
   }
 
   CreateDevice() {
+    let res: Result[] = [];
     this.api.AddDevice(this.addDevice).subscribe(
       success => {
-        this.openDialog(false, "Successfully added the device!");
+        res.push({message: this.addDevice._id + " was successfully added.", success: true });
+        this.openDialog(MessageType.Success, "Building Added", null, res);
       },
       error => {
-        this.openDialog(true, error);
+        let errorMessage = this.S.ErrorCodeMessages[error.status]
+
+        res.push({message: error.json(), success: false, error: error});
+        this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
 
   UpdateDevice() {
-    this.api.UpdateDevice(this.editDevice).subscribe(
+    let res: Result[] = [];
+    this.api.UpdateDevice(this.IDToUpdate, this.editDevice).subscribe(
       success => {
-        this.openDialog(false, "Successfully updated the device!");
+        res.push({message: this.editDevice._id + " was successfully updated.", success: true });
+        this.openDialog(MessageType.Success, "Device Updated", null, res);
       },
       error => {
-        this.openDialog(true, error);
+        let errorMessage = this.S.ErrorCodeMessages[error.status]
+
+        res.push({message: error.json(), success: false, error: error});
+        this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
   
-  openDialog(status: boolean, message: string) {
+  openDialog(status: MessageType, subheader: string, message?: string, results?: Result[]) {
     let dialogRef = this.dialog.open(ModalComponent, {
-      data: {error: status, message: message}
+      data: {type: status, subheader: subheader, message: message, results: results}
     });
 
     dialogRef.afterClosed().subscribe(result => {

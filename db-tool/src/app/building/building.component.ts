@@ -23,6 +23,8 @@ export class BuildingComponent implements OnInit {
   @Input() addBuilding: Building;  
   @Input() editBuilding: Building;
   
+  IDToUpdate: string;
+
   buildingMatcher = new DBError();
   AddFormGroup: FormGroup;
   EditFormGroup: FormGroup;
@@ -85,11 +87,9 @@ export class BuildingComponent implements OnInit {
         this.openDialog(MessageType.Success, "Building Added", null, res);
       },
       error => {
-        let errorMessage: string;
-        // if(error.status === 500) {
-        //   errorMessage = "Building already exists.";
-        // }
-        res.push({message: "Failed to add " + this.addBuilding._id, success: false, error: error});
+        let errorMessage = this.S.ErrorCodeMessages[error.status]
+
+        res.push({message: error.json(), success: false, error: error});
         this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
@@ -97,14 +97,17 @@ export class BuildingComponent implements OnInit {
   UpdateBuilding() {
     console.log(this.editBuilding);
     let res: Result[] = [];
-    this.api.UpdateBuilding(this.editBuilding).subscribe(
+    this.api.UpdateBuilding(this.IDToUpdate, this.editBuilding).subscribe(
       success => {
         res.push({message: this.editBuilding._id + " was successfully updated.", success: true });
-        this.openDialog(MessageType.Success, "", null, res);
+        this.openDialog(MessageType.Success, "Building Updated", null, res);
+        this.IDToUpdate = this.editBuilding._id;
       },
       error => {
-        res.push({message: "Failed to update " + this.editBuilding._id, success: false, error: error});
-        this.openDialog(MessageType.Error, "", null, res);
+        let errorMessage = this.S.ErrorCodeMessages[error.status]
+
+        res.push({message: error.json(), success: false, error: error});
+        this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
 
@@ -114,9 +117,6 @@ export class BuildingComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // if(this.locationDone) {
-      //   this.locationDone = false;
-      // }
       console.log('The dialog was closed');
     });
   }
