@@ -39,6 +39,7 @@ func GetDevicesByRoom(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
+
 	log.L.Debugf("[device] Successfully got all devices in the room %s!", roomID)
 	return context.JSON(http.StatusOK, devices)
 }
@@ -144,6 +145,7 @@ func UpdateDevice(context echo.Context) error {
 	log.L.Debugf("[device] Attempting to update the device %s", id)
 
 	var device structs.Device
+
 	err := context.Bind(&device)
 	if err != nil {
 		log.L.Debugf("[device] Failed to bind body to a device : %v", err.Error())
@@ -153,6 +155,8 @@ func UpdateDevice(context echo.Context) error {
 		log.L.Error("[device] Invalid body. Param ID: %s - Body ID: %s", id, device.ID)
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
+
+	log.L.Debugf("Updating %s...", device.ID)
 
 	device, err = db.GetDB().UpdateDevice(id, device)
 	if err != nil {

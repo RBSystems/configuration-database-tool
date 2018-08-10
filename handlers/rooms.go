@@ -34,6 +34,7 @@ func GetRoomsByBuilding(context echo.Context) error {
 	log.L.Debugf("[room] Attempting to get all rooms in %s", buildingID)
 
 	rooms, err := db.GetDB().GetRoomsByBuilding(buildingID)
+  
 	if err != nil {
 		log.L.Errorf("[room] An error occurred while getting all rooms in the room %s: %v", buildingID, err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
@@ -132,6 +133,8 @@ func AddRoom(context echo.Context) error {
 		log.L.Errorf("[room] Invalid body. Param ID: %s - Body ID: %s", id, room.ID)
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
+
+	log.L.Debugf("Adding the room %s", room.ID)
 
 	room, err = db.GetDB().CreateRoom(room)
 	if err != nil {

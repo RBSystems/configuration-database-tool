@@ -30,7 +30,7 @@ export class Strings {
         "walkthrough", 
         "building", 
         "room", 
-        "device", 
+        "device",
         "uiconfig",
         "summary"
     ];

@@ -16,7 +16,7 @@ if [ "$BRANCH" == "production" ]; then
 	aws configure set region us-west-2
 	aws s3 cp $DOCKERRUN_FILE s3://$EB_BUCKET/$DOCKERRUN_FILE # Copy the Dockerrun file to the S3 bucket
 	aws elasticbeanstalk create-application-version --application-name $PROJECT_NAME --version-label $SHA1 --source-bundle S3Bucket=$EB_BUCKET,S3Key=$DOCKERRUN_FILE
-	aws elasticbeanstalk update-environment --environment-name $PROJECT_NAME-env --version-label $SHA1
+	aws elasticbeanstalk update-environment --environment-name $PROJECT_NAME-prd --version-label $SHA1
 
 elif [ "$BRANCH" == "stage" ]; then 
 
