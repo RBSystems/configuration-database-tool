@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import { MatDialog } from '@angular/material';
 
 import 'rxjs/add/operator/map';
-import { Building, Room, RoomConfiguration, Device, DeviceType, Template, BulkUpdateResponse, UIConfig } from './objects';
+import { Building, Room, RoomConfiguration, Device, DeviceType, Template, BulkUpdateResponse, UIConfig, Role } from './objects';
 
 @Injectable()
 export class ApiService {
@@ -29,8 +29,8 @@ export class ApiService {
     return this.http.post(this.url + "/buildings/" + toAdd._id, toAdd, this.options).map(response => response.json());
   }
 
-  UpdateBuilding(toEdit: Building): Observable<any> {
-    return this.http.put(this.url + "/buildings/" + toEdit._id + "/update", toEdit, this.options).map(response => response.json());
+  UpdateBuilding(IDToEdit: string, toEdit: Building): Observable<any> {
+    return this.http.put(this.url + "/buildings/" + IDToEdit + "/update", toEdit, this.options).map(response => response.json());
   }
 
   GetRoomList(building: string): Observable<Room[]> {
@@ -45,8 +45,8 @@ export class ApiService {
     return this.http.post(this.url + "/rooms/" + toAdd._id + "/add", toAdd, this.options).map(response => response.json());
   }
 
-  UpdateRoom(toEdit: Room): Observable<any> {
-    return this.http.put(this.url + "/rooms/" + toEdit._id + "/update", toEdit, this.options).map(response => response.json());
+  UpdateRoom(IDToEdit: string, toEdit: Room): Observable<any> {
+    return this.http.put(this.url + "/rooms/" + IDToEdit + "/update", toEdit, this.options).map(response => response.json());
   }
 
   GetRoomConfigurations(): Observable<RoomConfiguration[]> {
@@ -61,8 +61,8 @@ export class ApiService {
     return this.http.post(this.url + "/devices/" + toAdd._id + "/add", toAdd, this.options).map(response => response.json());
   }
 
-  UpdateDevice(toEdit: Device): Observable<any> {
-    return this.http.put(this.url + "/devices/" + toEdit._id + "/update", toEdit, this.options).map(response => response.json());
+  UpdateDevice(IDToEdit: string, toEdit: Device): Observable<any> {
+    return this.http.put(this.url + "/devices/" + IDToEdit + "/update", toEdit, this.options).map(response => response.json());
   }
 
   GetDeviceList(room: string): Observable<Device[]> {
@@ -73,7 +73,7 @@ export class ApiService {
     return this.http.get(this.url + "/devicetypes", this.options).map(response => response.json());
   }
 
-  GetDeviceRolesList(): Observable<string[]> {
+  GetDeviceRolesList(): Observable<Role[]> {
     return this.http.get(this.url + "/deviceroles", this.options).map(response => response.json());
   }
 
@@ -93,7 +93,19 @@ export class ApiService {
     return this.http.get(this.url + "/uiconfig/" + roomID, this.options).map(response => response.json());
   }
 
+  AddUIConfig(roomID: string, toAdd: UIConfig): Observable<any> {
+    return this.http.post(this.url + "/uiconfig/" + roomID + "/add", toAdd, this.options).map(response => response.json());
+  }
+
+  UpdateUIConfig(roomID: string, toEdit: UIConfig): Observable<any> {
+    return this.http.put(this.url + "/uiconfig/" + roomID + "/update", toEdit, this.options).map(response => response.json());
+  }
+
   GetIcons(): Observable<string[]> {
     return this.http.get(this.url + "/icons", this.options).map(response => response.json());
+  }
+
+  HasAdminRights(): Observable<boolean> {
+    return this.http.get(this.url + "/auth/admin", this.options).map(response => response.json());
   }
 }

@@ -34,6 +34,8 @@ func main() {
 	secure.GET("/rooms", handlers.GetAllRooms)
 	secure.GET("/rooms/:room", handlers.GetRoomByID)
 	secure.GET("/rooms/:room/devices", handlers.GetDevicesByRoom)
+	secure.GET("/rooms/:room/roles/:role", handlers.GetDevicesByRoomAndRole)
+	secure.GET("/roles/:role/types/:type", handlers.GetDevicesByRoleAndType)
 	secure.GET("/roomconfigurations", handlers.GetRoomConfigurations)
 	secure.GET("/roomdesignations", handlers.GetRoomDesignations)
 	secure.GET("/devicetypes", handlers.GetDeviceTypes)
@@ -46,14 +48,17 @@ func main() {
 	secure.POST("/rooms/:room/add", handlers.AddRoom)
 	secure.POST("/devices/:device/add", handlers.AddDevice)
 	secure.POST("/devices/bulk/add", handlers.AddDevicesInBulk)
+	secure.POST("/uiconfig/:room/add", handlers.AddUIConfig)
 
 	secure.PUT("/buildings/:building/update", handlers.UpdateBuilding)
 	secure.PUT("/rooms/:room/update", handlers.UpdateRoom)
 	secure.PUT("/devices/:device/update", handlers.UpdateDevice)
+	secure.PUT("/uiconfig/:room/update", handlers.UpdateUIConfig)
 
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)
 	// router.PUT("/dev/:state", handlers.SetDev)
+	router.GET("/auth/admin", handlers.HasAdminRights)
 
 	secure.Static("/", "db-tool-dist")
 	secure.Static("/home", "db-tool-dist")
@@ -61,6 +66,15 @@ func main() {
 	secure.Static("/building", "db-tool-dist")
 	secure.Static("/room", "db-tool-dist")
 	secure.Static("/device", "db-tool-dist")
+	secure.Static("/uiconfig", "db-tool-dist")
+	secure.Static("/summary", "db-tool-dist")
+
+	// secure.Static("/", "db-tool/dist")
+	// secure.Static("/home", "db-tool/dist")
+	// secure.Static("/walkthrough", "db-tool/dist")
+	// secure.Static("/building", "db-tool/dist")
+	// secure.Static("/room", "db-tool/dist")
+	// secure.Static("/device", "db-tool/dist")
 
 	server := http.Server{
 		Addr:           port,

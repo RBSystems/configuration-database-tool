@@ -1,3 +1,10 @@
+@import 'src/db-theme.scss';
+@mixin db-tool-theme($theme) {
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $warn: map-get($theme, warn);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -15,9 +22,9 @@ body {
 
 .header {
     padding: 10px;
-    text-align: left;
-    background: #3F51B5;
+    background-color: $primary;
     color: white;
+    text-align: left;
 }
 
 .header h1 {

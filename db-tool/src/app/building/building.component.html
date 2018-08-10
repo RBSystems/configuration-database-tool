@@ -57,7 +57,7 @@
                 <!-- BUILDING -->
                 <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Building</mat-label>
-                    <mat-select matInput [(ngModel)]="editBuilding">
+                    <mat-select matInput [(ngModel)]="editBuilding" (selectionChange)="IDToUpdate = editBuilding._id;">
                         <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
                     </mat-select>
                 </mat-form-field>

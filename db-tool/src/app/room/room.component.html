@@ -49,7 +49,7 @@
                 <mat-form-field class="a " matTooltip="{{S.RoomTips[ 'designation']}} " [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Designation</mat-label>
                     <mat-select required matInput [(ngModel)]="addRoom.designation ">
-                        <mat-option *ngFor="let d of designationList " [value]="d ">{{d}}</mat-option>
+                        <mat-option *ngFor="let d of designationList " [value]="d ">{{d.charAt(0).toUpperCase() + d.slice(1)}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- TAGS -->
@@ -87,7 +87,7 @@
                 <!-- ROOM -->
                 <mat-form-field class="a" *ngIf="editBuilding._id != null && roomList.length > 0" matTooltip="{{S.RoomTips['room_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Room</mat-label>
-                    <mat-select matInput [(ngModel)]="editRoom" (selectionChange)="FixMissingName()">
+                    <mat-select matInput [(ngModel)]="editRoom" (selectionChange)="IDToUpdate = editRoom._id; FixMissingName()">
                         <mat-option *ngFor="let r of roomList" [value]="r">{{r._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -125,7 +125,7 @@
                 <mat-form-field class="a" matTooltip="{{S.RoomTips['designation']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Designation</mat-label>
                     <mat-select required matInput [(ngModel)]="editRoom.designation">
-                        <mat-option *ngFor="let d of designationList" [value]="d">{{d}}</mat-option>
+                        <mat-option *ngFor="let d of designationList" [value]="d">{{d.charAt(0).toUpperCase() + d.slice(1)}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- TAGS -->

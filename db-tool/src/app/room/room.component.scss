@@ -1,33 +1,40 @@
-.bldg-container {
+@import 'src/db-theme.scss';
+@mixin db-tool-theme($theme) {
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $warn: map-get($theme, warn);
+}
+
+.room-container {
     border-radius: 5px;
     background-color: #ffffff;
     padding: 20px;
     margin: auto;
     margin-top: 2%;
     max-height: 100%;
-    width: 76%;
-    max-width: 76%;
+    width: 78%;
+    max-width: 78%;
 }
 
-.bldg-container-half {
+.room-container-half {
     background-color: #ffffff;
     padding: 20px;
     height: 100%;
+    overflow: auto;
 }
 
-.bldg-row {
+.room-row {
     position: relative;
     float: left;
     margin: auto;
-    margin-top: 3%;
-    display: flex;
-    align-items: flex-start;
-    overflow: hidden;
+    margin-top: 2%;
+    margin-bottom: 3%;
     width: 100%;
+    display: flex;
     justify-content: space-evenly;
 }
 
-.bldg-row-b {
+.room-row-b {
     position: relative;
     float: left;
     margin: auto;
@@ -35,13 +42,13 @@
     width: 100%;
 }
 
-.bldg-box {
+.room-box {
     margin: auto;
     margin-top: 5px;
     width: 18%;
 }
 
-.bldg-box-large {
+.room-box-large {
     margin: auto;
     margin-top: 5px;
     width: 30%;
@@ -52,18 +59,23 @@ mat-select {
 }
 
 mat-form-field.a {
-    width: 25%;
+    width: 22%;
 }
 
 mat-form-field.b {
-    width: 40%;
+    width: 10%;
 }
 
-.bldg-button.submit {
+mat-form-field.c {
+    width: 16%;
+}
+
+.room-button.submit {
     float: right;
     color: #ffffff !important;
     text-transform: uppercase;
     background: #1d9c43;
+    /* border: 1px solid #494949 !important; */
     border-radius: 6px;
     margin-bottom: 20px;
     margin-right: 5%;
@@ -71,10 +83,14 @@ mat-form-field.b {
     width: wrap;
 }
 
-.bldg-button.submit:hover {
+.room-button.submit:hover {
     color: #ffffff !important;
     background: #f6513b;
     border-color: #f6513b !important;
     transition: all 0.2s ease 0s;
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
+}
+
+.room-chip-list {
+    width: 22%;
 }

@@ -1,0 +1,10 @@
+@import '~@angular/material/_theming.scss';
+@include mat-core();
+$db-primary: mat-palette($mat-indigo, 800, 700, 900);
+$db-accent: mat-palette($mat-blue, A400, A200, A700);
+$db-warn: mat-palette($mat-red, A400, A200, A700);
+$db-theme: mat-light-theme($db-primary, $db-accent, $db-warn);
+@include angular-material-theme($db-theme);
+$primary: mat-color($db-primary);
+$accent: mat-color($db-accent);
+$warn: mat-color($db-warn);
