@@ -1,0 +1,252 @@
+<div class="sum-container">
+    <div class="sum-row">
+        <!-- BUILDING -->
+        <mat-form-field class="a" matTooltip="{{S.UITips['bldg_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']" *ngIf="!InStepper">
+            <mat-label>Building</mat-label>
+            <mat-select matInput [(ngModel)]="building" (selectionChange)="getRoomList()">
+                <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- ROOM -->
+        <!-- <mat-form-field class="a" *ngIf="building._id != null && roomList.length > 0 && !InStepper" matTooltip="{{S.UITips['room_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
+            <mat-label>Room</mat-label>
+            <mat-select matInput [(ngModel)]="room" (selectionChange)="config = blankConfig; getUIConfig();">
+                <mat-option *ngFor="let r of roomList" [value]="r">{{r._id}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+        <!-- <button mat-button color="accent" (click)="Check()">Check</button> -->
+    </div>
+
+    <!-- ROOM LIST -->
+    <ng-container *ngIf="!InStepper && building != null && building._id != null && RoomToDeviceMap != null && RoomToDeviceMap.size > 0">
+        <mat-expansion-panel *ngFor="let r of roomList; let i = index;" (opened)="setStep(i)">
+            <mat-expansion-panel-header>
+                <mat-panel-title style="font-weight: 550">{{r._id}}</mat-panel-title>
+                <!-- <mat-panel-description>{{r.configuration._id}} - {{r.designation}}</mat-panel-description> -->
+            </mat-expansion-panel-header>
+
+            <table mat-table [dataSource]="[r]" class="mat-elevation-z2">
+                <ng-container matColumnDef="_id">
+                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <td mat-cell *matCellDef="let theRoom">{{theRoom._id}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Name </th>
+                    <td mat-cell *matCellDef="let theRoom">{{theRoom.name}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef> Description </th>
+                    <td mat-cell *matCellDef="let theRoom">{{theRoom.description}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="configuration">
+                    <th mat-header-cell *matHeaderCellDef> Configuration </th>
+                    <td mat-cell *matCellDef="let theRoom">{{theRoom.configuration._id}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="designation">
+                    <th mat-header-cell *matHeaderCellDef> Designation </th>
+                    <td mat-cell *matCellDef="let theRoom">{{theRoom.designation}}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="roomColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: roomColumns;"></tr>
+            </table>
+
+            <h4 style="font-weight: 500;">Devices</h4>
+            <table mat-table [dataSource]="RoomToDeviceMap.get(r._id)" class="mat-elevation-z2">
+                <ng-container matColumnDef="_id">
+                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <td mat-cell *matCellDef="let device">{{device._id}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Name </th>
+                    <td mat-cell *matCellDef="let device">{{device.name}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef> Description </th>
+                    <td mat-cell *matCellDef="let device">{{device.description}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="address">
+                    <th mat-header-cell *matHeaderCellDef> Address </th>
+                    <td mat-cell *matCellDef="let device">{{device.address}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="roles">
+                    <th mat-header-cell *matHeaderCellDef> Roles </th>
+                    <td mat-cell *matCellDef="let device">{{rolesToString(device.roles)}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> Type </th>
+                    <td mat-cell *matCellDef="let device">{{device.type._id}}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="deviceColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: deviceColumns;"></tr>
+            </table>
+
+            <h4 style="font-weight: 500;">{{(RoomToUIConfigMap.get(r._id) != null && 'UI Configuration') || RoomToUIConfigMap.get(r._id) == null && 'UI Configuration - No UI configuration available for this room'}}</h4>
+            <table mat-table *ngIf="RoomToUIConfigMap.get(r._id) != null" [dataSource]="RoomToUIConfigMap.get(r._id).panels" class="mat-elevation-z2">
+                <ng-container matColumnDef="panel">
+                    <th mat-header-cell *matHeaderCellDef> Panel </th>
+                    <td mat-cell *matCellDef="let panel">{{panel.hostname}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="preset">
+                    <th mat-header-cell *matHeaderCellDef> Preset </th>
+                    <td mat-cell *matCellDef="let panel">{{panel.preset}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="uipath">
+                    <th mat-header-cell *matHeaderCellDef> UI Path </th>
+                    <td mat-cell *matCellDef="let panel">{{S.UIPaths[panel.uipath].title}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="main_icon">
+                    <th mat-header-cell *matHeaderCellDef> Icon </th>
+                    <td mat-cell *matCellDef="let panel">{{panel.icon}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="displays">
+                    <th mat-header-cell *matHeaderCellDef> Displays </th>
+                    <td mat-cell *matCellDef="let panel">{{arrayToString(getPreset(r._id, panel.preset).displays)}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="inputs">
+                    <th mat-header-cell *matHeaderCellDef> Inputs </th>
+                    <td mat-cell *matCellDef="let panel">{{arrayToString(getPreset(r._id, panel.preset).inputs)}}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="uiconfigColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: uiconfigColumns;"></tr>
+            </table>
+
+            <!-- ACCORDION BUTTONS -->
+            <!-- <mat-action-row *ngIf="i === 0 && roomList.length != 1">
+                <button mat-button color="primary" (click)="nextStep()">Next</button>
+            </mat-action-row>
+            <mat-action-row *ngIf="i > 0 && i < roomList.length-1 && roomList.length != 1">
+                <button mat-button color="warn" (click)="prevStep()">Previous</button>
+                <button mat-button color="primary" (click)="nextStep()">Next</button>
+            </mat-action-row>
+            <mat-action-row *ngIf="i === roomList.length-1 && roomList.length != 1">
+                <button mat-button color="warn" (click)="prevStep()">Previous</button>
+                <button mat-button color="primary" (click)="nextStep()">End</button>
+            </mat-action-row> -->
+        </mat-expansion-panel>
+    </ng-container>
+
+
+    <!-- ROOM SUMMARY - END OF WALKTHROUGH -->
+    <ng-container *ngIf="InStepper && room != null && room._id != null && deviceList != null && deviceList.length > 0">
+
+        <h4 style="font-weight: 500;">Room Information</h4>
+        <table mat-table [dataSource]="[room]" class="mat-elevation-z2">
+            <ng-container matColumnDef="_id">
+                <th mat-header-cell *matHeaderCellDef> ID </th>
+                <td mat-cell *matCellDef="let theRoom">{{theRoom._id}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let theRoom">{{theRoom.name}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> Description </th>
+                <td mat-cell *matCellDef="let theRoom">{{theRoom.description}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="configuration">
+                <th mat-header-cell *matHeaderCellDef> Configuration </th>
+                <td mat-cell *matCellDef="let theRoom">{{theRoom.configuration._id}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="designation">
+                <th mat-header-cell *matHeaderCellDef> Designation </th>
+                <td mat-cell *matCellDef="let theRoom">{{theRoom.designation}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="roomColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: roomColumns;"></tr>
+        </table>
+
+        <h4 style="font-weight: 500;">Devices</h4>
+        <table mat-table [dataSource]="deviceList" class="mat-elevation-z2">
+            <ng-container matColumnDef="_id">
+                <th mat-header-cell *matHeaderCellDef> ID </th>
+                <td mat-cell *matCellDef="let device">{{device._id}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let device">{{device.name}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> Description </th>
+                <td mat-cell *matCellDef="let device">{{device.description}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="address">
+                <th mat-header-cell *matHeaderCellDef> Address </th>
+                <td mat-cell *matCellDef="let device">{{device.address}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="roles">
+                <th mat-header-cell *matHeaderCellDef> Roles </th>
+                <td mat-cell *matCellDef="let device">{{rolesToString(device.roles)}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef> Type </th>
+                <td mat-cell *matCellDef="let device">{{device.type._id}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="deviceColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: deviceColumns;"></tr>
+        </table>
+
+        <h4 style="font-weight: 500;">{{(config != null && 'UI Configuration') || config == null && 'UI Configuration - No UI configuration available for this room'}}</h4>
+        <table mat-table *ngIf="config != null" [dataSource]="config.panels" class="mat-elevation-z2">
+            <ng-container matColumnDef="panel">
+                <th mat-header-cell *matHeaderCellDef> Panel </th>
+                <td mat-cell *matCellDef="let panel">{{panel.hostname}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="preset">
+                <th mat-header-cell *matHeaderCellDef> Preset </th>
+                <td mat-cell *matCellDef="let panel">{{panel.preset}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="uipath">
+                <th mat-header-cell *matHeaderCellDef> UI Path </th>
+                <td mat-cell *matCellDef="let panel">{{S.UIPaths[panel.uipath].title}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="main_icon">
+                <th mat-header-cell *matHeaderCellDef> Icon </th>
+                <td mat-cell *matCellDef="let panel">{{panel.icon}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="displays">
+                <th mat-header-cell *matHeaderCellDef> Displays </th>
+                <td mat-cell *matCellDef="let panel">{{arrayToString(getPreset(room._id, panel.preset).displays)}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="inputs">
+                <th mat-header-cell *matHeaderCellDef> Inputs </th>
+                <td mat-cell *matCellDef="let panel">{{arrayToString(getPreset(room._id, panel.preset).inputs)}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="uiconfigColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: uiconfigColumns;"></tr>
+        </table>
+    </ng-container>
+</div>

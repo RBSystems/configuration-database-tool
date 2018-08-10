@@ -1,3 +1,10 @@
+@import 'src/db-theme.scss';
+@mixin db-tool-theme($theme) {
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $warn: map-get($theme, warn);
+}
+
 .device-container {
     border-radius: 5px;
     background-color: #ffffff;
@@ -5,8 +12,8 @@
     margin: auto;
     margin-top: 2%;
     max-height: 100%;
-    width: 76%;
-    max-width: 76%;
+    width: 78%;
+    max-width: 78%;
 }
 
 .device-row {
@@ -18,6 +25,7 @@
     width: 100%;
     display: flex;
     justify-content: space-evenly;
+    align-items: flex-end;
 }
 
 .device-row-b {
@@ -44,19 +52,24 @@ mat-select {
     padding: 5px;
 }
 
-mat-form-field.a {
-    /* margin-left: 8%; */
-    width: 22%;
-}
-
-mat-form-field.b {
-    /* margin-left: 8%; */
-    width: 10%;
-}
-
-mat-form-field.c {
-    /* margin-left: auto; */
-    width: 16%;
+mat-form-field {
+    &.a {
+        /* margin-left: 8%; */
+        width: 22%;
+    }
+    &.b {
+        /* margin-left: 8%; */
+        width: 10%;
+    }
+    &.c {
+        /* margin-left: auto; */
+        width: 16%;
+    }
+    &.device-chip-list {
+        /* margin-left: 8%; */
+        padding: 2px;
+        width: 22%;
+    }
 }
 
 .device-button.submit {
@@ -96,7 +109,6 @@ mat-form-field.c {
     margin-left: 5%;
 }
 
-.device-chip-list {
-    /* margin-left: 8%; */
-    width: 22%;
+.device-label-a {
+    font-weight: 500;
 }

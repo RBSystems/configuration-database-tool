@@ -8,6 +8,7 @@ import { DeviceComponent } from './device/device.component';
 import { ModalComponent } from './modal/modal.component';
 import { WalkthroughComponent } from './walkthrough/walkthrough.component';
 import { UIConfigComponent } from './uiconfig/uiconfig.component';
+import { SummaryComponent } from './summary/summary.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'room', component: RoomComponent },
   { path: 'device', component: DeviceComponent },
   { path: 'uiconfig', component: UIConfigComponent },
+  { path: 'summary', component: SummaryComponent },
   { path: 'modal', component: ModalComponent}
 ]
 

@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Building, Room, Device, DeviceType, Role } from '../objects';
 import { ApiService } from '../api.service'; 
 import { MatDialog } from '@angular/material';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material';
 import { Strings } from '../strings.service';
@@ -10,7 +10,7 @@ import { Strings } from '../strings.service';
 @Component({
   selector: 'app-device',
   templateUrl: './device.component.html',
-  styleUrls: ['./device.component.css']
+  styleUrls: ['./device.component.scss']
 })
 export class DeviceComponent implements OnInit {
   @Input() InStepper: boolean = false;
@@ -23,6 +23,8 @@ export class DeviceComponent implements OnInit {
   @Input() editDevice: Device;
   @Input() addType: DeviceType;
   editType: DeviceType;
+
+  IDToUpdate: string;
 
   addBuildingList: Building[] = [];
   editBuildingList: Building[] = [];
@@ -150,20 +152,9 @@ export class DeviceComponent implements OnInit {
     this.UpdateRoleLists(true);
 
     this.addDeviceList = [];
-    // this.addSourceDevices = [];
 
     this.api.GetDeviceList(this.addRoom._id).subscribe(val => {
       this.addDeviceList = val;
-      // this.addDeviceList.forEach(d => {
-      //   this.deviceTypeList.forEach(t => {
-      //     if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id))) {
-      //       this.addSourceDevices.push(d);
-      //     }
-      //     if(d.type._id == t._id && (t.output || this.switcherTypes.includes(t._id))) {
-      //       this.addDestinationDevices.push(d);
-      //     }
-      //   });
-      // });
       this.GetSourceAndDestinationLists();
     });
   }
@@ -173,26 +164,14 @@ export class DeviceComponent implements OnInit {
     this.editDevice.type = new DeviceType();
 
     this.editDeviceList = [];
-    // this.editSourceDevices = [];
 
     this.api.GetDeviceList(this.editRoom._id).subscribe(val => {
       this.editDeviceList = val;
-      // this.editDeviceList.forEach(d => {
-      //   this.deviceTypeList.forEach(t => {
-      //     if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id))) {
-      //       this.editSourceDevices.push(d);
-      //     }
-      //     if(d.type._id == t._id && (t.output || this.switcherTypes.includes(t._id))) {
-      //       this.editDestinationDevices.push(d);
-      //     }
-      //   });
-      // });
       this.GetSourceAndDestinationLists();
     });
   }
 
   GetSourceAndDestinationLists() {
-    // console.log("source time")
     this.addSourceDevices = [];
     this.addDestinationDevices = [];
 
@@ -200,19 +179,13 @@ export class DeviceComponent implements OnInit {
     this.editDestinationDevices = [];
 
     if(this.addDeviceList != null) {
-      // console.log("source time 2")
       this.addDeviceList.forEach(d => {
-        // console.log("source time 3")
         this.deviceTypeList.forEach(t => {
-          if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id) || d.type._id.includes("Gateway"))) {
-            // console.log("source time 4a")
+          if(d.type._id == t._id && t.source) {
             this.addSourceDevices.push(d);
-            // console.log(this.addSourceDevices)
           }
-          if(d.type._id == t._id && (t.output || this.switcherTypes.includes(t._id))) {
-            // console.log("source time 4b")
+          if(d.type._id == t._id && t.destination) {
             this.addDestinationDevices.push(d);
-            // console.log(this.addDestinationDevices)
           }
         });
       });
@@ -221,10 +194,10 @@ export class DeviceComponent implements OnInit {
     if(this.editDeviceList != null) {
       this.editDeviceList.forEach(d => {
         this.deviceTypeList.forEach(t => {
-          if(d.type._id == t._id && (t.input || this.switcherTypes.includes(t._id) || d.type._id.includes("Gateway"))) {
+          if(d.type._id == t._id && t.source) {
             this.editSourceDevices.push(d);
           }
-          if(d.type._id == t._id && (t.output || this.switcherTypes.includes(t._id))) {
+          if(d.type._id == t._id && t.destination) {
             this.editDestinationDevices.push(d);
           }
         });
@@ -242,29 +215,31 @@ export class DeviceComponent implements OnInit {
   getDeviceRoleList() {
     this.deviceRoleList = [];
     this.api.GetDeviceRolesList().subscribe(val => {
-      let tempList: string[] = val;
-      tempList.forEach(r => {
-        let role = new Role();
-        role._id = r;
-        role.description = r;
-        role.tags = [];
-        this.deviceRoleList.push(role);
-      });    
+      this.deviceRoleList = val;  
       this.UpdateRoleLists(true);
     });
   }
 
   UpdateID() {
-    if(this.addDevice != null && (this.addDevice._id == null || this.addDevice._id.length == 0)) {
-      let id = this.addRoom._id.concat("-");
-      this.addDevice._id = id;
+    if(this.addDevice != null) {
+      if (this.addRoom != null && this.addRoom._id != null) {
+        let id = this.addRoom._id.concat("-");
+        if(this.addDevice.name != null) {
+          id = id + this.addDevice.name;
+        }
+        this.addDevice._id = id;
+      }
     }
-  }
 
-  UpdateName() {
-    // if(this.addDevice.name == null || this.addDevice.name.length == 0) {
-      this.addDevice.name = this.addDevice._id.split("-")[2];
-    // }
+    if(this.editDevice != null) {
+      if (this.editRoom != null && this.editRoom._id != null) {
+        let id = this.editRoom._id.concat("-");
+        if(this.editDevice.name != null) {
+          id = id + this.editDevice.name;
+        }
+        this.editDevice._id = id;
+      }
+    }
   }
 
   UpdateRoleLists(add: boolean) {
@@ -272,6 +247,7 @@ export class DeviceComponent implements OnInit {
       this.addRoleList = [];
       this.deviceRoleList.forEach(role => {
         let PushToAddList : boolean = true;
+        
         this.addDevice.roles.forEach(dRole => {
           if(role._id == dRole._id) {
             PushToAddList = false;
@@ -286,6 +262,7 @@ export class DeviceComponent implements OnInit {
       this.editRoleList = [];
       this.deviceRoleList.forEach(role => {
         let PushToEditList : boolean = true;
+        
         this.editDevice.roles.forEach(dRole => {
           if(role._id == dRole._id) {
             PushToEditList = false;
@@ -315,11 +292,22 @@ export class DeviceComponent implements OnInit {
 
         this.GetSourceAndDestinationLists();
 
+        this.addDevice.roles = [];
+        this.addDevice.roles = this.addType.roles;
+        this.UpdateRoleLists(true);
         this.UpdateDevicePorts(true);
       }
       if(this.editDevice != null && type._id == this.editDevice.type._id) {
         this.editType = type;
+
+        this.editDevice.ports = [];
         
+        if(type.ports != null) {
+          this.editDevice.ports = type.ports;
+        }
+        
+        this.editDevice.roles = this.editType.roles;
+        this.UpdateRoleLists(false);
         this.UpdateDevicePorts(false);
       }
     });
@@ -371,122 +359,171 @@ export class DeviceComponent implements OnInit {
   }
 
   SetDefaultPortConfigurations() {
+    console.log("Hello friends")
     let NumRegex = /[0-9]/;
     let IDEnd = this.addDevice._id.split("-", 3)[2];
     let index = IDEnd.search(NumRegex)
     let devNumber: string = IDEnd.substring(index);
 
-    
-    // Set Ports for output devices (i.e. displays)
-    if(this.addType.output && this.addDevice.ports != null && this.addDevice.ports.length > 0) {
-      this.addSourceDevices.forEach(source => {
-        if(this.addRoom.configuration._id.includes("Tiered") || this.addRoom.configuration._id.includes("Video")) {
-          if(source.name.includes("SW") && this.addDevice.ports.length >= 1) {
-            this.addDevice.ports[0].source_device = source._id;
-            for(let i = 1; i < this.addDevice.ports.length; i++) {
-              this.addDevice.ports[i].source_device = "";
-            }
-          }
-        }
-        else {
-          if(source.name.includes(devNumber)) {
-            if(source.name.includes("HDMI") && this.addDevice.ports.length >= 2) {
-              this.addDevice.ports[1].source_device = source._id;
-            }
-            if(source.name.includes("VIA") && this.addDevice.ports.length >= 3) {
-              this.addDevice.ports[2].source_device = source._id;
-            }
-            if(source.name.includes("PC") && this.addDevice.ports.length >= 4) {
-              this.addDevice.ports[3].source_device = source._id;
-            }
-          }
-        }
-      });
+    if(this.addDevice.ports != null) {
+      let defaultPorts = this.S.DefaultPorts[this.addDevice.type._id];
+      console.log(defaultPorts);
 
-      this.addDevice.ports.forEach(port => {
-        port.destination_device = this.addDevice._id;
-      });
-    }
-
-    // Set Ports for video switchers and DSPs
-    if(this.switcherTypes.includes(this.addDevice.type._id) && this.addDevice.ports != null && this.addDevice.ports.length > 0) {
-      console.log(this.addDevice)
-      this.addDevice.ports.forEach(port => {
-        if(port._id.includes("IN")) {
-          
-          port.destination_device = this.addDevice._id;
-          
-          // if(port.source_device != null) {
-            let currentSource = port.source_device;
-            this.addSourceDevices.forEach(source => {
-              if(source._id.includes(currentSource)) {
-                port.source_device = source._id;
-              }
-            });
-          // }
-        }
-        else if(port._id.includes("OUT")) {
-
-          port.source_device = this.addDevice._id;
-
-          // if(port.destination_device != null) {
-            let currentDestination = port.destination_device;
-            this.addDestinationDevices.forEach(destination => {
-              if(destination._id.includes(currentDestination)) {
-                port.destination_device = destination._id;
-              }
-            });
-          // }
-        }
-        else {
-          port.destination_device = this.addDevice._id;
-        }
-      });
-    }
-
-    // Set Ports for gateway devices
-    if(this.addDevice.type._id == "Crestron RMC-3 Gateway") {
-      let port = this.addDevice.ports[0];
-      port.source_device = this.addDevice._id;
-      // if(port.destination_device != null) {
-        let currentDestination = port.destination_device;
-        this.addDestinationDevices.forEach(destination => {
-          if(destination._id.includes(currentDestination)) {
-            port.destination_device = destination._id;
+      this.addDevice.ports.forEach(port => {  
+        let sourceName = defaultPorts[port._id].source;
+        this.addSourceDevices.forEach(source => {
+          if(source.name.includes(sourceName) && source.name.includes(devNumber)) {
+            port.source_device = source._id;
           }
         });
-      // }
+
+        let destName = defaultPorts[port._id].destination;
+        this.addDestinationDevices.forEach(dest => {
+          if(dest.name.includes(destName) && dest.name.includes(devNumber)) {
+            port.destination_device = dest._id;
+          }
+        });
+      });
     }
+    // this.addDevice.ports.forEach(port => {
+    //   if(port.source_device == null) {
+    //     console.log("the most hello")
+    //     this.addSourceDevices.forEach(source => {
+    //       console.log(port._id)
+    //       console.log(this.S.DefaultPorts[this.addDevice.type._id][port._id].source)
+    //       if(source.name.includes(devNumber) && source.name.includes(this.S.DefaultPorts[this.addDevice.type._id][port._id].source)) {
+    //         port.source_device = source._id
+    //       }
+    //     });
+    //   }
+
+    //   if(port.destination_device == null && this.addType.output) {
+    //     port.destination_device = this.addDevice._id
+    //   }
+      
+    //   if(port.destination_device == null && this.switcherTypes.includes(this.addDevice.type._id)) {
+    //     this.addDestinationDevices.forEach(dest => {
+    //       if(dest.name.includes(devNumber) && dest.name.includes(this.S.DefaultPorts[this.addDevice.type._id][port._id].destination)) {
+    //         port.destination_device = dest._id
+    //       }
+    //     });
+    //   }
+    // });
+    // Set Ports for output devices (i.e. displays)
+    // if(this.addType.output && this.addDevice.ports != null && this.addDevice.ports.length > 0) {
+    //   this.addSourceDevices.forEach(source => {
+    //     if(this.addRoom.configuration._id.includes("Tiered") || this.addRoom.configuration._id.includes("Video")) {
+    //       if(source.name.includes("SW") && this.addDevice.ports.length >= 1) {
+    //         this.addDevice.ports[0].source_device = source._id;
+    //         for(let i = 1; i < this.addDevice.ports.length; i++) {
+    //           this.addDevice.ports[i].source_device = "";
+    //         }
+    //       }
+    //     }
+    //     else {
+    //       if(source.name.includes(devNumber)) {
+    //         if(source.name.includes("HDMI") && this.addDevice.ports.length >= 2) {
+    //           this.addDevice.ports[1].source_device = source._id;
+    //         }
+    //         if(source.name.includes("VIA") && this.addDevice.ports.length >= 3) {
+    //           this.addDevice.ports[2].source_device = source._id;
+    //         }
+    //         if(source.name.includes("PC") && this.addDevice.ports.length >= 4) {
+    //           this.addDevice.ports[3].source_device = source._id;
+    //         }
+    //       }
+    //     }
+    //   });
+
+    //   this.addDevice.ports.forEach(port => {
+    //     port.destination_device = this.addDevice._id;
+    //   });
+    // }
+
+    // Set Ports for video switchers and DSPs
+    // if(this.switcherTypes.includes(this.addDevice.type._id) && this.addDevice.ports != null && this.addDevice.ports.length > 0) {
+    //   console.log(this.addDevice)
+    //   this.addDevice.ports.forEach(port => {
+    //     if(port._id.includes("IN")) {
+          
+    //       port.destination_device = this.addDevice._id;
+          
+    //       if(port.source_device != null) {
+    //         let currentSource = port.source_device;
+    //         this.addSourceDevices.forEach(source => {
+    //           if(source._id.includes(currentSource)) {
+    //             port.source_device = source._id;
+    //           }
+    //         });
+    //       }
+    //     }
+    //     else if(port._id.includes("OUT")) {
+
+    //       port.source_device = this.addDevice._id;
+
+    //       if(port.destination_device != null) {
+    //         let currentDestination = port.destination_device;
+    //         this.addDestinationDevices.forEach(destination => {
+    //           if(destination._id.includes(currentDestination)) {
+    //             port.destination_device = destination._id;
+    //           }
+    //         });
+    //       }
+    //     }
+    //     else {
+    //       port.destination_device = this.addDevice._id;
+    //     }
+    //   });
+    // }
+
+    // Set Ports for gateway devices
+    // if(this.addDevice.type._id == "Crestron RMC-3 Gateway") {
+    //   let port = this.addDevice.ports[0];
+    //   port.source_device = this.addDevice._id;
+    //   if(port.destination_device != null) {
+    //     let currentDestination = port.destination_device;
+    //     this.addDestinationDevices.forEach(destination => {
+    //       if(destination._id.includes(currentDestination)) {
+    //         port.destination_device = destination._id;
+    //       }
+    //     });
+    //   }
+    // }
   }
 
   CreateDevice() {
-    // console.log(this.addDevice);
+    let res: Result[] = [];
     this.api.AddDevice(this.addDevice).subscribe(
       success => {
-        this.openDialog(false, "Successfully added the device!");
+        res.push({message: this.addDevice._id + " was successfully added.", success: true });
+        this.openDialog(MessageType.Success, "Building Added", null, res);
       },
       error => {
-        this.openDialog(true, error);
+        let errorMessage = this.S.ErrorCodeMessages[error.status]
+
+        res.push({message: error.json(), success: false, error: error});
+        this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
 
   UpdateDevice() {
-    // console.log(this.editDevice);
-    // this.editDevice.type = new DeviceType();
-    // this.editDevice.type._id = this.editType._id;
-    // console.log(this.editDevice);
-    this.api.UpdateDevice(this.editDevice).subscribe(
+    let res: Result[] = [];
+    this.api.UpdateDevice(this.IDToUpdate, this.editDevice).subscribe(
       success => {
-        this.openDialog(false, "Successfully updated the device!");
+        res.push({message: this.editDevice._id + " was successfully updated.", success: true });
+        this.openDialog(MessageType.Success, "Device Updated", null, res);
       },
       error => {
-        this.openDialog(true, error);
+        let errorMessage = this.S.ErrorCodeMessages[error.status]
+
+        res.push({message: error.json(), success: false, error: error});
+        this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
   
-  openDialog(status: boolean, message: string) {
+  openDialog(status: MessageType, subheader: string, message?: string, results?: Result[]) {
     let dialogRef = this.dialog.open(ModalComponent, {
-      data: {error: status, message: message}
+      data: {type: status, subheader: subheader, message: message, results: results}
     });
 
     dialogRef.afterClosed().subscribe(result => {
