@@ -8,3 +8,8 @@ $db-theme: mat-light-theme($db-primary, $db-accent, $db-warn);
 $primary: mat-color($db-primary);
 $accent: mat-color($db-accent);
 $warn: mat-color($db-warn);
+@mixin db-tool-theme($theme) {
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $warn: map-get($theme, warn);
+}

@@ -77,7 +77,8 @@ export class Strings {
     }
 
     DeviceStrings = {
-        "type_roles": "Required roles"
+        "type_roles": "Required roles",
+        "mirror": "Does this display always mirror another?"
     }
 
     DeviceTips = {
@@ -130,14 +131,7 @@ export class Strings {
         false: "Sharing disabled"
     }
 
-    DefaultIcons = {
-        "SonyXBR": "tv",
-        "SonyVPL": "videocam",
-        "Shure Microphone": "mic",
-        "HDMI": "settings_input_hdmi",
-        "VIA": "settings_input_antenna",
-        "PC": "desktop_windows"
-    }
+    
 
     Icons = [
         "tv",
@@ -161,43 +155,9 @@ export class Strings {
         "ondemand_video",
         "tap_and_play",
         "share",
-        "mic"
+        "mic",
+        "people"
     ]
-
-    DefaultPorts = {
-        "SonyXBR": {
-            "hdmi!1":  {
-                "source":"bogus",
-                "destination": "D"
-            },
-            "hdmi!2":  {
-                "source":"HDMI",
-                "destination": "D"
-            },
-            "hdmi!3":  {
-                "source":"VIA",
-                "destination": "D"
-            },
-            "hdmi!4":  {
-                "source":"PC",
-                "destination": "D"
-            }
-        },
-        "ADCP Sony VPL": {
-            "hdmi1": {
-                "source":"HDMI",
-                "destination":"D"
-            },
-            "hdbaset1": {
-                "source":"VIA",
-                "destination":"D"
-            },
-            "dvi1": {
-                "source":"PC",
-                "destination":"D"
-            }
-        }
-    }
 
     ErrorCodeMessages = {
         500: "Something is wrong internally...",

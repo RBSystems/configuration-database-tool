@@ -187,6 +187,14 @@ export class PanelComponent implements OnInit {
     return false;
   }
 
+  InputHasRole(inputName: string, roleID: string): boolean {
+    for(let i = 0; i < this.deviceList.length; i++) {
+      if(this.deviceList[i].name === inputName) {
+        return this.HasRole(this.deviceList[i], roleID)
+      }
+    }
+  }
+
   AddPreset() {
     let add: boolean = true;
     this.preset.name = this.panel.preset;
@@ -240,6 +248,18 @@ export class PanelComponent implements OnInit {
         return aN === bN ? 0 : aN > bN ? 1 : -1;
     } else {
         return aA > bA ? 1 : -1;
+    }
+  }
+
+  HasRole(device: Device, roleID: string): boolean {
+    if(device.roles != null && device.roles.length > 0) {
+        let found: boolean = false;
+        device.roles.forEach(r => {
+            if(r._id === roleID) {
+                found = true;
+            }
+        });
+        return found;
     }
   }
 }

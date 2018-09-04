@@ -1,6 +1,6 @@
 <div class="walk-container">
     <mat-horizontal-stepper [linear]="true" #setupStepper>
-        <mat-step [completed]="locationFormControl.valid">
+        <mat-step [completed]="locationFormControl.valid && !roomExists">
             <form [formGroup]="locationFormGroup">
                 <ng-template matStepLabel>Choose a location</ng-template>
                 <mat-form-field style="margin: auto; display: block; width: 15%;">
@@ -17,7 +17,7 @@
                 </div>
             </form>
         </mat-step>
-        <mat-step>
+        <mat-step [completed]="locBuilding.Validate() && locRoom.Validate()" [editable]="!roomExists">
             <form>
                 <ng-template matStepLabel>Location information</ng-template>
 

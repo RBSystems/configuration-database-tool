@@ -21,6 +21,7 @@ export class ApiService {
     this.options = new RequestOptions({headers : this.headers}); 
   }
 
+  ///// BUILDING FUNCTIONS /////
   GetBuildingList(): Observable<Building[]> {
     return this.http.get(this.url+"/buildings", this.options).map(response => response.json());
   }
@@ -33,6 +34,8 @@ export class ApiService {
     return this.http.put(this.url + "/buildings/" + IDToEdit + "/update", toEdit, this.options).map(response => response.json());
   }
 
+
+  ///// ROOM FUNCTIONS /////
   GetRoomList(building: string): Observable<Room[]> {
     return this.http.get(this.url+"/buildings/" + building + "/rooms", this.options).map(response => response.json());
   }
@@ -53,10 +56,12 @@ export class ApiService {
     return this.http.get(this.url + "/roomconfigurations", this.options).map(response => response.json());
   }
 
-  GetRoomDesignations(): Observable<string[]> {
-    return this.http.get(this.url + "/roomdesignations", this.options).map(response => response.json());
+  GetAllRooms(): Observable<Room[]> {
+    return this.http.get(this.url + "/rooms", this.options).map(response => response.json());
   }
 
+
+  ///// DEVICE FUNCTIONS /////
   AddDevice(toAdd: Device): Observable<any> {
     return this.http.post(this.url + "/devices/" + toAdd._id + "/add", toAdd, this.options).map(response => response.json());
   }
@@ -73,6 +78,12 @@ export class ApiService {
     return this.http.get(this.url + "/devicetypes", this.options).map(response => response.json());
   }
 
+  CreateBulkDevices(devices: Device[]): Observable<BulkUpdateResponse[]> {
+    return this.http.post(this.url + "/devices/bulk/add", devices, this.options).map(response => response.json());
+  }
+
+
+  ///// OPTIONS FUNCTIONS /////
   GetDeviceRolesList(): Observable<Role[]> {
     return this.http.get(this.url + "/deviceroles", this.options).map(response => response.json());
   }
@@ -81,14 +92,16 @@ export class ApiService {
     return this.http.get(this.url + "/templates", this.options).map(response => response.json());
   }
 
-  GetAllRooms(): Observable<Room[]> {
-    return this.http.get(this.url + "/rooms", this.options).map(response => response.json());
+  GetRoomDesignations(): Observable<string[]> {
+    return this.http.get(this.url + "/roomdesignations", this.options).map(response => response.json());
   }
 
-  CreateBulkDevices(devices: Device[]): Observable<BulkUpdateResponse[]> {
-    return this.http.post(this.url + "/devices/bulk/add", devices, this.options).map(response => response.json());
+  GetIcons(): Observable<string[]> {
+    return this.http.get(this.url + "/icons", this.options).map(response => response.json());
   }
+  
 
+  ///// UI CONFIG FUNCTIONS /////
   GetUIConfig(roomID: string): Observable<UIConfig> {
     return this.http.get(this.url + "/uiconfig/" + roomID, this.options).map(response => response.json());
   }
@@ -101,10 +114,8 @@ export class ApiService {
     return this.http.put(this.url + "/uiconfig/" + roomID + "/update", toEdit, this.options).map(response => response.json());
   }
 
-  GetIcons(): Observable<string[]> {
-    return this.http.get(this.url + "/icons", this.options).map(response => response.json());
-  }
-
+  
+  ///// AUTH FUNCTIONS /////
   HasAdminRights(): Observable<boolean> {
     return this.http.get(this.url + "/auth/admin", this.options).map(response => response.json());
   }

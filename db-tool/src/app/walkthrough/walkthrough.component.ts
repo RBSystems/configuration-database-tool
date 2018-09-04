@@ -82,7 +82,7 @@ export class WalkthroughComponent implements OnInit {
     this.buildingList.forEach(b => {
       if(b._id == buildingID) {
         this.buildingExists = true;
-        this.locBuilding = b;
+        this.locBuilding = new Building(b);
         this.BuildingIDToUpdate = this.locBuilding._id;
       }
     });
@@ -96,7 +96,7 @@ export class WalkthroughComponent implements OnInit {
     this.allRoomList.forEach(r => {
       if(r._id == roomID) {
         this.roomExists = true;
-        this.locRoom = r;
+        this.locRoom = new Room(r);
         this.RoomIDToUpdate = this.locRoom._id;
       }
     });
@@ -104,7 +104,7 @@ export class WalkthroughComponent implements OnInit {
     if(!this.roomExists) {
       let room = new Room();
       room._id = roomID;
-      this.locRoom = room;
+      this.locRoom = new Room(room);
     }
 
     if(this.buildingExists && this.roomExists) {
