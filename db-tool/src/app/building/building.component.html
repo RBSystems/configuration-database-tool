@@ -12,13 +12,11 @@
                     <mat-error *ngIf="addIDFormControl.hasError('required')">
                         The building ID is <strong>required</strong>
                     </mat-error>
-                    <!-- <mat-hint>{{S.BuildingTips['id']}}</mat-hint> -->
                 </mat-form-field>
                 <!-- NAME -->
                 <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['name']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Name</mat-label>
                     <input matInput type="text" [(ngModel)]="addBuilding.name">
-                    <!-- <mat-hint>{{S.BuildingTips['name']}}</mat-hint> -->
                 </mat-form-field>
             </div>
 
@@ -27,10 +25,9 @@
                 <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['description']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Description</mat-label>
                     <input matInput type="text" [(ngModel)]="addBuilding.description">
-                    <!-- <mat-hint>{{S.BuildingTips['description']}}</mat-hint> -->
                 </mat-form-field>
                 <!-- TAGS -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }">
+                <mat-form-field [ngClass]="{ 'a chipList': !InStepper, 'b chipList': InStepper }">
                     <mat-label style="padding: 2px;">Tags</mat-label>
                     <mat-chip-list #chipList>
                         <mat-chip *ngFor="let tag of addBuilding.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, true)">
@@ -43,7 +40,7 @@
             </div>
 
             <!-- BUTTONS -->
-            <div class="bldg-row-b" *ngIf="!InStepper">
+            <div class="bldg-row b" *ngIf="!InStepper">
                 <button mat-raised-button matTooltip="{{S.BuildingTips['create']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']" class="bldg-button submit" (click)="CreateBuilding()">Submit</button>
             </div>
 

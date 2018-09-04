@@ -54,7 +54,7 @@ export class BuildingComponent implements OnInit {
     });
 
     this.tabIndex = 0;
-    this.getBuildingList();
+    this.GetBuildingList();
 
     this.addBuilding = new Building();
     this.editBuilding = new Building();
@@ -71,13 +71,16 @@ export class BuildingComponent implements OnInit {
     }, 0); 
   }
 
-  getBuildingList() {
+  ///// GETTERS & SETTERS /////
+  GetBuildingList() {
     this.buildingList = [];
     this.api.GetBuildingList().subscribe(val => {
       this.buildingList = val;
     });
   }
+  /*-*/
 
+  ///// DATABASE SUBMISSION /////
   CreateBuilding() {
     console.log(this.addBuilding);
     let res: Result[] = [];
@@ -110,7 +113,9 @@ export class BuildingComponent implements OnInit {
         this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
+  /*-*/
 
+  ///// RESPONSE MESSAGE /////
   openDialog(status: MessageType, subheader: string, message?: string, results?: Result[]) {
     let dialogRef = this.dialog.open(ModalComponent, {
       data: {type: status, subheader: subheader, message: message, results: results}
@@ -120,7 +125,9 @@ export class BuildingComponent implements OnInit {
       console.log('The dialog was closed');
     });
   }
+  /*-*/
 
+  ///// TAGS /////
   AddChip(event: MatChipInputEvent, add: boolean): void {
     if(add && (this.addBuilding.tags == null || this.addBuilding.tags.length == 0)) {
       this.addBuilding.tags = [];
@@ -161,4 +168,5 @@ export class BuildingComponent implements OnInit {
       }
     }
   }
+  /*-*/
 }

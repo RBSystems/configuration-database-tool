@@ -4,6 +4,7 @@ import { ApiService } from '../api.service';
 import { Strings } from '../strings.service';
 import { Building, Room, Device, Template, UIConfig, Panel, IOConfiguration, DeviceType, Preset } from '../objects';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
+import { Defaults } from '../defaults.service';
 
 @Component({
   selector: 'app-uiconfig',
@@ -17,6 +18,7 @@ export class UIConfigComponent implements OnInit {
   roomList: Room[] = [];
   @Input() deviceList: Device[] = [];
   typeList: DeviceType[] = [];
+  deviceTypeMap: Map<string, DeviceType> = new Map();
   panels: Panel[] = [];
   displays: IOConfiguration[] = [];
   inputs: IOConfiguration[] = [];
@@ -35,7 +37,7 @@ export class UIConfigComponent implements OnInit {
 
   NumRegex = /[0-9]/;
 
-  constructor(private api: ApiService, public dialog: MatDialog, public S: Strings) { }
+  constructor(private api: ApiService, public dialog: MatDialog, public S: Strings, public D: Defaults) { }
 
   ngOnInit() {
     // this.api.HasAdminRights().subscribe(val => {
@@ -71,6 +73,10 @@ export class UIConfigComponent implements OnInit {
 
     this.api.GetDeviceTypesList().subscribe(val => {
       this.typeList = val;
+
+      this.typeList.forEach(type => {
+        this.deviceTypeMap.set(type._id, type);
+      })
     });
   }
 
@@ -123,79 +129,82 @@ export class UIConfigComponent implements OnInit {
   }
 
   SetIOConfigurations() {
-    let AddToInputs: boolean = false;
-    let AddToOutputs: boolean = false;
-     
     if(this.config.inputConfiguration == null || this.config.inputConfiguration.length == 0) {
       this.config.inputConfiguration = [];
-      AddToInputs = true;
     }
     if(this.config.outputConfiguration == null || this.config.outputConfiguration.length == 0) {
       this.config.outputConfiguration = [];
-      AddToOutputs = true;
     }
-
+  
     this.deviceList.forEach(d => {
       let index = d.name.search(this.NumRegex)
       let NameSansNum: string = d.name.substring(0, index);
+  
+      let t = this.deviceTypeMap.get(d.type._id);
+      // Find all the ControlProcessors and make a Panel for each.
+      if(this.VerifyTypeHasRole(t, "ControlProcessor")) {
+        let p = new Panel();
+        p.hostname = d._id;
 
-      this.typeList.forEach(t => {
-        if(d.type._id === t._id) {
-          // Find all the ControlProcessors and make a Panel for each.
-          if(this.VerifyTypeHasRole(t, "ControlProcessor")) {
-            let p = new Panel();
-            p.hostname = d._id;
-
-            let add = true;
-
-            this.panels.forEach(pan => {
-              if(pan.hostname === p.hostname) {
-                add = false;
-              }
-            });
-
-            if(add) {
-              this.panels.push(p);
-            }
+        let add = true;
+  
+        this.panels.forEach(pan => {
+          if(pan.hostname === p.hostname) {
+            add = false;
           }
-
-          let io = new IOConfiguration();
-
-          // Find all the inputs and make an IOConfiguration for each.
-          if(t.input) {
-            io.name = d.name;
-            io.icon = this.S.DefaultIcons[NameSansNum];
-            this.inputs.push(io);
-
-            if(AddToInputs) {
-              this.config.inputConfiguration.push(io);
-            } 
-          }
-
-          // Find the displays and make an IOConfiguration for each.
-          if(t.output && this.VerifyTypeHasRole(t, "VideoOut")) {
-            io.name = d.name;
-            io.icon = this.S.DefaultIcons[d.type._id];
-            this.displays.push(io);
-
-            if(AddToOutputs) {
-              this.config.outputConfiguration.push(io);
-            }              
-          }
-
-          // Find the independent audio devices and add them to the list.
-          if(this.VerifyTypeHasRole(t, "Microphone")) {
-            io.name = d.name;
-            io.icon = this.S.DefaultIcons[d.type._id];
-            this.indyAudios.push(io);
-
-            if(AddToOutputs) {
-              this.config.outputConfiguration.push(io);
-            }  
-          }
+        });
+  
+        if(add) {
+          this.panels.push(p);
         }
-      });
+      }
+  
+      let io = new IOConfiguration();
+  
+      // Find all the inputs and make an IOConfiguration for each.
+      if(t.input) {
+        io.name = d.name;
+        io.icon = this.D.DefaultIcons[NameSansNum];
+        this.inputs.push(io);
+  
+        if(!this.IOIsInList(io.name, this.config.inputConfiguration)) {
+          this.config.inputConfiguration.push(io);
+        } 
+      }
+  
+      // Find the displays and make an IOConfiguration for each.
+      if(t.output && this.VerifyTypeHasRole(t, "VideoOut")) {
+        io.name = d.name;
+        io.icon = this.D.DefaultIcons[d.type._id];
+        this.displays.push(io);
+  
+        if(!this.IOIsInList(io.name, this.config.outputConfiguration)) {
+          this.config.outputConfiguration.push(io);
+        }              
+      }
+  
+      // Find the independent audio devices and add them to the list.
+      if(this.VerifyTypeHasRole(t, "Microphone")) {
+        io.name = d.name;
+        io.icon = this.D.DefaultIcons[d.type._id];
+        this.indyAudios.push(io);
+  
+        if(!this.IOIsInList(io.name, this.config.inputConfiguration)) {
+          this.config.outputConfiguration.push(io);
+        }  
+      }
     });
+  }
+
+  IOIsInList(nameToCheck: string, listToCheck: IOConfiguration[]): boolean {
+    if(listToCheck == null) {return false;}
+
+    for(let i = 0; i < listToCheck.length; i++) {
+      if(listToCheck[i].name === nameToCheck) {
+        return true;
+      }
+    }
+    return false;
   }
 
   UpdatePanels() {

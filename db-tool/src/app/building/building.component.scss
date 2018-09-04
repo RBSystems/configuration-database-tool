@@ -1,10 +1,4 @@
 @import 'src/db-theme.scss';
-@mixin db-tool-theme($theme) {
-    $primary: map-get($theme, primary);
-    $accent: map-get($theme, accent);
-    $warn: map-get($theme, warn);
-}
-
 .bldg-container {
     border-radius: 5px;
     background-color: #ffffff;
@@ -32,38 +26,23 @@
     overflow: hidden;
     width: 100%;
     justify-content: space-evenly;
-}
-
-.bldg-row-b {
-    position: relative;
-    float: left;
-    margin: auto;
-    margin-top: 3%;
-    width: 100%;
-}
-
-.bldg-box {
-    margin: auto;
-    margin-top: 5px;
-    width: 18%;
-}
-
-.bldg-box-large {
-    margin: auto;
-    margin-top: 5px;
-    width: 30%;
+    &.b {
+        float: right;
+        justify-content: flex-end;
+    }
 }
 
 mat-select {
     padding: 5px;
 }
 
-mat-form-field.a {
-    width: 25%;
-}
-
-mat-form-field.b {
-    width: 40%;
+mat-form-field {
+    &.a {
+        width: 25%;
+    }
+    &.b {
+        width: 40%;
+    }
 }
 
 .bldg-button.submit {
@@ -76,12 +55,11 @@ mat-form-field.b {
     margin-right: 5%;
     cursor: pointer;
     width: wrap;
-}
-
-.bldg-button.submit:hover {
-    color: #ffffff !important;
-    background: #f6513b;
-    border-color: #f6513b !important;
-    transition: all 0.2s ease 0s;
-    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
+    &:hover {
+        color: #ffffff !important;
+        background: #f6513b;
+        border-color: #f6513b !important;
+        transition: all 0.2s ease 0s;
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
+    }
 }

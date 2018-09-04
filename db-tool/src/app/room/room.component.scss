@@ -1,10 +1,4 @@
 @import 'src/db-theme.scss';
-@mixin db-tool-theme($theme) {
-    $primary: map-get($theme, primary);
-    $accent: map-get($theme, accent);
-    $warn: map-get($theme, warn);
-}
-
 .room-container {
     border-radius: 5px;
     background-color: #ffffff;
@@ -32,42 +26,26 @@
     width: 100%;
     display: flex;
     justify-content: space-evenly;
-}
-
-.room-row-b {
-    position: relative;
-    float: left;
-    margin: auto;
-    margin-top: 3%;
-    width: 100%;
-}
-
-.room-box {
-    margin: auto;
-    margin-top: 5px;
-    width: 18%;
-}
-
-.room-box-large {
-    margin: auto;
-    margin-top: 5px;
-    width: 30%;
+    &.b {
+        justify-content: flex-end;
+        float: right;
+    }
 }
 
 mat-select {
     padding: 5px;
 }
 
-mat-form-field.a {
-    width: 22%;
-}
-
-mat-form-field.b {
-    width: 10%;
-}
-
-mat-form-field.c {
-    width: 16%;
+mat-form-field {
+    &.a {
+        width: 22%;
+    }
+    &.b {
+        width: 10%;
+    }
+    &.c {
+        width: 16%;
+    }
 }
 
 .room-button.submit {
@@ -75,20 +53,18 @@ mat-form-field.c {
     color: #ffffff !important;
     text-transform: uppercase;
     background: #1d9c43;
-    /* border: 1px solid #494949 !important; */
     border-radius: 6px;
     margin-bottom: 20px;
     margin-right: 5%;
     cursor: pointer;
     width: wrap;
-}
-
-.room-button.submit:hover {
-    color: #ffffff !important;
-    background: #f6513b;
-    border-color: #f6513b !important;
-    transition: all 0.2s ease 0s;
-    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
+    &:hover {
+        color: #ffffff !important;
+        background: #f6513b;
+        border-color: #f6513b !important;
+        transition: all 0.2s ease 0s;
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
+    }
 }
 
 .room-chip-list {

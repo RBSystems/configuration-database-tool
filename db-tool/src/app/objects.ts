@@ -5,8 +5,16 @@ export class Building {
     description?: string;
     tags?: string[]; 
 
-    constructor() {
+    constructor(b?: Building) {
         this.tags = [];
+
+        if(b != null) {
+            this._id = b._id;
+            this._rev = b._rev;
+            this.name = b.name;
+            this.description = b.description;
+            this.tags = b.tags;
+        }
     }
 }
 
@@ -20,9 +28,20 @@ export class Room {
     devices?: Device[];
     tags?: string[];
 
-    constructor() {
+    constructor(r?: Room) {
         this.tags = [];
         this.designation = "production";
+
+        if(r != null) {
+            this._id = r._id;
+            this._rev = r._rev;
+            this.name = r.name;
+            this.description = r.description;
+            this.configuration = r.configuration;
+            this.designation = r.designation;
+            this.devices = r.devices;
+            this.tags = r.tags;
+        }
     }
 }
 
@@ -87,7 +106,7 @@ export class Template {
 export class UIConfig   {
 	_id?: 				  string
 	_rev?:                string            
-	api?:                 string[] = [];     
+	api?:                 string[] = ["localhost"];     
 	panels?:              Panel[] = [];    
 	presets?:             Preset[] = [];
 	inputConfiguration?:  IOConfiguration[] = [];
@@ -103,7 +122,6 @@ export class Preset   {
 	audioDevices?:            string[] = [];
 	inputs?:                  string[] = [];
     independentAudioDevices?: string[] = [];
-    // commands?: Commands;
 }
 
 export class Panel   {
