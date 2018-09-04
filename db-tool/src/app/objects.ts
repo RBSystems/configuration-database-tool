@@ -16,6 +16,18 @@ export class Building {
             this.tags = b.tags;
         }
     }
+
+    Validate(): boolean {
+        if(this._id == null || this._id.length < 1) {
+            return false;
+        }
+
+        if(this.name == null || this.name.length < 1) {
+            return false;
+        }
+
+        return true;
+    }
 }
 
 export class Room {
@@ -42,6 +54,26 @@ export class Room {
             this.devices = r.devices;
             this.tags = r.tags;
         }
+    }
+
+    Validate(): boolean {
+        if(this._id == null || this._id.length < 3) {
+            return false;
+        }
+
+        if(this.name == null || this.name.length < 1) {
+            return false;
+        } 
+
+        if(this.configuration == null || this.configuration._id == null || this.configuration._id.length < 1) {
+            return false;
+        }
+
+        if(this.designation == null || this.designation.length < 1) {
+            return false;
+        }
+
+        return true;
     }
 }
 
