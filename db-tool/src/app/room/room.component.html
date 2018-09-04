@@ -8,7 +8,7 @@
                 <!-- BUILDING -->
                 <mat-form-field class="a" matTooltip="{{S.RoomTips['bldg-list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Building</mat-label>
-                    <mat-select matInput [(ngModel)]="addBuilding" (selectionChange)="getRoomList(true)">
+                    <mat-select matInput [(ngModel)]="addBuilding" (selectionChange)="GetRoomList(true)">
                         <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -67,7 +67,7 @@
             </div>
 
             <!-- BUTTONS -->
-            <div *ngIf="addBuilding._id && !InStepper " class="room-row-b ">
+            <div *ngIf="addBuilding._id && !InStepper " class="room-row b ">
                 <button mat-raised-button matTooltip="{{S.RoomTips[ 'create']}} " [matTooltipShowDelay]=S.Slow class="room-button submit " (click)="CreateRoom() ">Submit</button>
             </div>
         </mat-tab>
@@ -80,7 +80,7 @@
                 <!-- BUILDING -->
                 <mat-form-field class="a" matTooltip="{{S.RoomTips['bldg_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Building</mat-label>
-                    <mat-select matInput [(ngModel)]="editBuilding " (selectionChange)="getRoomList(false) ">
+                    <mat-select matInput [(ngModel)]="editBuilding " (selectionChange)="GetRoomList(false) ">
                         <mat-option *ngFor="let b of buildingList " [value]="b ">{{b._id}} ({{b.name}})</mat-option>
                     </mat-select>
                 </mat-form-field>

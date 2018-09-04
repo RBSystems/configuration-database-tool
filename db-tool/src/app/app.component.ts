@@ -20,16 +20,12 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // Update the icon list from the database.
-    this.UpdateIcons()
+    this.api.GetIcons().subscribe(val => {
+      this.S.Icons = val;
+    });
   }
 
   SetActiveLink(link: string) {
     this.activeLink = link;
-  }
-
-  UpdateIcons() {
-    this.api.GetIcons().subscribe(val => {
-      this.S.Icons = val;
-    });
   }
 }

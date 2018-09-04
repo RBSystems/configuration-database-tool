@@ -22,6 +22,7 @@ import { ModalComponent } from './modal/modal.component';
 import { UIConfigComponent } from './uiconfig/uiconfig.component';
 import { PanelComponent } from './panel/panel.component';
 import { SummaryComponent } from './summary/summary.component';
+import { Defaults } from './defaults.service';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { SummaryComponent } from './summary/summary.component';
   ],
   providers: [
     ApiService,
-    Strings
+    Strings,
+    Defaults
   ],
   bootstrap: [AppComponent]
 })

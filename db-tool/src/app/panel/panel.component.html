@@ -38,7 +38,7 @@
         <p class="row-label short">Displays Controlled:</p>
         <div class="io-list display">
             <div class="icon display" *ngFor="let d of config.outputConfiguration">
-                <ng-container *ngIf="!InputAndTypeMatch(d.name, 'Shure Microphone')">
+                <ng-container *ngIf="!InputAndTypeMatch(d.name, 'Shure Microphone') && !InputHasRole(d.name, 'MirrorSlave')">
                     <mat-checkbox [checked]="preset.displays.includes(d.name)" (change)="UpdatePresetDisplays(preset, d.name, $event.checked);">
                         {{d.name}}
                     </mat-checkbox>
@@ -56,7 +56,7 @@
         <p class="row-label short">Displays with Audio:</p>
         <div class="io-list display">
             <div class="icon display" *ngFor="let d of config.outputConfiguration">
-                <mat-checkbox *ngIf="!InputAndTypeMatch(d.name, 'Shure Microphone')" [checked]="preset.audioDevices.includes(d.name)" (change)="UpdateAudioDevices(preset, d.name, $event.checked);">
+                <mat-checkbox *ngIf="!InputAndTypeMatch(d.name, 'Shure Microphone') && !InputHasRole(d.name, 'MirrorSlave')" [checked]="preset.audioDevices.includes(d.name)" (change)="UpdateAudioDevices(preset, d.name, $event.checked);">
                     {{d.name}}
                 </mat-checkbox>
             </div>
@@ -68,7 +68,7 @@
         <p class="row-label short">Shareable Displays:</p>
         <div class="io-list display">
             <div class="icon display" *ngFor="let d of config.outputConfiguration">
-                <mat-checkbox *ngIf="!InputAndTypeMatch(d.name, 'Shure Microphone')" [checked]="preset.shareableDisplays.includes(d.name)" (change)="UpdateShareableDisplays(preset, d.name, $event.checked);">
+                <mat-checkbox *ngIf="!InputAndTypeMatch(d.name, 'Shure Microphone') && !InputHasRole(d.name, 'MirrorSlave')" [checked]="preset.shareableDisplays.includes(d.name)" (change)="UpdateShareableDisplays(preset, d.name, $event.checked);">
                     {{d.name}}
                 </mat-checkbox>
             </div>

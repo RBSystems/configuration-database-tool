@@ -1,10 +1,4 @@
 @import 'src/db-theme.scss';
-@mixin db-tool-theme($theme) {
-    $primary: map-get($theme, primary);
-    $accent: map-get($theme, accent);
-    $warn: map-get($theme, warn);
-}
-
 .walk-button-a {
     color: #ffffff !important;
     text-transform: uppercase;
@@ -143,9 +137,11 @@ mat-horizontal-stepper {
 
 .button {
     &.finish {
-        background: $accent;
+        background: #1d9c43;
+        color: #ffffff;
         &:hover {
             background: #f6b93b;
+            color: #000000;
             transition: all 0.2s ease 0s;
         }
     }

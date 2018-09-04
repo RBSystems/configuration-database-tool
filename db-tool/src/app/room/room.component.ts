@@ -46,9 +46,9 @@ export class RoomComponent implements OnInit {
     this.addRoom = new Room();
     this.editRoom = new Room();
 
-    this.getBuildingList();
-    this.getConfigurationList();
-    this.getDesignationList();
+    this.GetBuildingList();
+    this.GetConfigurationList();
+    this.GetDesignationList();
   }
 
   ngOnChanges() {
@@ -70,14 +70,37 @@ export class RoomComponent implements OnInit {
     this.FixMissingName();
   }
 
-  getBuildingList() {
+  // FixMissingName fills in the name with the ID. This helps in room creation, and in room editing since some rooms have a missing name but cannot be updated without a name.
+  FixMissingName() {
+    if(this.addRoom != null && this.addRoom._id != null && (this.addRoom.name == null || this.addRoom.name.length == 0)) {
+      this.addRoom.name = this.addRoom._id;
+    }
+    if(this.editRoom != null && this.editRoom._id != null && (this.editRoom.name == null || this.editRoom.name.length == 0)) {
+      this.editRoom.name = this.editRoom._id;
+    }
+  }
+
+  // UpdateConfiguration picks the configuration from the list because for whatever reason ngModel has issues with the ID and stuff.
+  UpdateConfiguration() {
+    this.configurationList.forEach(c => {
+      if(this.editRoom.configuration._id = c._id) {
+        this.editRoom.configuration = c;
+      }
+      if(this.addRoom.configuration._id = c._id) {
+        this.addRoom.configuration = c;
+      }
+    });
+  }
+
+  ///// GETTERS & SETTERS /////
+  GetBuildingList() {
     this.buildingList = [];
     this.api.GetBuildingList().subscribe(val => {
       this.buildingList = val;
     });
   }
 
-  getRoomList(add: boolean) {
+  GetRoomList(add: boolean) {
     this.roomList = [];
 
     if (add) {
@@ -89,7 +112,7 @@ export class RoomComponent implements OnInit {
     });
   }
 
-  getConfigurationList() {
+  GetConfigurationList() {
     this.configurationList = [];
     this.configNameList = [];
 
@@ -104,33 +127,15 @@ export class RoomComponent implements OnInit {
     });
   }
 
-  getDesignationList() {
+  GetDesignationList() {
     this.designationList = [];
     this.api.GetRoomDesignations().subscribe(val => {
       this.designationList = val;
     })
   }
+  /*-*/
 
-  FixMissingName() {
-    if(this.addRoom != null && this.addRoom._id != null && (this.addRoom.name == null || this.addRoom.name.length == 0)) {
-      this.addRoom.name = this.addRoom._id;
-    }
-    if(this.editRoom != null && this.editRoom._id != null && (this.editRoom.name == null || this.editRoom.name.length == 0)) {
-      this.editRoom.name = this.editRoom._id;
-    }
-  }
-
-  UpdateConfiguration() {
-    this.configurationList.forEach(c => {
-      if(this.editRoom.configuration._id = c._id) {
-        this.editRoom.configuration = c;
-      }
-      if(this.addRoom.configuration._id = c._id) {
-        this.addRoom.configuration = c;
-      }
-    });
-  }
-
+  ///// DATABASE SUBMISSION /////
   CreateRoom() {
     console.log(this.addRoom);
     let res: Result[] = [];
@@ -163,7 +168,9 @@ export class RoomComponent implements OnInit {
         this.openDialog(MessageType.Error, errorMessage, null, res);
       });
   }
+  /*-*/
 
+  ///// RESPONSE MESSAGE /////
   openDialog(status: MessageType, subheader: string, message?: string, results?: Result[]) {
     let dialogRef = this.dialog.open(ModalComponent, {
       data: {type: status, subheader: subheader, message: message, results: results}
@@ -173,7 +180,9 @@ export class RoomComponent implements OnInit {
       console.log('The dialog was closed');
     });
   }
+  /*-*/
 
+  ///// TAGS /////
   AddChip(event: MatChipInputEvent, add: boolean): void {
     if(add && (this.addRoom.tags == null || this.addRoom.tags.length == 0)) {
       this.addRoom.tags = [];
@@ -214,4 +223,5 @@ export class RoomComponent implements OnInit {
       }
     }
   }
+  /*-*/
 }

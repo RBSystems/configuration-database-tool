@@ -8,19 +8,21 @@
                 <!-- BUILDING -->
                 <mat-form-field class="a" matTooltip="{{S.DeviceTips['bldg_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Building</mat-label>
-                    <mat-select matInput [(ngModel)]="addBuilding" (selectionChange)="getAddRoomList()">
+                    <mat-select matInput [(ngModel)]="addBuilding" (selectionChange)="GetAddRoomList()">
                         <mat-option *ngFor="let b of addBuildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- ROOM -->
                 <mat-form-field *ngIf="addBuilding._id != null" class="a" matTooltip="{{S.DeviceTips['room_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Room</mat-label>
-                    <mat-select matInput [(ngModel)]="addRoom" (selectionChange)="getAddDeviceList()">
+                    <mat-select matInput [(ngModel)]="addRoom" (selectionChange)="GetAddDeviceList()">
                         <mat-option *ngFor="let r of addRoomList" [value]="r">{{r._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
 
             </div>
+
+            <mat-divider *ngIf="addRoom._id != null"></mat-divider>
 
             <div *ngIf="addRoom._id != null" class="device-row">
                 <!-- ID -->
@@ -45,14 +47,6 @@
                 <mat-form-field class="a" matTooltip="{{S.DeviceTips['roles']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Roles</mat-label>
                     <mat-select required matInput multiple [(ngModel)]="addDevice.roles" (selectionChange)="UpdateRoleLists(true)" (valueChange)="UpdateRoleLists(true)">
-                        <!-- <mat-optgroup *ngIf="addType != null && addType.roles != null" [label]="S.DeviceStrings['type_roles']">
-                            <ng-container *ngFor="let r of addDevice.roles">
-                                <mat-option *ngIf="addType.roles.includes(r)">{{r._id}}</mat-option>
-                            </ng-container>
-                        </mat-optgroup>
-                        <ng-container *ngFor="let r of addDevice.roles">
-                            <mat-option *ngIf="!addType.roles.includes(r)" [value]="r">{{r._id}}</mat-option>
-                        </ng-container> -->
                         <mat-option *ngFor="let r of addDevice.roles" [value]="r">{{r._id}}</mat-option>
                         <mat-option *ngFor="let r of addRoleList" [value]="r">{{r._id}}</mat-option>
                     </mat-select>
@@ -64,7 +58,7 @@
                 </mat-form-field>
                 <!-- TAGS -->
                 <mat-form-field class="device-chip-list">
-                    <mat-label style="padding: 2px;">Tags</mat-label>
+                    <mat-label>Tags</mat-label>
                     <mat-chip-list #deviceChipList>
                         <mat-chip *ngFor="let tag of addDevice.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, true)">
                             {{tag}}
@@ -80,7 +74,7 @@
                 <!-- TYPE -->
                 <mat-form-field class="a" matTooltip="{{S.DeviceTips['type']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Device Type</mat-label>
-                    <mat-select required matInput [(ngModel)]="addDevice.type._id" (ngModelChange)="UpdateDeviceTypeInfo()">
+                    <mat-select required matInput [(ngModel)]="addDevice.type._id" (selectionChange)="DeviceTypeChange()">
                         <mat-option *ngFor="let type of deviceTypeList" [value]="type._id">{{type._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -93,8 +87,8 @@
 
             <!-- PORTS -->
             <mat-expansion-panel #addPortList *ngIf="addType != null && (addDevice.ports != null && addDevice.ports.length > 0)">
-                <mat-expansion-panel-header (click)="GetSourceAndDestinationLists(); SetDefaultPortConfigurations();">
-                    <mat-panel-title class="device-label-a">Ports:</mat-panel-title>
+                <mat-expansion-panel-header (click)="SetDefaultPortConfigurations();">
+                    <mat-panel-title class="port-label">Ports:</mat-panel-title>
                     <mat-panel-description *ngIf="!addPortList.expanded">{{S.DeviceTips['ports_open']}}</mat-panel-description>
                     <mat-panel-description *ngIf="addPortList.expanded">{{S.DeviceTips['ports_close']}}</mat-panel-description>
                 </mat-expansion-panel-header>
@@ -112,24 +106,24 @@
                     <!-- SOURCE DEVICE -->
                     <mat-form-field class="c" matTooltip="{{S.DeviceTips['source_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                         <mat-label>Source Device</mat-label>
-                        <mat-select matInput [(ngModel)]="port.source_device" (click)="GetSourceAndDestinationLists();">
+                        <mat-select matInput [(ngModel)]="port.source_device" (click)="SetSourceAndDestinationLists();">
                             <mat-option [value]=null>None</mat-option>
-                            <mat-option *ngFor="let i of addSourceDevices" [value]="i._id">{{i._id}}</mat-option>
+                            <mat-option *ngFor="let i of addSourceDevices" [value]="i">{{i}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <!-- DESTINATION DEVICE -->
                     <mat-form-field class="c" matTooltip="{{S.DeviceTips['destination_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                         <mat-label>Destination Device</mat-label>
-                        <mat-select matInput [(ngModel)]="port.destination_device" (click)="GetSourceAndDestinationLists();">
+                        <mat-select matInput [(ngModel)]="port.destination_device" (click)="SetSourceAndDestinationLists();">
                             <mat-option [value]=null>None</mat-option>
-                            <mat-option *ngFor="let i of addDestinationDevices" [value]="i._id">{{i._id}}</mat-option>
+                            <mat-option *ngFor="let i of addDestinationDevices" [value]="i">{{i}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
             </mat-expansion-panel>
 
             <!-- BUTTONS -->
-            <div *ngIf="addRoom._id && !InStepper" class="device-row-b">
+            <div *ngIf="addRoom._id && !InStepper" class="device-row b">
                 <button mat-raised-button class="device-button submit" matTooltip="{{S.DeviceTips['create']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']" (click)="CreateDevice()">Submit</button>
             </div>
         </mat-tab>
@@ -143,26 +137,27 @@
                 <!-- BUILDING -->
                 <mat-form-field class="a" matTooltip="{{S.DeviceTips['bldg_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Building</mat-label>
-                    <mat-select matInput [(ngModel)]="editBuilding" (selectionChange)="getEditRoomList()">
+                    <mat-select matInput [(ngModel)]="editBuilding" (selectionChange)="GetEditRoomList()">
                         <mat-option *ngFor="let b of editBuildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- ROOM -->
                 <mat-form-field *ngIf="editBuilding._id != null && editRoomList.length > 0" class="a" matTooltip="{{S.DeviceTips['room_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Room</mat-label>
-                    <mat-select matInput [(ngModel)]="editRoom" (selectionChange)="getEditDeviceList()">
+                    <mat-select matInput [(ngModel)]="editRoom" (selectionChange)="GetEditDeviceList()">
                         <mat-option *ngFor="let r of editRoomList" [value]="r">{{r._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- DEVICE -->
                 <mat-form-field *ngIf="editRoom._id != null && editRoomList.length > 0" class="a" matTooltip="{{S.DeviceTips['device_list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Device</mat-label>
-                    <mat-select matInput [(ngModel)]="editDevice" (selectionChange)="IDToUpdate = editDevice._id; UpdateDeviceTypeInfo()">
+                    <mat-select matInput [(ngModel)]="editDevice" (selectionChange)="EditDeviceChanges()">
                         <mat-option *ngFor="let d of editDeviceList" [value]="d">{{d._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <!-- <mat-divider *ngIf="editDevice._id != null"></mat-divider> -->
             </div>
+
+            <mat-divider *ngIf="editDevice._id"></mat-divider>
 
             <div *ngIf="editDevice._id" class="device-row">
                 <!-- ID -->
@@ -210,25 +205,25 @@
                 </mat-form-field>
             </div>
 
-            <div *ngIf="editDevice._id" class="device-row">
+            <div *ngIf="editDevice._id != null" class="device-row">
                 <!-- TYPE -->
                 <mat-form-field class="a" matTooltip="{{S.DeviceTips['type']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Device Type</mat-label>
-                    <mat-select required matInput [(ngModel)]="editDevice.type._id" (ngModelChange)="UpdateDeviceTypeInfo()">
+                    <mat-select required matInput [(ngModel)]="editDevice.type._id" (selectionChange)="DeviceTypeChange()">
                         <mat-option *ngFor="let type of deviceTypeList" [value]="type._id">{{type._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- DISPLAY_NAME -->
-                <mat-form-field class="a" *ngIf="editType != null && (editDevice._id != null && editType.input)" matTooltip="{{S.DeviceTips['display_name']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
-                    <mat-label>Name Shown on UI</mat-label>
+                <mat-form-field class="a" *ngIf="editType != null && editType.input" matTooltip="{{S.DeviceTips['display_name']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
+                    <mat-label>Display Name</mat-label>
                     <input matInput type="text" [(ngModel)]="editDevice.display_name">
                 </mat-form-field>
             </div>
 
             <!-- PORTS -->
-            <mat-expansion-panel #editPortList *ngIf="editType != null && (editDevice.ports != null && editDevice.ports.length > 0)">
+            <mat-expansion-panel #editPortList *ngIf="editDevice.ports != null && editDevice.ports.length > 0">
                 <mat-expansion-panel-header>
-                    <mat-panel-title class="device-label-a">Ports:</mat-panel-title>
+                    <mat-panel-title class="port-label">Ports:</mat-panel-title>
                     <mat-panel-description *ngIf="!editPortList.expanded">{{S.DeviceTips['ports_open']}}</mat-panel-description>
                     <mat-panel-description *ngIf="editPortList.expanded">{{S.DeviceTips['ports_close']}}</mat-panel-description>
                 </mat-expansion-panel-header>
@@ -244,11 +239,11 @@
                         <input matInput type="text" [(ngModel)]="port.friendly_name">
                     </mat-form-field>
                     <!-- SOURCE DEVICE -->
-                    <mat-form-field class="c" *ngIf="port.source_device != editDevice._id" matTooltip="{{S.DeviceTips['source_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
+                    <mat-form-field class="c" matTooltip="{{S.DeviceTips['source_device']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                         <mat-label>Source Device</mat-label>
                         <mat-select matInput [(ngModel)]="port.source_device">
                             <mat-option [value]=null>None</mat-option>
-                            <mat-option *ngFor="let i of editSourceDevices" [value]="i._id">{{i._id}}</mat-option>
+                            <mat-option *ngFor="let i of editSourceDevices" [value]="i">{{i}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <!-- DESTINATION DEVICE -->
@@ -256,14 +251,14 @@
                         <mat-label>Destination Device</mat-label>
                         <mat-select matInput [(ngModel)]="port.destination_device">
                             <mat-option [value]=null>None</mat-option>
-                            <mat-option *ngFor="let i of editDestinationDevices" [value]="i._id">{{i._id}}</mat-option>
+                            <mat-option *ngFor="let i of editDestinationDevices" [value]="i">{{i}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
             </mat-expansion-panel>
 
             <!-- BUTTONS -->
-            <div *ngIf="editDevice._id && !InStepper" class="device-row-b">
+            <div *ngIf="editDevice._id && !InStepper" class="device-row b">
                 <button mat-raised-button matTooltip="{{S.DeviceTips['update']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']" class="device-button submit" (click)="UpdateDevice()">Submit</button>
             </div>
         </mat-tab>
