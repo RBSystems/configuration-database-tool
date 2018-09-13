@@ -49,6 +49,7 @@ export class WalkthroughComponent implements OnInit {
   ]);
 
   deviceTypeList: DeviceType[];
+  deviceTypeMap: Map<string, DeviceType> = new Map();
   deviceStep = 0;
 
   constructor(private _formBuilder: FormBuilder, private api: ApiService, public dialog: MatDialog) { }
@@ -163,6 +164,10 @@ export class WalkthroughComponent implements OnInit {
     this.deviceTypeList = [];
     this.api.GetDeviceTypesList().subscribe(val => {
       this.deviceTypeList = val;
+
+      this.deviceTypeList.forEach(type => {
+        this.deviceTypeMap.set(type._id, type);
+      })
     });
   }
 
