@@ -39,7 +39,7 @@ export class DeviceComponent implements OnInit {
   addDestinationDevices: string[] = [];
   editDestinationDevices: string[] = [];
   @Input() deviceTypeList: DeviceType[] = [];
-  deviceTypeMap: Map<string, DeviceType> = new Map();
+  @Input() deviceTypeMap: Map<string, DeviceType> = new Map();
   deviceRoleList: Role[] = [];
   addRoleList: Role[] = [];
   editRoleList: Role[] = [];

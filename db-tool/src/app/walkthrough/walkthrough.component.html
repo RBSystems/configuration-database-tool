@@ -58,7 +58,7 @@
                         <mat-panel-title style="font-weight: 550">{{device._id}}</mat-panel-title>
                         <mat-panel-description>Type: {{device.type._id}}</mat-panel-description>
                     </mat-expansion-panel-header>
-                    <app-device [InStepper]="true" [addDevice]="device" [addBuilding]="locBuilding" [addRoom]="locRoom" [deviceTypeList]="deviceTypeList" [addDeviceList]="fullRoomDeviceList"></app-device>
+                    <app-device [InStepper]="true" [addDevice]="device" [addBuilding]="locBuilding" [addRoom]="locRoom" [deviceTypeList]="deviceTypeList" [deviceTypeMap]="deviceTypeMap" [addDeviceList]="fullRoomDeviceList"></app-device>
                     <mat-action-row *ngIf="i === 0 && fullRoomDeviceList.length != 1">
                         <button mat-button color="primary" (click)="nextStep()">Next</button>
                     </mat-action-row>
