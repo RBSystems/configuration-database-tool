@@ -74,7 +74,7 @@
                 <!-- TYPE -->
                 <mat-form-field class="a" matTooltip="{{S.DeviceTips['type']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Device Type</mat-label>
-                    <mat-select required matInput [(ngModel)]="addDevice.type._id" (selectionChange)="DeviceTypeChange()">
+                    <mat-select required matInput [(ngModel)]="addDevice.type._id" (selectionChange)="DeviceTypeChange(); SetDefaultPortConfigurations(addDevice);">
                         <mat-option *ngFor="let type of deviceTypeList" [value]="type._id">{{type._id}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -87,7 +87,7 @@
 
             <!-- PORTS -->
             <mat-expansion-panel #addPortList *ngIf="addType != null && (addDevice.ports != null && addDevice.ports.length > 0)">
-                <mat-expansion-panel-header (click)="SetDefaultPortConfigurations();">
+                <mat-expansion-panel-header>
                     <mat-panel-title class="port-label">Ports:</mat-panel-title>
                     <mat-panel-description *ngIf="!addPortList.expanded">{{S.DeviceTips['ports_open']}}</mat-panel-description>
                     <mat-panel-description *ngIf="addPortList.expanded">{{S.DeviceTips['ports_close']}}</mat-panel-description>

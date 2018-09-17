@@ -212,7 +212,16 @@ export class DeviceComponent implements OnInit {
 
       // Set the ports for the device to include whatever ports there are on the type.
       if(this.addType != null && this.addType.ports != null) {
-        this.addDevice.ports = this.addType.ports;
+        this.addDevice.ports = [];
+        this.addType.ports.forEach(p => {
+          let port = new Port();
+          port._id = p._id;
+          port.description = p.description;
+          port.friendly_name = p.friendly_name;
+          port.tags = p.tags
+
+          this.addDevice.ports.push(port);
+        })
       }
       else {
         this.addDevice.ports = [];
@@ -359,16 +368,19 @@ export class DeviceComponent implements OnInit {
   }
 
   // SetDefaultPortConfiguration attempts to fill in any default port information that is largely based 
-  SetDefaultPortConfigurations() {
+  SetDefaultPortConfigurations(device: Device) {
     let NumRegex = /[0-9]/;
-    let IDEnd = this.addDevice._id.split("-", 3)[2];
+    let IDEnd = device._id.split("-", 3)[2];
     let index = IDEnd.search(NumRegex)
     let devNumber: string = IDEnd.substring(index);
 
-    if(this.addDevice.ports != null) {
-      let defaultPorts = this.D.DefaultPorts[this.addDevice.type._id];
+    console.log(devNumber);
 
-      this.addDevice.ports.forEach(port => {  
+    if(device.ports != null) {
+      let defaultPorts = this.D.DefaultPorts[device.type._id];
+
+      for(let i = 0; i < device.ports.length; i++) {
+        let port = device.ports[i];  
         let sourceName = defaultPorts[port._id].source;
         this.addSourceDevices.forEach(source => {
           let name = source.split("-", 3)[2];
@@ -384,7 +396,7 @@ export class DeviceComponent implements OnInit {
             port.destination_device = dest;
           }
         });
-      });
+      }
     }
   }
 
