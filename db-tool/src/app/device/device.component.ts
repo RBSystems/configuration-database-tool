@@ -85,7 +85,10 @@ export class DeviceComponent implements OnInit {
     setTimeout(() => {
       this.SetSourceAndDestinationLists();
       this.GetDeviceRoleList();
-      // this.UpdateDeviceTypeInfo();      
+      this.DeviceTypeChange();
+      if(this.addDevice != null) {
+        this.SetDefaultPortConfigurations(this.addDevice); 
+      }
     }, 0); 
   }
 
@@ -373,8 +376,6 @@ export class DeviceComponent implements OnInit {
     let IDEnd = device._id.split("-", 3)[2];
     let index = IDEnd.search(NumRegex)
     let devNumber: string = IDEnd.substring(index);
-
-    console.log(devNumber);
 
     if(device.ports != null) {
       let defaultPorts = this.D.DefaultPorts[device.type._id];
