@@ -143,6 +143,7 @@ export class RoomComponent implements OnInit {
       success => {
         res.push({message: this.addRoom._id + " was successfully added.", success: true });
         this.openDialog(MessageType.Success, "Room Added", null, res);
+        this.api.ClearTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]
@@ -160,6 +161,7 @@ export class RoomComponent implements OnInit {
         res.push({message: this.editRoom._id + " was successfully updated.", success: true });
         this.openDialog(MessageType.Success, "Room Updated", null, res);
         this.IDToUpdate = this.editRoom._id;
+        this.api.ClearTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]

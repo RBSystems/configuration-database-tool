@@ -66,11 +66,15 @@ func AddUIConfig(context echo.Context) error {
 
 	context.Bind(&config)
 
+	changes.AddNew(context.Request().Context().Value("user").(string), UIConfig, roomID)
+
 	config, err := db.GetDB().CreateUIConfig(roomID, config)
 	if err != nil {
 		log.L.Errorf("[uiconfig] Problem adding UI Config for %s : %v", roomID, err.Error())
 		return context.JSON(http.StatusBadRequest, err)
 	}
+
+	changes.Write()
 
 	log.L.Debugf("[uiconfig] Successfully added the UI Config for %s!", roomID)
 	return context.JSON(http.StatusOK, config)
@@ -100,11 +104,20 @@ func UpdateUIConfig(context echo.Context) error {
 
 	context.Bind(&config)
 
-	config, err := db.GetDB().UpdateUIConfig(roomID, config)
+	oldConfig, err := db.GetDB().GetUIConfig(roomID)
+	if err != nil {
+		log.L.Errorf("[uiconfig] UIConfig for %s does not exist in the database: %v", roomID, err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	changes.AddChange(context.Request().Context().Value("user").(string), UIConfig, FindChanges(oldConfig, config, UIConfig))
+
+	config, err = db.GetDB().UpdateUIConfig(roomID, config)
 	if err != nil {
 		log.L.Errorf("[uiconfig] Problem updating UI Config for %s : %v", roomID, err.Error())
 		return context.JSON(http.StatusBadRequest, err)
 	}
+
+	changes.Write()
 
 	log.L.Debugf("[uiconfig] Successfully updated the UI Config for %s!", roomID)
 	return context.JSON(http.StatusOK, config)

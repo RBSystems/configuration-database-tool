@@ -69,6 +69,8 @@ func AddBuilding(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
+	changes.AddNew(context.Request().Context().Value("user").(string), Building, building.ID)
+
 	building, err := db.GetDB().CreateBuilding(building)
 	if err != nil {
 		log.L.Errorf("[bldg] Failed to add the building %s : %v", id, err.Error())
@@ -82,6 +84,7 @@ func AddBuilding(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.BuildingsCreated++
+	changes.Write()
 
 	log.L.Debugf("[bldg] Successfully added the building %s!", building.ID)
 	return context.JSON(http.StatusOK, building)
@@ -144,7 +147,14 @@ func UpdateBuilding(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
-	building, err := db.GetDB().UpdateBuilding(id, building)
+	oldBuilding, err := db.GetDB().GetBuilding(building.ID)
+	if err != nil {
+		log.L.Errorf("[bldg] Building %s does not exist in the database: %v", id, err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	changes.AddChange(context.Request().Context().Value("user").(string), Building, FindChanges(oldBuilding, building, Building))
+
+	building, err = db.GetDB().UpdateBuilding(id, building)
 	if err != nil {
 		log.L.Errorf("[bldg] Failed to update the building %s : %v", id, err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
@@ -152,6 +162,7 @@ func UpdateBuilding(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.BuildingsUpdated++
+	changes.Write()
 
 	log.L.Debugf("[bldg] Successfully updated the building %s!", building.ID)
 	return context.JSON(http.StatusOK, building)

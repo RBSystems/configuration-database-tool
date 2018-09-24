@@ -34,7 +34,7 @@ func GetRoomsByBuilding(context echo.Context) error {
 	log.L.Debugf("[room] Attempting to get all rooms in %s", buildingID)
 
 	rooms, err := db.GetDB().GetRoomsByBuilding(buildingID)
-  
+
 	if err != nil {
 		log.L.Errorf("[room] An error occurred while getting all rooms in the room %s: %v", buildingID, err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
@@ -136,6 +136,8 @@ func AddRoom(context echo.Context) error {
 
 	log.L.Debugf("Adding the room %s", room.ID)
 
+	changes.AddNew(context.Request().Context().Value("user").(string), Room, room.ID)
+
 	room, err = db.GetDB().CreateRoom(room)
 	if err != nil {
 		log.L.Errorf("[room] Failed to add the room %s : %v", id, err.Error())
@@ -161,6 +163,7 @@ func AddRoom(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.RoomsCreated++
+	changes.Write()
 
 	log.L.Debugf("[room] Successfully added the room %s!", room.ID)
 	return context.JSON(http.StatusOK, room)
@@ -193,7 +196,14 @@ func UpdateRoom(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
-	room, err := db.GetDB().UpdateRoom(id, room)
+	oldRoom, err := db.GetDB().GetRoom(room.ID)
+	if err != nil {
+		log.L.Errorf("[room] Room %s does not exist in the database: %v", id, err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	changes.AddChange(context.Request().Context().Value("user").(string), Room, FindChanges(oldRoom, room, Room))
+
+	room, err = db.GetDB().UpdateRoom(id, room)
 	if err != nil {
 		log.L.Errorf("[room] Failed to update the room %s : %v", id, err.Error())
 
@@ -206,6 +216,7 @@ func UpdateRoom(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.RoomsUpdated++
+	changes.Write()
 
 	log.L.Debugf("[room] Successfully updated the room %s!", room.ID)
 	return context.JSON(http.StatusOK, room)

@@ -512,6 +512,7 @@ export class DeviceComponent implements OnInit {
       success => {
         res.push({message: this.addDevice._id + " was successfully added.", success: true });
         this.openDialog(MessageType.Success, "Building Added", null, res);
+        this.api.ClearTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]
@@ -527,6 +528,7 @@ export class DeviceComponent implements OnInit {
       success => {
         res.push({message: this.editDevice._id + " was successfully updated.", success: true });
         this.openDialog(MessageType.Success, "Device Updated", null, res);
+        this.api.ClearTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]

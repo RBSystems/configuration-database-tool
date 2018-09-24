@@ -59,6 +59,8 @@ func main() {
 	router.GET("/log-level", log.GetLogLevel)
 	// router.PUT("/dev/:state", handlers.SetDev)
 	router.GET("/auth/admin", handlers.HasAdminRights)
+	router.GET("/changes", handlers.GetChanges)
+	router.GET("/changes/clear", handlers.ClearChanges)
 
 	secure.Static("/", "db-tool-dist")
 	secure.Static("/home", "db-tool-dist")
