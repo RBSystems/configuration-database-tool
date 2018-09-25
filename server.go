@@ -61,6 +61,7 @@ func main() {
 	router.GET("/auth/admin", handlers.HasAdminRights)
 	router.GET("/changes", handlers.GetChanges)
 	router.GET("/changes/clear", handlers.ClearChanges)
+	router.GET("/changes/write", handlers.WriteChanges)
 
 	secure.Static("/", "db-tool-dist")
 	secure.Static("/home", "db-tool-dist")

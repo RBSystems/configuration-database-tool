@@ -124,4 +124,11 @@ export class ApiService {
   ClearTempChanges() {
     this.http.get(this.url + "/changes/clear", this.options);
   }
+
+  WriteTempChanges() {
+    this.http.get(this.url + "/changes/write", this.options);
+    setTimeout(() => {
+      this.ClearTempChanges();
+    }, 2000);
+  }
 }

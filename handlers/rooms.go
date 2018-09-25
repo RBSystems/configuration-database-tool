@@ -163,7 +163,6 @@ func AddRoom(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.RoomsCreated++
-	changes.Write()
 
 	log.L.Debugf("[room] Successfully added the room %s!", room.ID)
 	return context.JSON(http.StatusOK, room)
@@ -216,7 +215,6 @@ func UpdateRoom(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.RoomsUpdated++
-	changes.Write()
 
 	log.L.Debugf("[room] Successfully updated the room %s!", room.ID)
 	return context.JSON(http.StatusOK, room)

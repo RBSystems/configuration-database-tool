@@ -83,7 +83,6 @@ func AddDevice(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.DevicesCreated++
-	changes.Write()
 
 	log.L.Debugf("[device] Successfully added the device %s!", device.ID)
 	return context.JSON(http.StatusOK, device)
@@ -127,7 +126,6 @@ func AddDevicesInBulk(context echo.Context) error {
 	}
 
 	changes.AddBulkChanges(context.Request().Context().Value("user").(string), Device, changeList)
-	changes.Write()
 
 	log.L.Debugf("[device] Returning responses from trying to add %s devices", len(devices))
 	return context.JSON(http.StatusOK, results)
@@ -181,7 +179,6 @@ func UpdateDevice(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.DevicesUpdated++
-	changes.Write()
 
 	log.L.Debugf("[device] Successfully updated the device %s!", device.ID)
 	return context.JSON(http.StatusOK, device)

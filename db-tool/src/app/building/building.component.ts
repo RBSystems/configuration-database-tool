@@ -88,7 +88,7 @@ export class BuildingComponent implements OnInit {
       success => {
         res.push({message: this.addBuilding._id + " was successfully added.", success: true });
         this.openDialog(MessageType.Success, "Building Added", null, res);
-        this.api.ClearTempChanges();
+        this.api.WriteTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]
@@ -106,7 +106,7 @@ export class BuildingComponent implements OnInit {
         res.push({message: this.editBuilding._id + " was successfully updated.", success: true });
         this.openDialog(MessageType.Success, "Building Updated", null, res);
         this.IDToUpdate = this.editBuilding._id;
-        this.api.ClearTempChanges();
+        this.api.WriteTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]

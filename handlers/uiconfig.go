@@ -74,8 +74,6 @@ func AddUIConfig(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	changes.Write()
-
 	log.L.Debugf("[uiconfig] Successfully added the UI Config for %s!", roomID)
 	return context.JSON(http.StatusOK, config)
 }
@@ -116,8 +114,6 @@ func UpdateUIConfig(context echo.Context) error {
 		log.L.Errorf("[uiconfig] Problem updating UI Config for %s : %v", roomID, err.Error())
 		return context.JSON(http.StatusBadRequest, err)
 	}
-
-	changes.Write()
 
 	log.L.Debugf("[uiconfig] Successfully updated the UI Config for %s!", roomID)
 	return context.JSON(http.StatusOK, config)

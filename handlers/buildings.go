@@ -84,7 +84,6 @@ func AddBuilding(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.BuildingsCreated++
-	changes.Write()
 
 	log.L.Debugf("[bldg] Successfully added the building %s!", building.ID)
 	return context.JSON(http.StatusOK, building)
@@ -162,7 +161,6 @@ func UpdateBuilding(context echo.Context) error {
 
 	// Increment the counter on the ServerStatus
 	SS.BuildingsUpdated++
-	changes.Write()
 
 	log.L.Debugf("[bldg] Successfully updated the building %s!", building.ID)
 	return context.JSON(http.StatusOK, building)

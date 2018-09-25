@@ -67,6 +67,13 @@ func ClearChanges(context echo.Context) error {
 	return context.JSON(http.StatusOK, "Changes cleared.")
 }
 
+// WriteChanges removes the current temporary storage of changes from the change log.
+func WriteChanges(context echo.Context) error {
+	changes.Write()
+
+	return context.JSON(http.StatusOK, "Changes cleared.")
+}
+
 // Write takes a message and appends it to the change log file.
 func (cl *ChangeLog) Write() {
 	file, err := os.OpenFile("changelog.txt", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)

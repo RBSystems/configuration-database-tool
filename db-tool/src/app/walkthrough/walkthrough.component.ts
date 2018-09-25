@@ -406,7 +406,7 @@ export class WalkthroughComponent implements OnInit {
       this.openDialog(MessageType.Error, "All Information Failed", null, results);
     }
 
-    this.api.ClearTempChanges();
+    this.api.WriteTempChanges();
   }
 
   openDialog(status: MessageType, subheader: string, message?: string, results?: Result[]) {
