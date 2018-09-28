@@ -401,6 +401,55 @@ export class DeviceComponent implements OnInit {
     }
   }
 
+  // IsValidSource checks to see if the source device is a valid option for a port on the host device.
+  IsValidSource(sourceID: string, destID: string, InAddDevice: boolean): boolean {
+    let source: Device;
+    let host: Device;
+    let listToCheck: Device[];
+
+    if(InAddDevice) {
+      listToCheck = this.addDeviceList;
+    }
+    else {
+      listToCheck = this.editDeviceList;
+    }
+
+    for(let i = 0; i < listToCheck.length; i++) {
+      if(listToCheck[i]._id === sourceID) {
+        source = listToCheck[i];
+      }
+      if(listToCheck[i]._id === destID) {
+        host = listToCheck[i];
+      }
+    }
+
+    // DSPs should only show microphones.
+    if(this.HasRole(source, "Microphone") && this.HasRole(host, "DSP")) {
+      return true;
+    }
+
+    // Displays and video switchers should only show video inputs or video switchers.
+    if(this.HasRole(host, "VideoOut") || this.HasRole(host, "VideoSwitcher")) {
+      if(this.HasRole(source, "VideoIn") || this.HasRole(source, "VideoSwitcher")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  HasRole(device: Device, roleID: string): boolean {
+    if(device.roles != null && device.roles.length > 0) {
+        let found: boolean = false;
+        device.roles.forEach(r => {
+            if(r._id === roleID) {
+                found = true;
+            }
+        });
+        return found;
+    }
+  }
+
   ///// API FUNCTIONS /////
   GetAddBuildingList() {
     if(!this.InStepper) {
@@ -512,6 +561,7 @@ export class DeviceComponent implements OnInit {
       success => {
         res.push({message: this.addDevice._id + " was successfully added.", success: true });
         this.openDialog(MessageType.Success, "Building Added", null, res);
+        this.api.WriteTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]
@@ -527,6 +577,7 @@ export class DeviceComponent implements OnInit {
       success => {
         res.push({message: this.editDevice._id + " was successfully updated.", success: true });
         this.openDialog(MessageType.Success, "Device Updated", null, res);
+        this.api.WriteTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]

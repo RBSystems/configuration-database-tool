@@ -39,7 +39,6 @@ func GetDevicesByRoom(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-
 	log.L.Debugf("[device] Successfully got all devices in the room %s!", roomID)
 	return context.JSON(http.StatusOK, devices)
 }
@@ -68,6 +67,8 @@ func AddDevice(context echo.Context) error {
 	}
 
 	log.L.Debugf("[device] Attempting to add the device %s", device.ID)
+
+	changes.AddNew(context.Request().Context().Value("user").(string), Device, device.ID)
 
 	device, err = db.GetDB().CreateDevice(device)
 	if err != nil {
@@ -114,12 +115,17 @@ func AddDevicesInBulk(context echo.Context) error {
 
 	results := db.GetDB().CreateBulkDevices(devices)
 
+	var changeList []Change
 	// Update the counter on the ServerStatus
 	for _, res := range results {
 		if res.Success {
+			ch := changes.GetNewChange(context.Request().Context().Value("user").(string), Device, res.ID)
+			changeList = append(changeList, ch)
 			SS.DevicesCreated++
 		}
 	}
+
+	changes.AddBulkChanges(context.Request().Context().Value("user").(string), Device, changeList)
 
 	log.L.Debugf("[device] Returning responses from trying to add %s devices", len(devices))
 	return context.JSON(http.StatusOK, results)
@@ -157,6 +163,13 @@ func UpdateDevice(context echo.Context) error {
 	}
 
 	log.L.Debugf("Updating %s...", device.ID)
+
+	oldDevice, err := db.GetDB().GetDevice(device.ID)
+	if err != nil {
+		log.L.Errorf("[device] Device %s does not exist in the database: %v", id, err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	changes.AddChange(context.Request().Context().Value("user").(string), Device, FindChanges(oldDevice, device, Device))
 
 	device, err = db.GetDB().UpdateDevice(id, device)
 	if err != nil {

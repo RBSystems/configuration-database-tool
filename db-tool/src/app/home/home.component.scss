@@ -1,15 +1,24 @@
 @import 'src/db-theme.scss';
+$phone-size: 360px;
 .home-button {
     text-transform: uppercase;
     padding: 15px;
     border-radius: 6px;
     display: inline-block;
     &.a {
+        margin: auto;
         width: 280px;
+        @media screen and (max-width: $phone-size) {
+            width: 75%;
+        }
     }
     &.b {
         margin: auto;
-        width: 180px;
+        width: 160px;
+        @media screen and (max-width: $phone-size) {
+            width: 50%;
+            margin-bottom: 15px;
+        }
     }
 }
 
@@ -22,6 +31,9 @@
     overflow: auto;
     max-width: 2000px;
     min-height: 100%;
+    @media screen and (max-width: $phone-size) {
+        padding: 10px;
+    }
 }
 
 .home-row {
@@ -34,4 +46,12 @@
     align-items: flex-start;
     display: flex;
     justify-content: space-evenly;
+    @media screen and (max-width: $phone-size) {
+        flex-flow: column;
+        justify-content: center;
+    }
+}
+
+.grid-button {
+    background: #6da9ee
 }

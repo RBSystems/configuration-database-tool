@@ -281,6 +281,7 @@ export class UIConfigComponent implements OnInit {
         res.push({message: "Successfully added a UI Config for " + this.room._id + ".", success: true });
         this.openDialog(MessageType.Success, "UI Config Added", null, res);
         this.configExists = true;
+        this.api.WriteTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]
@@ -296,6 +297,7 @@ export class UIConfigComponent implements OnInit {
       success => {
         res.push({message: "Successfully updated the UI Config for " + this.room._id + ".", success: true });
         this.openDialog(MessageType.Success, "UI Config Updated", null, res);
+        this.api.WriteTempChanges();
       },
       error => {
         let errorMessage = this.S.ErrorCodeMessages[error.status]
