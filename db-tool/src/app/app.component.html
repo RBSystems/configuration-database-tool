@@ -2,6 +2,21 @@
     <mat-toolbar>
         <mat-toolbar-row class='header'>
             <h1>Database Tool</h1>
+
+            <!-- MOBILE MENU -->
+            <span class="toolbar-spacer"></span>
+            <div class="mobile-menu">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                <mat-menu #menu="matMenu">
+                    <button class="mobile-menu-button" mat-menu-item *ngFor="let link of S.Links" routerLink="/{{link}}">
+                        <span>{{S.LinkTitles[link]}}</span>
+                    </button>
+                </mat-menu>
+            </div>
+            <!-- MOBILE MENU -->
+
         </mat-toolbar-row>
     </mat-toolbar>
 

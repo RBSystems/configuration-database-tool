@@ -119,4 +119,16 @@ export class ApiService {
   HasAdminRights(): Observable<boolean> {
     return this.http.get(this.url + "/auth/admin", this.options).map(response => response.json());
   }
+
+  ///// CHANGELOG FUNCTIONS /////
+  ClearTempChanges() {
+    this.http.get(this.url + "/changes/clear", this.options);
+  }
+
+  WriteTempChanges() {
+    this.http.get(this.url + "/changes/write", this.options);
+    setTimeout(() => {
+      this.ClearTempChanges();
+    }, 2000);
+  }
 }

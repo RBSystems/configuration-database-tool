@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule, MatDialog, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule } from '@angular/material';
+import { MatInputModule, MatDialog, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule, MatMenuModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -64,7 +64,8 @@ import { Defaults } from './defaults.service';
     MatCheckboxModule,
     MatSlideToggleModule,
     MatRadioModule,
-    MatTableModule
+    MatTableModule,
+    MatMenuModule
   ],
   providers: [
     ApiService,

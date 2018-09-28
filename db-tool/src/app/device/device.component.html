@@ -108,7 +108,9 @@
                         <mat-label>Source Device</mat-label>
                         <mat-select matInput [(ngModel)]="port.source_device" (click)="SetSourceAndDestinationLists();">
                             <mat-option [value]=null>None</mat-option>
-                            <mat-option *ngFor="let i of addSourceDevices" [value]="i">{{i}}</mat-option>
+                            <ng-container *ngFor="let i of addSourceDevices">
+                                <mat-option *ngIf="IsValidSource(i, addDevice._id, true)" [value]="i">{{i}}</mat-option>
+                            </ng-container>
                         </mat-select>
                     </mat-form-field>
                     <!-- DESTINATION DEVICE -->
@@ -243,7 +245,9 @@
                         <mat-label>Source Device</mat-label>
                         <mat-select matInput [(ngModel)]="port.source_device">
                             <mat-option [value]=null>None</mat-option>
-                            <mat-option *ngFor="let i of editSourceDevices" [value]="i">{{i}}</mat-option>
+                            <ng-container *ngFor="let i of editSourceDevices">
+                                <mat-option *ngIf="IsValidSource(i, editDevice._id, false)" [value]="i">{{i}}</mat-option>
+                            </ng-container>
                         </mat-select>
                     </mat-form-field>
                     <!-- DESTINATION DEVICE -->
