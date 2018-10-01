@@ -9,6 +9,7 @@ import { ModalComponent } from './modal/modal.component';
 import { WalkthroughComponent } from './walkthrough/walkthrough.component';
 import { UIConfigComponent } from './uiconfig/uiconfig.component';
 import { SummaryComponent } from './summary/summary.component';
+import { DndComponent } from './dnd/dnd.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -19,7 +20,8 @@ const routes: Routes = [
   { path: 'device', component: DeviceComponent },
   { path: 'uiconfig', component: UIConfigComponent },
   { path: 'summary', component: SummaryComponent },
-  { path: 'modal', component: ModalComponent}
+  { path: 'modal', component: ModalComponent},
+  { path: 'dnd', component: DndComponent}
 ]
 
 @NgModule({

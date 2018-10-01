@@ -32,7 +32,8 @@ export class Strings {
         "room", 
         "device",
         "uiconfig",
-        "summary"
+        "summary",
+        "dnd"
     ];
 
     LinkTitles = {
@@ -42,7 +43,8 @@ export class Strings {
         "room": "Room", 
         "device": "Device", 
         "uiconfig": "UI Config",
-        "summary": "Summary"
+        "summary": "Summary",
+        "dnd": "Room Builder Beta"
     }
 
     HomeTips = {

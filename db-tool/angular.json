@@ -22,7 +22,8 @@
                         ],
                         "styles": [
                             "src/styles.scss",
-                            "src/db-theme.scss"
+                            "src/db-theme.scss",
+                            "node_modules/ng2-dnd/bundles/style.css"
                         ],
                         "scripts": []
                     },
@@ -71,7 +72,8 @@
                         "scripts": [],
                         "styles": [
                             "src/styles.scss",
-                            "src/db-theme.scss"
+                            "src/db-theme.scss",
+                            "node_modules/ng2-dnd/bundles/style.css"
                         ],
                         "assets": [
                             "src/assets",
