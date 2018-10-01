@@ -23,6 +23,8 @@ import { UIConfigComponent } from './uiconfig/uiconfig.component';
 import { PanelComponent } from './panel/panel.component';
 import { SummaryComponent } from './summary/summary.component';
 import { Defaults } from './defaults.service';
+import { DndComponent } from './dnd/dnd.component';
+import { DndModule } from 'ng2-dnd';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,8 @@ import { Defaults } from './defaults.service';
     UIConfigComponent,
     PanelComponent,
     SummaryComponent,
-    ModalComponent
+    ModalComponent,
+    DndComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +68,9 @@ import { Defaults } from './defaults.service';
     MatSlideToggleModule,
     MatRadioModule,
     MatTableModule,
-    MatMenuModule
+    MatMenuModule,
+    DndModule.forRoot(),
+    MatCardModule
   ],
   providers: [
     ApiService,
