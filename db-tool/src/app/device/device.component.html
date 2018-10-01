@@ -31,7 +31,7 @@
                     <input readonly="true" matInput type="text" [(ngModel)]="addDevice._id">
                 </mat-form-field>
                 <!-- NAME -->
-                <mat-form-field class="a" matTooltip="{{S.DeviceTips['name']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
+                <mat-form-field class="a" matTooltip="{{S.DeviceTips['name']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']" matTooltipClass="tooltip-para">
                     <mat-label>Name</mat-label>
                     <input required matInput type="text" [(ngModel)]="addDevice.name" (blur)="UpdateID()">
                 </mat-form-field>

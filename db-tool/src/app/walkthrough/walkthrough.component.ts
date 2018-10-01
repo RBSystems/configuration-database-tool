@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { FormGroupDirective, FormControl, NgForm, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { MatStepper, MatDialog } from '@angular/material';
 import { ApiService } from '../api.service';
 import { Building, Room, Template, Device, DeviceType, BulkUpdateResponse, UIConfig } from '../objects';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
+import { UIConfigComponent } from '../uiconfig/uiconfig.component';
 
 
 export class DBError implements ErrorStateMatcher {
@@ -52,6 +53,8 @@ export class WalkthroughComponent implements OnInit {
   deviceTypeMap: Map<string, DeviceType> = new Map();
   deviceStep = 0;
 
+  @ViewChild("uiconfig") uiConfigComponent: UIConfigComponent;
+
   constructor(private _formBuilder: FormBuilder, private api: ApiService, public dialog: MatDialog) { }
 
   ngOnInit() {
@@ -69,7 +72,9 @@ export class WalkthroughComponent implements OnInit {
     this.locRoom = new Room();
     this.currentTemplate = new Template();
     this.customTemplate = new Template();
+    this.customTemplate.uiconfig = new UIConfig();
     this.customTemplate.devices = [];
+    this.customTemplate._id = "Custom";
   }
 
   ValidateLocation(stepper: MatStepper) {
@@ -156,7 +161,7 @@ export class WalkthroughComponent implements OnInit {
     this.templateList = [];
     this.api.GetTemplates().subscribe(val => {
       this.templateList = val;
-      console.log(this.templateList)
+      // console.log(this.templateList)
     });
   }
 
@@ -426,10 +431,17 @@ export class WalkthroughComponent implements OnInit {
   }
 
   nextStep() {
+    
     this.deviceStep++;    
   }
 
   prevStep() {
     this.deviceStep--;
+  }
+
+  PrepUIConfig() {
+    this.currentTemplate.devices = this.fullRoomDeviceList;
+    this.currentTemplate._id = "CustomTemp";
+    this.uiConfigComponent.ngOnChanges()
   }
 }

@@ -97,13 +97,34 @@ export class DndComponent implements OnInit {
       this.devicesToAdd.push(dev);
     }
     group.devices.push(dev);
+    group.devices = group.devices.sort(this.sortAlphaNum);
     
   }
 
   RemoveFromGroup(group: Group, dev: Device) {
     let index = group.devices.indexOf(dev);
     delete group.devices[index];
-    group.devices = group.devices.filter(this.notEmpty);
+    group.devices = group.devices.filter(this.notEmpty).sort(this.sortAlphaNum);
+  }
+
+  DeleteDevice(dev: Device) {
+    let index = this.devicesToAdd.indexOf(dev);
+    delete this.devicesToAdd[index];
+    this.devicesToAdd = this.devicesToAdd.filter(this.notEmpty).sort(this.sortAlphaNum);
+  }
+
+  DeleteGroup(group: Group) {
+    // Delete each device
+    group.devices.forEach(d => {
+      this.DeleteDevice(d);
+    });
+
+    // TODO Delete the preset information here
+
+    // Delete the group.
+    let index = this.groupList.indexOf(group);
+    delete this.groupList[index];
+    this.groupList = this.groupList.filter(this.notEmpty);
   }
 
   SetValidDropZones(dev: Device): string[] {
@@ -199,5 +220,22 @@ export class DndComponent implements OnInit {
   notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
     // Remove all empty and null values from the array.
     return value !== null && value !== undefined;
+  }
+
+  sortAlphaNum(a: Device,b: Device) {
+    // Sort the array first alphabetically and then numerically.
+    let reA: RegExp = /[^a-zA-Z]/g;
+    let reN: RegExp = /[^0-9]/g;
+    
+    let aA = a._id.replace(reA, "");
+    let bA = b._id.replace(reA, "");
+
+    if(aA === bA) {
+        let aN = parseInt(a._id.replace(reN, ""), 10);
+        let bN = parseInt(b._id.replace(reN, ""), 10);
+        return aN === bN ? 0 : aN > bN ? 1 : -1;
+    } else {
+        return aA > bA ? 1 : -1;
+    }
   }
 }

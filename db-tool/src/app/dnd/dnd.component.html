@@ -93,18 +93,26 @@
         <div class="column group" *ngFor="let g of groupList">
             <mat-card dnd-droppable [dropZones]="['NotPi']" (onDropSuccess)="AddDeviceToGroup(g, $event.dragData)">
                 <mat-card-header style="padding-bottom: 10px;">
+                    <!-- <div class="box-row"> -->
+
+                    <!-- </div> -->
                     <mat-form-field>
                         <mat-label>Name:</mat-label>
                         <input required matInput type="text" matAutosize="true" [(ngModel)]="g.preset.name">
                     </mat-form-field>
+                    <button mat-icon-button style="float: right; padding-bottom: 20px;" (click)="DeleteGroup(g)"><mat-icon>close</mat-icon></button>
+
                 </mat-card-header>
                 <mat-divider></mat-divider>
                 <mat-card-content class="panel-body">
-                    <div *ngIf="g.devices != null && g.devices.length > 0">
-                        <div *ngFor="let d of g.devices" dnd-draggable [dragEnabled]="true" [dropZones]="SetValidDropZones(d)" [dragData]="d" (onDragSuccess)="RemoveFromGroup(g, d)">
+                    <ng-container *ngIf="g.devices != null && g.devices.length > 0">
+                        <div class="device-info" *ngFor="let d of g.devices; let i = index;" dnd-draggable [dragEnabled]="true" [dropZones]="SetValidDropZones(d)" [dragData]="d" (onDragSuccess)="RemoveFromGroup(g, d)">
                             <button class="icon-button" mat-mini-fab color="accent"><mat-icon>{{D.DefaultIcons[d.type._id]}}</mat-icon></button><span>{{d._id}}</span>
+                            <button mat-icon-button style="float: right; color: red" (click)="RemoveFromGroup(g, d); DeleteDevice(d);"><mat-icon>remove_circle_outline</mat-icon></button>
+                            <mat-divider *ngIf="i < g.devices.length-1" style="align-self: flex-end;"></mat-divider>
                         </div>
-                    </div>
+                    </ng-container>
+
                 </mat-card-content>
 
             </mat-card>

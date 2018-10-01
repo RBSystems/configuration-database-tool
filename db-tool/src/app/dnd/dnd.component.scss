@@ -70,9 +70,18 @@
     flex-flow: row wrap;
     justify-content: flex-start;
     align-content: center;
+    width: 100%;
     padding-top: 10px;
 }
 
 .icon-button {
     margin: 5px;
+}
+
+.device-info {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 5px;
 }
