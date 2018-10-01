@@ -17,7 +17,7 @@
                 </div>
             </form>
         </mat-step>
-        <mat-step [completed]="locBuilding.Validate() && locRoom.Validate()" [editable]="!roomExists">
+        <mat-step [editable]="!roomExists">
             <form>
                 <ng-template matStepLabel>Location information</ng-template>
 
@@ -74,12 +74,12 @@
             </mat-accordion>
             <div style="margin-top: 2%;">
                 <button mat-raised-button matStepperPrevious (click)="prevStep()">Back</button>
-                <button mat-raised-button matStepperNext (click)="nextStep()">Next</button>
+                <button mat-raised-button matStepperNext (click)="nextStep(); PrepUIConfig();">Next</button>
             </div>
         </mat-step>
         <mat-step>
             <ng-template matStepLabel>UI Configuration</ng-template>
-            <app-uiconfig [InStepper]="true" [building]="locBuilding" [room]="locRoom" [deviceList]="fullRoomDeviceList" [currentTemplate]="currentTemplate"></app-uiconfig>
+            <app-uiconfig #uiconfig [InStepper]="true" [building]="locBuilding" [room]="locRoom" [deviceList]="fullRoomDeviceList" [currentTemplate]="currentTemplate"></app-uiconfig>
             <div style="margin-top: 2%;">
                 <button mat-raised-button matStepperPrevious (click)="prevStep()">Back</button>
                 <button mat-raised-button matStepperNext (click)="nextStep()">Next</button>

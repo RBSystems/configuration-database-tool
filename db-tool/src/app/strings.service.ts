@@ -32,7 +32,8 @@ export class Strings {
         "room", 
         "device",
         "uiconfig",
-        "summary"
+        "summary",
+        // "dnd"
     ];
 
     LinkTitles = {
@@ -42,7 +43,8 @@ export class Strings {
         "room": "Room", 
         "device": "Device", 
         "uiconfig": "UI Config",
-        "summary": "Summary"
+        "summary": "Summary",
+        // "dnd": "Room Builder Beta"
     }
 
     HomeTips = {
@@ -83,7 +85,7 @@ export class Strings {
 
     DeviceTips = {
         "id": "READ ONLY! The part after the second hyphen is whatever the device name is.",
-        "name": "ex: D1",
+        "name": "ex: D1\nCP1\nHDMI1",
         "description": "ex: Sony TV",
         "roles": "What this device does in this room",
         "address": "Hostname, IP, or 0.0.0.0",

@@ -40,14 +40,8 @@ export class UIConfigComponent implements OnInit {
   constructor(private api: ApiService, public dialog: MatDialog, public S: Strings, public D: Defaults) { }
 
   ngOnInit() {
-    // this.api.HasAdminRights().subscribe(val => {
-    //   this.UserHasAdminRights = val;
-    // });
-    if(!this.InStepper) {
-      // this.currentTemplate = new Template();
-    }
-
     this.customTemplate._id = "Custom";
+    this.customTemplate.uiconfig = new UIConfig();
     this.getBuildingList();
     this.getTemplateList();
     this.getDeviceTypeList();
@@ -55,8 +49,9 @@ export class UIConfigComponent implements OnInit {
 
   ngOnChanges() {
     if(this.currentTemplate != null && this.currentTemplate._id != null) {
-      console.log(this.currentTemplate)
+      this.SetIOConfigurations();
       this.UpdatePanels();
+      
     }
   }
 
@@ -129,6 +124,10 @@ export class UIConfigComponent implements OnInit {
   }
 
   SetIOConfigurations() {
+    if(this.deviceList == null || this.deviceList.length == 0 || this.config == null) {
+      return;
+    }
+
     if(this.config.inputConfiguration == null || this.config.inputConfiguration.length == 0) {
       this.config.inputConfiguration = [];
     }
@@ -136,63 +135,67 @@ export class UIConfigComponent implements OnInit {
       this.config.outputConfiguration = [];
     }
   
+    
     this.deviceList.forEach(d => {
-      let index = d.name.search(this.NumRegex)
-      let NameSansNum: string = d.name.substring(0, index);
+      if(d.name != null) {
+        let index = d.name.search(this.NumRegex)
+        let NameSansNum: string = d.name.substring(0, index);
+    
+        let t = this.deviceTypeMap.get(d.type._id);
+        // Find all the ControlProcessors and make a Panel for each.
+        if(this.VerifyTypeHasRole(t, "ControlProcessor")) {
+          let p = new Panel();
+          p.hostname = d._id;
   
-      let t = this.deviceTypeMap.get(d.type._id);
-      // Find all the ControlProcessors and make a Panel for each.
-      if(this.VerifyTypeHasRole(t, "ControlProcessor")) {
-        let p = new Panel();
-        p.hostname = d._id;
-
-        let add = true;
-  
-        this.panels.forEach(pan => {
-          if(pan.hostname === p.hostname) {
-            add = false;
+          let add = true;
+    
+          this.panels.forEach(pan => {
+            if(pan.hostname === p.hostname) {
+              add = false;
+            }
+          });
+    
+          if(add) {
+            this.panels.push(p);
           }
-        });
-  
-        if(add) {
-          this.panels.push(p);
+        }
+    
+        let io = new IOConfiguration();
+    
+        // Find all the inputs and make an IOConfiguration for each.
+        if(t.input) {
+          io.name = d.name;
+          io.icon = this.D.DefaultIcons[NameSansNum];
+          this.inputs.push(io);
+    
+          if(!this.IOIsInList(io.name, this.config.inputConfiguration)) {
+            this.config.inputConfiguration.push(io);
+          } 
+        }
+    
+        // Find the displays and make an IOConfiguration for each.
+        if(t.output && this.VerifyTypeHasRole(t, "VideoOut")) {
+          io.name = d.name;
+          io.icon = this.D.DefaultIcons[d.type._id];
+          this.displays.push(io);
+    
+          if(!this.IOIsInList(io.name, this.config.outputConfiguration)) {
+            this.config.outputConfiguration.push(io);
+          }              
+        }
+    
+        // Find the independent audio devices and add them to the list.
+        if(this.VerifyTypeHasRole(t, "Microphone")) {
+          io.name = d.name;
+          io.icon = this.D.DefaultIcons[d.type._id];
+          this.indyAudios.push(io);
+    
+          if(!this.IOIsInList(io.name, this.config.inputConfiguration)) {
+            this.config.outputConfiguration.push(io);
+          }  
         }
       }
-  
-      let io = new IOConfiguration();
-  
-      // Find all the inputs and make an IOConfiguration for each.
-      if(t.input) {
-        io.name = d.name;
-        io.icon = this.D.DefaultIcons[NameSansNum];
-        this.inputs.push(io);
-  
-        if(!this.IOIsInList(io.name, this.config.inputConfiguration)) {
-          this.config.inputConfiguration.push(io);
-        } 
-      }
-  
-      // Find the displays and make an IOConfiguration for each.
-      if(t.output && this.VerifyTypeHasRole(t, "VideoOut")) {
-        io.name = d.name;
-        io.icon = this.D.DefaultIcons[d.type._id];
-        this.displays.push(io);
-  
-        if(!this.IOIsInList(io.name, this.config.outputConfiguration)) {
-          this.config.outputConfiguration.push(io);
-        }              
-      }
-  
-      // Find the independent audio devices and add them to the list.
-      if(this.VerifyTypeHasRole(t, "Microphone")) {
-        io.name = d.name;
-        io.icon = this.D.DefaultIcons[d.type._id];
-        this.indyAudios.push(io);
-  
-        if(!this.IOIsInList(io.name, this.config.inputConfiguration)) {
-          this.config.outputConfiguration.push(io);
-        }  
-      }
+      
     });
   }
 
@@ -208,22 +211,23 @@ export class UIConfigComponent implements OnInit {
   }
 
   UpdatePanels() {
-    if(this.currentTemplate._id === "Custom") {
-      this.customTemplate.uiconfig = this.config;
-      this.customTemplate.uiconfig.panels = this.panels;
-    }
 
     this.config = this.currentTemplate.uiconfig;
 
     this.SetIOConfigurations();
     
-    console.log(this.panels)
+    let push: boolean = false;
+    if(this.config.panels != null && this.config.panels.length == 0) {
+      push = true;
+    }
     for(let i = 0; i < this.panels.length; i++) {
-      if(i < this.config.panels.length) {
+      if(i < this.config.panels.length && !push) {
         this.config.panels[i].hostname = this.panels[i].hostname;
       }
+      else if(push) {
+        this.config.panels.push(this.panels[i]);
+      }
     }
-    console.log(this.config);
   }
 
   GetPreset(presetID: string): Preset {
@@ -260,8 +264,6 @@ export class UIConfigComponent implements OnInit {
   }
 
   Submit() {
-    console.log(this.config)
-    console.log(this.configExists)
     if(this.configExists) {
       this.UpdateUIConfig();
     }

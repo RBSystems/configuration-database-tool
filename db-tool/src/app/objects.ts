@@ -94,9 +94,35 @@ export class Device {
     ports?: Port[];
     tags?: string[];
 
-    constructor() {
+    constructor(baseType?: DeviceType) {
         this.roles = [];
         this.tags = [];
+        this.type = new DeviceType();
+
+        if(baseType != null) {
+            this.type._id = baseType._id;
+            
+            if(baseType.ports != null) {
+                this.ports = [];
+                baseType.ports.forEach(port => {
+                    let p = new Port();
+                    p._id = port._id;
+                    p.description = port.description;
+                    p.friendly_name = port.friendly_name;
+                    p.source_device = port.source_device;
+                    p.tags = [];
+                    this.ports.push(p)
+                });
+            }
+            
+            baseType.roles.forEach(role => {
+                let r = new Role();
+                r._id = role._id;
+                r.description = role.description;
+                r.tags = [];
+                this.roles.push(r);
+            })
+        }
     }
 }
 
@@ -178,4 +204,9 @@ export class BulkUpdateResponse {
     _id?: string;
     success?: boolean;
     message?: string;
+}
+
+export class Group {
+    preset?: Preset = new Preset();
+    devices?: Device[] = [];
 }

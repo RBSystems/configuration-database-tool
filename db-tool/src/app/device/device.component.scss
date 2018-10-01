@@ -55,6 +55,11 @@ mat-form-field {
     }
 }
 
+.tooltip-para {
+    height: auto;
+    flex-flow: row wrap;
+}
+
 .device-button.submit {
     float: right;
     color: #ffffff !important;

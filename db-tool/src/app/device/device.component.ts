@@ -299,13 +299,15 @@ export class DeviceComponent implements OnInit {
     if(this.addDeviceList != null && this.addType != null) {
       // Add the device list to either sources or destinations.
       this.addDeviceList.forEach(device => {
-        let type = this.deviceTypeMap.get(device.type._id);
+        if(device.type != null && device.type._id != null) {
+          let type = this.deviceTypeMap.get(device.type._id);
 
-        if(type.source) {
-          this.addSourceDevices.push(device._id);
-        }
-        if(type.destination) {
-          this.addDestinationDevices.push(device._id);
+          if(type.source) {
+            this.addSourceDevices.push(device._id);
+          }
+          if(type.destination) {
+            this.addDestinationDevices.push(device._id);
+          }
         }
       });
 
