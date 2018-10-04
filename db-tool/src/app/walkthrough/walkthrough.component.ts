@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { FormGroupDirective, FormControl, NgForm, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { MatStepper, MatDialog } from '@angular/material';
-import { ApiService } from '../api.service';
+import { ApiService } from '../services/api.service';
 import { Building, Room, Template, Device, DeviceType, BulkUpdateResponse, UIConfig } from '../objects';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 import { UIConfigComponent } from '../uiconfig/uiconfig.component';

@@ -2,9 +2,9 @@ import { Component, OnInit, Input  } from '@angular/core';
 import { Building, Room, Device, DeviceType, Role, Port, Group, RoomConfiguration } from '../objects';
 import { MatDialog, ErrorStateMatcher } from '@angular/material';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
-import { ApiService } from '../api.service'; 
-import { Strings } from '../strings.service';
-import { Defaults } from '../defaults.service';
+import { ApiService } from '../services/api.service'; 
+import { Strings } from '../services/strings.service';
+import { Defaults } from '../services/defaults.service';
 
 @Component({
   selector: 'app-dnd',

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Strings } from '../strings.service';
+import { Strings } from '../services/strings.service';
 import { MatDialog } from '@angular/material';
 import { Building, Room, Device, Template, UIConfig, Panel, IOConfiguration, DeviceType, Preset } from '../objects';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';

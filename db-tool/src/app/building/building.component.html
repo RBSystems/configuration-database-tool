@@ -1,106 +1,39 @@
-<div [ngClass]="{ 'bldg-container': !InStepper, 'bldg-container-half': InStepper }">
-    <mat-tab-group mat-stretch-tabs="always" [selectedIndex]="tabIndex">
-        <!-- //////////// -->
-        <!-- ADD BUILDING -->
-        <!-- //////////// -->
-        <mat-tab label="ADD" [disabled]="InStepper && buildingExists">
-            <div class="bldg-row">
-                <!-- ID -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['id']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
-                    <mat-label>ID</mat-label>
-                    <input #AID matInput required type="text" [(ngModel)]="addBuilding._id" [errorStateMatcher]="buildingMatcher">
-                    <mat-error *ngIf="addIDFormControl.hasError('required')">
-                        The building ID is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-                <!-- NAME -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['name']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
-                    <mat-label>Name</mat-label>
-                    <input matInput type="text" [(ngModel)]="addBuilding.name">
-                </mat-form-field>
-            </div>
+<div #bldgContainer class="container">
+    <div class="row">
+        <mat-accordion #bldgIdentifiers>
+            <mat-expansion-panel class="mat-elevation-z0">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <mat-form-field #bldgID>
+                            <mat-label>ID</mat-label>
+                            <input matInput type="text" required [(ngModel)]="building._id">
+                        </mat-form-field>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="column">
+                    <mat-form-field #bldgName>
+                        <mat-label>Name</mat-label>
+                        <input matInput type="text" [(ngModel)]="building.name">
+                    </mat-form-field>
+                    <mat-form-field #bldgDescription>
+                        <mat-label>Description</mat-label>
+                        <input matInput type="text" [(ngModel)]="building.description">
+                    </mat-form-field>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+        <mat-form-field class="chips">
+            <mat-label>Tags</mat-label>
+            <mat-chip-list #bldgTags>
+                <mat-chip *ngFor="let tag of building.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, true)">
+                    {{tag}}
+                    <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
 
-            <div class="bldg-row">
-                <!-- DESCRIPTION -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['description']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
-                    <mat-label>Description</mat-label>
-                    <input matInput type="text" [(ngModel)]="addBuilding.description">
-                </mat-form-field>
-                <!-- TAGS -->
-                <mat-form-field [ngClass]="{ 'a chipList': !InStepper, 'b chipList': InStepper }">
-                    <mat-label style="padding: 2px;">Tags</mat-label>
-                    <mat-chip-list #chipList>
-                        <mat-chip *ngFor="let tag of addBuilding.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, true)">
-                            {{tag}}
-                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                        </mat-chip>
-                        <input style="padding: 4px;" matInput [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, true)">
-                    </mat-chip-list>
-                </mat-form-field>
-            </div>
-
-            <!-- BUTTONS -->
-            <div class="bldg-row b" *ngIf="!InStepper">
-                <button mat-raised-button matTooltip="{{S.BuildingTips['create']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']" class="bldg-button submit" (click)="CreateBuilding()">Submit</button>
-            </div>
-
-        </mat-tab>
-
-        <!-- ///////////// -->
-        <!-- EDIT BUILDING -->
-        <!-- ///////////// -->
-        <mat-tab label="EDIT" [disabled]="InStepper && !buildingExists">
-            <div class="bldg-row" *ngIf="!InStepper">
-                <!-- BUILDING -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['list']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
-                    <mat-label>Building</mat-label>
-                    <mat-select matInput [(ngModel)]="editBuilding" (selectionChange)="IDToUpdate = editBuilding._id;">
-                        <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <!-- <mat-divider style="height: 5px;"></mat-divider> -->
-
-            <div *ngIf="editBuilding._id != null" class="bldg-row">
-                <!-- ID -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['id']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
-                    <mat-label>ID</mat-label>
-                    <input matInput required type="text" [(ngModel)]="editBuilding._id" [errorStateMatcher]="buildingMatcher">
-                    <mat-error *ngIf="editIDFormControl.hasError('required')">
-                        The building ID is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-                <!-- NAME -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['name']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
-                    <mat-label>Name</mat-label>
-                    <input matInput type="text" [(ngModel)]="editBuilding.name">
-                </mat-form-field>
-            </div>
-
-            <div *ngIf="editBuilding._id != null" class="bldg-row">
-                <!-- DESCRIPTION -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }" matTooltip="{{S.BuildingTips['description']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
-                    <mat-label>Description</mat-label>
-                    <input matInput type="text" [(ngModel)]="editBuilding.description">
-                </mat-form-field>
-                <!-- TAGS -->
-                <mat-form-field [ngClass]="{ 'a': !InStepper, 'b': InStepper }">
-                    <mat-label style="padding: 2px;">Tags</mat-label>
-                    <mat-chip-list #chipList2>
-                        <mat-chip *ngFor="let tag of editBuilding.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, false)">
-                            {{tag}}
-                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                        </mat-chip>
-
-                        <input style="padding: 4px;" matInput [matChipInputFor]="chipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, false)">
-                    </mat-chip-list>
-                </mat-form-field>
-            </div>
-
-            <!-- BUTTONS -->
-            <div *ngIf="editBuilding._id != null && !InStepper" class="bldg-row-b">
-                <button mat-raised-button matTooltip="{{S.BuildingTips['update']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']" class="bldg-button submit" (click)="UpdateBuilding()">Submit</button>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
+                <input type="text" matInput [matChipInputFor]="bldgTags" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, true)">
+            </mat-chip-list>
+        </mat-form-field>
+        <button mat-raised-button class="button delete" (click)="DeleteBuilding()" [disabled]="building._id == null || building._id == ''">Delete</button>
+        <button mat-raised-button class="button submit" (click)="SubmitBuilding()" [disabled]="building._id == null || building._id == ''">Submit</button>
+    </div>
 </div>

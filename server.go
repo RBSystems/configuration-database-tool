@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	auth "github.com/byuoitav/common/auth/middleware"
+	"github.com/byuoitav/authmiddleware"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/handlers"
 	"github.com/jessemillar/health"
@@ -17,13 +17,13 @@ func main() {
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
 
-	handlers.Dev = false
+	handlers.Dev = true
 
 	// Use the `secure` routing group to require authentication
-	// secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
+	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	// if !handlers.Dev {
-	secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
+	// secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
 	// }
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
@@ -54,6 +54,8 @@ func main() {
 	secure.PUT("/rooms/:room/update", handlers.UpdateRoom)
 	secure.PUT("/devices/:device/update", handlers.UpdateDevice)
 	secure.PUT("/uiconfig/:room/update", handlers.UpdateUIConfig)
+
+	secure.GET("/buildings/:building/delete", handlers.DeleteBuilding)
 
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)

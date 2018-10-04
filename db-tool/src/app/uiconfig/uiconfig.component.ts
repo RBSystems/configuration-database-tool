@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ApiService } from '../api.service';
-import { Strings } from '../strings.service';
+import { ApiService } from '../services/api.service';
+import { Strings } from '../services/strings.service';
 import { Building, Room, Device, Template, UIConfig, Panel, IOConfiguration, DeviceType, Preset } from '../objects';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
-import { Defaults } from '../defaults.service';
+import { Defaults } from '../services/defaults.service';
 
 @Component({
   selector: 'app-uiconfig',

@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Building, Room, RoomConfiguration } from '../objects';
-import { ApiService } from '../api.service'; 
+import { ApiService } from '../services/api.service'; 
 import { MatDialog } from '@angular/material';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material';
-import { Strings } from '../strings.service';
+import { Strings } from '../services/strings.service';
 
 @Component({
   selector: 'app-room',

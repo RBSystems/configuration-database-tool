@@ -69,7 +69,7 @@ func AddBuilding(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
-	changes.AddNew(context.Request().Context().Value("user").(string), Building, building.ID)
+	// changes.AddNew(context.Request().Context().Value("user").(string), Building, building.ID)
 
 	building, err := db.GetDB().CreateBuilding(building)
 	if err != nil {
@@ -146,14 +146,14 @@ func UpdateBuilding(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
-	oldBuilding, err := db.GetDB().GetBuilding(building.ID)
-	if err != nil {
-		log.L.Errorf("[bldg] Building %s does not exist in the database: %v", id, err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-	changes.AddChange(context.Request().Context().Value("user").(string), Building, FindChanges(oldBuilding, building, Building))
+	// oldBuilding, err := db.GetDB().GetBuilding(building.ID)
+	// if err != nil {
+	// 	log.L.Errorf("[bldg] Building %s does not exist in the database: %v", id, err.Error())
+	// 	return context.JSON(http.StatusBadRequest, err.Error())
+	// }
+	// changes.AddChange(context.Request().Context().Value("user").(string), Building, FindChanges(oldBuilding, building, Building))
 
-	building, err = db.GetDB().UpdateBuilding(id, building)
+	building, err := db.GetDB().UpdateBuilding(id, building)
 	if err != nil {
 		log.L.Errorf("[bldg] Failed to update the building %s : %v", id, err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
@@ -164,4 +164,34 @@ func UpdateBuilding(context echo.Context) error {
 
 	log.L.Debugf("[bldg] Successfully updated the building %s!", building.ID)
 	return context.JSON(http.StatusOK, building)
+}
+
+// DeleteBuilding removes a building from the database.
+func DeleteBuilding(context echo.Context) error {
+	log.L.Debug("[bldg] Starting DeleteBuilding...")
+
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("[bldg] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[bldg] User %s is not allowed to delete a building.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
+
+	id := context.Param("building")
+
+	log.L.Debugf("[bldg] Attempting to delete the building %s", id)
+
+	err := db.GetDB().DeleteBuilding(id)
+	if err != nil {
+		log.L.Errorf("[bldg] Failed to delete the building %s : %v", id, err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	log.L.Debugf("[bldg] Successfully deleted the building %s!", id)
+	return context.JSON(http.StatusOK, id)
 }

@@ -1,12 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Building, Room, Device, DeviceType, Role, Port } from '../objects';
-import { ApiService } from '../api.service'; 
+import { ApiService } from '../services/api.service'; 
 import { MatDialog, ErrorStateMatcher } from '@angular/material';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material';
-import { Strings } from '../strings.service';
-import { Defaults } from '../defaults.service';
+import { Strings } from '../services/strings.service';
+import { Defaults } from '../services/defaults.service';
 
 @Component({
   selector: 'app-device',

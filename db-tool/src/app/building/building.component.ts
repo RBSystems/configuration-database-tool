@@ -1,13 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Building } from '../objects'
-import { ApiService } from '../api.service';
-import { MatDialog } from '@angular/material';
+import { ApiService } from '../services/api.service';
+import { MatDialog, MatAccordionDisplayMode } from '@angular/material';
 import { ModalComponent, MessageType, Result } from '../modal/modal.component';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { DBError } from '../home/home.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material';
-import { Strings } from '../strings.service';
+import { Strings } from '../services/strings.service';
 
 @Component({
   selector: 'app-building',
@@ -15,27 +15,9 @@ import { Strings } from '../strings.service';
   styleUrls: ['./building.component.scss']
 })
 export class BuildingComponent implements OnInit {
-  @Input() InStepper: boolean = false;
+  @Input() building: Building;
   @Input() buildingExists: boolean = false;
-  tabIndex: number = 0;
-
-  buildingList: Building[] = [];
-  @Input() addBuilding: Building;  
-  @Input() editBuilding: Building;
-  
-  IDToUpdate: string;
-
-  buildingMatcher = new DBError();
-  AddFormGroup: FormGroup;
-  EditFormGroup: FormGroup;
-  addIDFormControl = new FormControl('', [
-    Validators.required,
-    Validators.pattern("[A-Z0-9]*")
-  ]);
-  editIDFormControl = new FormControl('', [
-    Validators.required,
-    Validators.pattern("[A-Z0-9]*")
-  ]);
+  @Input() IDToUpdate: string;
 
   visible = true;
   selectable = true;
@@ -46,76 +28,64 @@ export class BuildingComponent implements OnInit {
   constructor(private api: ApiService, public dialog: MatDialog, private _formBuilder: FormBuilder, public S: Strings) { }
 
   ngOnInit() {
-    this.AddFormGroup = this._formBuilder.group({
-      addIDCtrl: ['', Validators.required]
-    });
-    this.EditFormGroup = this._formBuilder.group({
-      editIDCtrl: ['', Validators.required]
-    });
-
-    this.tabIndex = 0;
-    this.GetBuildingList();
-
-    this.addBuilding = new Building();
-    this.editBuilding = new Building();
+    this.building = new Building();
   }
 
   ngOnChanges() {
-    setTimeout(() => {
-      if(this.InStepper && this.buildingExists) {
-        this.tabIndex = 1;
-      }
-      else {
-        this.tabIndex = 0;
-      }
-    }, 0); 
+    if(this.building != null) {
+      this.IDToUpdate = this.building._id;
+    }
   }
 
-  ///// GETTERS & SETTERS /////
-  GetBuildingList() {
-    this.buildingList = [];
-    this.api.GetBuildingList().subscribe(val => {
-      this.buildingList = val;
-    });
-  }
-  /*-*/
-
-  ///// DATABASE SUBMISSION /////
-  CreateBuilding() {
-    console.log(this.addBuilding);
+  ///// API FUNCTIONS /////
+  SubmitBuilding() {
     let res: Result[] = [];
-    this.api.AddBuilding(this.addBuilding).subscribe(
+    if(!this.buildingExists) {
+      this.api.AddBuilding(this.building).subscribe(
+        success => {
+          res.push({message: this.building._id + " was successfully added.", success: true});
+          this.openDialog(MessageType.Success, "Building Added", null, res);
+          this.api.WriteTempChanges();
+          this.buildingExists = true;
+        },
+        error => {
+          let errorMsg = this.S.ErrorCodeMessages[error.status];
+          res.push({message: error.json(), success: false, error: error});
+          this.openDialog(MessageType.Error, errorMsg, null, res);
+        });
+    }
+    else {
+      this.api.UpdateBuilding(this.IDToUpdate, this.building).subscribe(
+        success => {
+          res.push({message: this.building._id + " was successfully updated.", success: true});
+          this.openDialog(MessageType.Success, "Building Updated", null, res);
+          this.IDToUpdate = this.building._id;
+          this.api.WriteTempChanges();
+        },
+        error => {
+          let errorMsg = this.S.ErrorCodeMessages[error.status];
+          res.push({message: error.json(), success: false, error: error});
+          this.openDialog(MessageType.Error, errorMsg, null, res);
+        });
+    }
+  }
+
+  DeleteBuilding() {
+    let res: Result[] = [];
+  
+    this.api.DeleteBuilding(this.building._id).subscribe(
       success => {
-        res.push({message: this.addBuilding._id + " was successfully added.", success: true });
-        this.openDialog(MessageType.Success, "Building Added", null, res);
+        res.push({message: this.building._id + " was successfully deleted.", success: true});
+        this.openDialog(MessageType.Success, "Building Deleted", null, res);
         this.api.WriteTempChanges();
+        this.buildingExists = false;
       },
       error => {
-        let errorMessage = this.S.ErrorCodeMessages[error.status]
-
+        let errorMsg = this.S.ErrorCodeMessages[error.status];
         res.push({message: error.json(), success: false, error: error});
-        this.openDialog(MessageType.Error, errorMessage, null, res);
+        this.openDialog(MessageType.Error, errorMsg, null, res);
       });
   }
-
-  UpdateBuilding() {
-    console.log(this.editBuilding);
-    let res: Result[] = [];
-    this.api.UpdateBuilding(this.IDToUpdate, this.editBuilding).subscribe(
-      success => {
-        res.push({message: this.editBuilding._id + " was successfully updated.", success: true });
-        this.openDialog(MessageType.Success, "Building Updated", null, res);
-        this.IDToUpdate = this.editBuilding._id;
-        this.api.WriteTempChanges();
-      },
-      error => {
-        let errorMessage = this.S.ErrorCodeMessages[error.status]
-
-        res.push({message: error.json(), success: false, error: error});
-        this.openDialog(MessageType.Error, errorMessage, null, res);
-      });
-  }
-  /*-*/
 
   ///// RESPONSE MESSAGE /////
   openDialog(status: MessageType, subheader: string, message?: string, results?: Result[]) {
@@ -130,23 +100,17 @@ export class BuildingComponent implements OnInit {
   /*-*/
 
   ///// TAGS /////
-  AddChip(event: MatChipInputEvent, add: boolean): void {
-    if(add && (this.addBuilding.tags == null || this.addBuilding.tags.length == 0)) {
-      this.addBuilding.tags = [];
-    }
-    if(!add && (this.editBuilding.tags == null || this.editBuilding.tags.length == 0)) {
-      this.editBuilding.tags = [];
+  AddChip(event: MatChipInputEvent): void {
+    if(this.building.tags == null || this.building.tags.length == 0) {
+      this.building.tags = [];
     }
 
     const input = event.input;
     const value = event.value;
 
     // Add our tag
-    if ((value || '').trim() && add) {
-      this.addBuilding.tags.push(value.trim());
-    }
-    else if ((value || '').trim() && !add) {
-      this.editBuilding.tags.push(value.trim());
+    if ((value || '').trim()) {
+      this.building.tags.push(value.trim());
     }
 
     // Reset the input value
@@ -155,19 +119,10 @@ export class BuildingComponent implements OnInit {
     }
   }
 
-  RemoveChip(tag: string, add: boolean): void {
-    
-    if(add) {
-      let index_A = this.addBuilding.tags.indexOf(tag);
-      if (index_A >= 0) {
-        this.addBuilding.tags.splice(index_A, 1);
-      }
-    }
-    else {
-      let index_E = this.editBuilding.tags.indexOf(tag);
-      if (index_E >= 0) {
-        this.editBuilding.tags.splice(index_E, 1);
-      }
+  RemoveChip(tag: string): void {
+    let index_A = this.building.tags.indexOf(tag);
+    if (index_A >= 0) {
+      this.building.tags.splice(index_A, 1);
     }
   }
   /*-*/

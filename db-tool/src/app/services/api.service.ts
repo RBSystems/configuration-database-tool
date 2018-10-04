@@ -4,12 +4,12 @@ import { Observable } from 'rxjs/Rx';
 import { MatDialog } from '@angular/material';
 
 import 'rxjs/add/operator/map';
-import { Building, Room, RoomConfiguration, Device, DeviceType, Template, BulkUpdateResponse, UIConfig, Role } from './objects';
+import { Building, Room, RoomConfiguration, Device, DeviceType, Template, BulkUpdateResponse, UIConfig, Role } from '../objects';
 
 @Injectable()
 export class ApiService {
-  // url: string = "http://localhost:9999";
-  url: string = '';
+  url: string = "http://localhost:9999";
+  // url: string = '';
   options: RequestOptions;
   headers: Headers;
   constructor(private http: Http, public dialog: MatDialog) {
@@ -32,6 +32,10 @@ export class ApiService {
 
   UpdateBuilding(IDToEdit: string, toEdit: Building): Observable<any> {
     return this.http.put(this.url + "/buildings/" + IDToEdit + "/update", toEdit, this.options).map(response => response.json());
+  }
+
+  DeleteBuilding(IDToDelete: string): Observable<any> {
+    return this.http.get(this.url + "/buildings/" + IDToDelete + "/delete", this.options).map(response => response.json());
   }
 
 

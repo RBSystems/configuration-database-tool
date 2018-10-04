@@ -2,8 +2,8 @@ import { Component, OnInit, Inject, forwardRef } from '@angular/core';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { FormGroupDirective, FormControl, NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { ApiService } from '../api.service';
-import { Strings } from '../strings.service';
+import { ApiService } from '../services/api.service';
+import { Strings } from '../services/strings.service';
 import { AppComponent } from '../app.component';
 
 

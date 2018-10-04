@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ApiService } from '../api.service';
-import { Strings } from '../strings.service';
+import { ApiService } from '../services/api.service';
+import { Strings } from '../services/strings.service';
 import { Building, Room, Device, UIConfig, Role, Preset } from '../objects';
 
 @Component({
