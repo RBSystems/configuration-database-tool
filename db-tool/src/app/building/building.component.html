@@ -1,4 +1,4 @@
-<div #bldgContainer class="container">
+<!-- <div #bldgContainer class="container">
     <div class="row">
         <mat-accordion #bldgIdentifiers>
             <mat-expansion-panel class="mat-elevation-z0">
@@ -36,4 +36,45 @@
         <button mat-raised-button class="button delete" (click)="DeleteBuilding()" [disabled]="building._id == null || building._id == ''">Delete</button>
         <button mat-raised-button class="button submit" (click)="SubmitBuilding()" [disabled]="building._id == null || building._id == ''">Submit</button>
     </div>
+</div> -->
+
+<div class="container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>ASB</mat-card-title>
+        </mat-card-header>
+        <img mat-card-image src="../../assets/images/ASB.JPG" class="image">
+        <!-- <mat-card-content> -->
+        <mat-accordion #bldgIdentifiers>
+            <mat-expansion-panel class="mat-elevation-z0">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Info
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="column">
+                    <mat-form-field #bldgName>
+                        <mat-label>Name</mat-label>
+                        <input matInput type="text" [(ngModel)]="building.name">
+                    </mat-form-field>
+                    <mat-form-field #bldgDescription>
+                        <mat-label>Description</mat-label>
+                        <input matInput type="text" [(ngModel)]="building.description">
+                    </mat-form-field>
+                    <mat-form-field class="chips">
+                        <mat-label>Tags</mat-label>
+                        <mat-chip-list #bldgTags>
+                            <mat-chip *ngFor="let tag of building.tags" [selectable]="selectable" [removable]="removable" (removed)="RemoveChip(tag, true)">
+                                {{tag}}
+                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                            </mat-chip>
+
+                            <input type="text" matInput [matChipInputFor]="bldgTags" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="AddChip($event, true)">
+                        </mat-chip-list>
+                    </mat-form-field>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+        <!-- </mat-card-content> -->
+    </mat-card>
 </div>
