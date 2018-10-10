@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Room, Device } from '../../objects';
+import { Room, Device, RoomSetup } from '../../objects';
 import { ApiService } from '../../services/api.service';
 import { MatDialog } from '@angular/material';
 import { Strings } from '../../services/strings.service';
 import { RoomModalComponent } from '../../modals/roommodal/roommodal.component';
 import { Defaults } from '../../services/defaults.service';
+import { SmeeComponent } from '../smee.component';
 
 @Component({
   selector: 'app-room',

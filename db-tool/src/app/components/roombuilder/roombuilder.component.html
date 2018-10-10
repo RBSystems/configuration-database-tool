@@ -1,0 +1,67 @@
+<div class="row">
+    <div class="column">
+        <button *ngIf="deviceTypeMap != null && deviceTypeMap.size > 0" mat-fab class="button menu" [matMenuTriggerFor]="classes"><mat-icon>add</mat-icon></button>
+
+        <mat-menu #classes>
+            <div mat-menu-item dnd-draggable [dragEnabled]="true" [dropZones]="['Pi', 'NotPi']">
+                <mat-icon>{{D.DefaultIcons["Pi3"]}}</mat-icon>
+                <span>Pi</span>
+            </div>
+            <button mat-menu-item dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
+            <mat-icon>{{D.DefaultIcons["SonyXBR"]}}</mat-icon>
+            <span>TV</span>
+          </button>
+            <button mat-menu-item [matMenuTriggerFor]="projectors">Projector</button>
+            <button mat-menu-item [matMenuTriggerFor]="inputs">Input</button>
+            <button mat-menu-item [matMenuTriggerFor]="switchers">Video Switcher</button>
+            <button mat-menu-item [matMenuTriggerFor]="other">Other</button>
+        </mat-menu>
+
+        <mat-menu #projectors>
+            <ng-container *ngFor="let type of deviceTypeList">
+                <button mat-menu-item *ngIf="IsInThisMenu('projector', type)" dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
+                  <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                  <span>{{type.display_name}}</span>
+              </button>
+            </ng-container>
+        </mat-menu>
+
+        <mat-menu #inputs>
+            <ng-container *ngFor="let type of deviceTypeList">
+                <button mat-menu-item *ngIf="IsInThisMenu('input', type)" dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
+                  <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                  <span>{{type.display_name}}</span>
+              </button>
+            </ng-container>
+        </mat-menu>
+
+        <mat-menu #switchers>
+            <ng-container *ngFor="let type of deviceTypeList">
+                <button mat-menu-item *ngIf="IsInThisMenu('switcher', type)" dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
+                  <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                  <span>{{type.display_name}}</span>
+              </button>
+            </ng-container>
+        </mat-menu>
+
+        <mat-menu #other>
+            <ng-container *ngFor="let type of deviceTypeList">
+                <button mat-menu-item *ngIf="IsInThisMenu('other', type)" dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
+                  <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                  <span>{{type.display_name}}</span>
+              </button>
+            </ng-container>
+        </mat-menu>
+
+        <button mat-stroked-button class="button template" [matMenuTriggerFor]="templates">Apply a Template</button>
+        <mat-menu #templates>
+            <button mat-menu-item *ngFor="let t of templateList" (click)="ApplyTemplate(t)">
+              <span>{{t._id}}</span>
+          </button>
+        </mat-menu>
+    </div>
+
+
+    <div class="drop-container" dnd-droppable [dropZones]="['Pi']">
+
+    </div>

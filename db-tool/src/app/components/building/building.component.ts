@@ -6,13 +6,15 @@ import { MatDialog } from '@angular/material';
 import { Strings } from '../../services/strings.service';
 import { BuildingModalComponent } from '../../modals/buildingmodal/buildingmodal.component';
 import { HomeComponent } from '../../pages/home/home.component';
+import { SmeeComponent } from '../smee.component';
 
 @Component({
   selector: 'app-building',
   templateUrl: './building.component.html',
   styleUrls: ['./building.component.scss']
 })
-export class BuildingComponent implements OnInit {
+export class BuildingComponent implements OnInit, SmeeComponent{
+  @Input() data;
   @Input() building: Building;
   @Input() buildingExists: boolean = false;
   @Input() IDToUpdate: string;

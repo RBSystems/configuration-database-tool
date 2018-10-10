@@ -210,3 +210,8 @@ export class Group {
     preset?: Preset = new Preset();
     devices?: Device[] = [];
 }
+
+export class RoomSetup {
+    room?: Room;
+    template?: Template;
+}

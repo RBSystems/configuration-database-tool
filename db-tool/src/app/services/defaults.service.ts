@@ -32,7 +32,8 @@ export class Defaults {
         "SonyPHZ10": "videocam",
         "VideoCard": "tv",
         "non-controllable": "settings_input_hdmi",
-        "via-connect-pro": "settings_input_antenna"
+        "via-connect-pro": "settings_input_antenna",
+        "NEC P502HL": "videocam"
     }
 
     DefaultPorts = {

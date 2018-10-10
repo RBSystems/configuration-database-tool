@@ -22,6 +22,11 @@ import { RoomComponent } from './components/room/room.component';
 import { RoomlistComponent } from './pages/roomlist/roomlist.component';
 import { RoomModalComponent } from './modals/roommodal/roommodal.component';
 import { RoomDetailComponent } from './pages/roomdetail/roomdetail.component';
+import { DetailDirective } from './detail.directive';
+import { ComponentsService } from './services/components.service';
+import { RoomBuilderComponent } from './components/roombuilder/roombuilder.component';
+import { RoomStateComponent } from './components/roomstate/roomstate.component';
+import { DeviceComponent } from './components/device/device.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +37,11 @@ import { RoomDetailComponent } from './pages/roomdetail/roomdetail.component';
     RoomComponent,
     RoomlistComponent,
     RoomModalComponent,
-    RoomDetailComponent
+    RoomDetailComponent,
+    DetailDirective,
+    RoomBuilderComponent,
+    RoomStateComponent,
+    DeviceComponent
   ],
   imports: [
     BrowserModule,
@@ -69,12 +78,16 @@ import { RoomDetailComponent } from './pages/roomdetail/roomdetail.component';
   ],
   entryComponents: [
     BuildingModalComponent,
-    RoomModalComponent
+    RoomModalComponent,
+    RoomBuilderComponent,
+    RoomStateComponent,
+    DeviceComponent
   ],
   providers: [
     ApiService,
     Strings,
-    Defaults
+    Defaults,
+    ComponentsService
   ],
   bootstrap: [AppComponent]
 })

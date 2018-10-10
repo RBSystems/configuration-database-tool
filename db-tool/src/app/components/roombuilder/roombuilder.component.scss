@@ -1,0 +1,52 @@
+@import 'src/db-theme.scss';
+.drop-container {
+    width: 100%;
+    min-height: 600px;
+    height: 745px;
+    border: solid 1px black;
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.drag-container {
+    width: 100%;
+    border: solid 2px red;
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+    color: black;
+}
+
+.column {
+    width: 12%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &.group {
+        width: 20%;
+        margin-top: 15px;
+    }
+    &.types {
+        overflow: auto;
+        height: 710px;
+    }
+}
+
+.row {
+    display: flex;
+    flex-flow: row nowrap;
+    align-content: flex-start;
+    overflow: auto;
+    width: 100%;
+}
+
+.button {
+    margin: 15px;
+    &.menu {}
+    &.template {
+        color: #F44336;
+    }
+}

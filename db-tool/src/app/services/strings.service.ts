@@ -72,8 +72,8 @@ export class Strings {
     }
 
     ActionList = [
-        "Roombuilder",
-        "Troubleshooting",
-        "Room State"
+        "Room Builder",
+        "Room State",
+        "ELK"
     ]
 }

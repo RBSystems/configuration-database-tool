@@ -5,12 +5,7 @@
             <input matInput [(ngModel)]="searchQuery" (ngModelChange)="Search()">
         </mat-form-field>
     </div>
-    <button mat-fab class="add" [matMenuTriggerFor]="addMenu"><mat-icon>add</mat-icon></button>
-    <mat-menu #addMenu>
-        <button mat-menu-item *ngFor="let t of templateList" (click)="CreateNewRoom(t)">
-            <span>{{t._id}}</span>
-        </button>
-    </mat-menu>
+    <button mat-fab class="add" (click)="CreateNewRoom()"><mat-icon>add</mat-icon></button>
 </div>
 <div class="container">
     <app-room *ngFor="let r of filteredRooms" [room]="r" [roomExists]="true"></app-room>

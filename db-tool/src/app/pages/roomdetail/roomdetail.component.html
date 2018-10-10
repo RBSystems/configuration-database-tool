@@ -1,28 +1,30 @@
-<mat-drawer-container class="container">
+<mat-drawer-container class="container" scrollable>
     <mat-drawer mode="side" opened class="side">
-        <mat-accordion displayMode='flat'>
-            <mat-expansion-panel class="mat-elevation-z0">
+        <mat-accordion displayMode='flat' multi>
+            <mat-expansion-panel class="mat-elevation-z0" expanded>
                 <mat-expansion-panel-header>
-                    Actions
+                    Room Actions
                 </mat-expansion-panel-header>
-
                 <mat-list>
                     <mat-list-item *ngFor="let action of S.ActionList">
-                        <h4 class="mat-h4">{{action}}</h4>
+                        <span (click)="loadComponent(action, room)" class="mat-h4 action">{{action}}</span>
                     </mat-list-item>
-
                 </mat-list>
             </mat-expansion-panel>
             <mat-divider></mat-divider>
-            <mat-expansion-panel class="mat-elevation-z0">
-                <mat-expansion-panel-header>Devices</mat-expansion-panel-header>
+            <mat-expansion-panel class="mat-elevation-z0" expanded>
+                <mat-expansion-panel-header>
+                    Devices
+                </mat-expansion-panel-header>
                 <mat-list>
                     <mat-list-item *ngFor="let device of deviceList">
-                        <span class="mat-h4">{{device._id}}</span>
+                        <span (click)="loadComponent('device', device)" class="mat-h4 action">{{device.name}}</span>
                     </mat-list-item>
                 </mat-list>
             </mat-expansion-panel>
         </mat-accordion>
     </mat-drawer>
-    <mat-drawer-content class="content">{{roomID}}</mat-drawer-content>
+    <mat-drawer-content class="content">
+        <ng-template appDetail></ng-template>
+    </mat-drawer-content>
 </mat-drawer-container>

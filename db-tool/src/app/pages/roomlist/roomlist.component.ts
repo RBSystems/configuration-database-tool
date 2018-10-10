@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
-import { Room, Device, Template, RoomConfiguration } from '../../objects';
+import { Room, Device, Template, RoomConfiguration, RoomSetup } from '../../objects';
 
 @Component({
   selector: 'app-roomlist',
@@ -25,7 +25,6 @@ export class RoomlistComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.GetTemplates();
   }
 
   Search() {
@@ -83,7 +82,7 @@ export class RoomlistComponent implements OnInit {
     });
   }
 
-  CreateNewRoom(template: Template) {
+  CreateNewRoom() {
     let newRoom = new Room();
     newRoom._id = this.buildingID + "-";
     newRoom.name = newRoom._id;
@@ -121,14 +120,6 @@ export class RoomlistComponent implements OnInit {
           this.roomToDeviceMap.set(room._id, val);
         }
       });
-    });
-  }
-
-  GetTemplates() {
-    this.api.GetTemplates().subscribe(val => {
-      if(val != null) {
-        this.templateList = val;
-      }
     });
   }
 }
