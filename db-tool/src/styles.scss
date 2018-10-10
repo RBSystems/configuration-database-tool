@@ -13,7 +13,7 @@ body {
     margin: 0;
     overflow: auto;
     position: relative;
-    background-color: #f2f2f2;
+    background-color: #ffffff;
     height: 100%;
 }
 
@@ -65,7 +65,7 @@ label {
 }
 
 .content {
-    padding: 16px;
+    padding: 8px;
 }
 
 .sticky {
@@ -75,7 +75,7 @@ label {
 }
 
 .sticky+.content {
-    padding-top: 102px;
+    padding-top: 50px;
 }
 
 .loader {

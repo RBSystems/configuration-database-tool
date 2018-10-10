@@ -1,0 +1,28 @@
+<mat-drawer-container class="container">
+    <mat-drawer mode="side" opened class="side">
+        <mat-accordion displayMode='flat'>
+            <mat-expansion-panel class="mat-elevation-z0">
+                <mat-expansion-panel-header>
+                    Actions
+                </mat-expansion-panel-header>
+
+                <mat-list>
+                    <mat-list-item *ngFor="let action of S.ActionList">
+                        <h4 class="mat-h4">{{action}}</h4>
+                    </mat-list-item>
+
+                </mat-list>
+            </mat-expansion-panel>
+            <mat-divider></mat-divider>
+            <mat-expansion-panel class="mat-elevation-z0">
+                <mat-expansion-panel-header>Devices</mat-expansion-panel-header>
+                <mat-list>
+                    <mat-list-item *ngFor="let device of deviceList">
+                        <span class="mat-h4">{{device._id}}</span>
+                    </mat-list-item>
+                </mat-list>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-drawer>
+    <mat-drawer-content class="content">{{roomID}}</mat-drawer-content>
+</mat-drawer-container>

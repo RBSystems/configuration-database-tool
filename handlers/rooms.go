@@ -195,14 +195,14 @@ func UpdateRoom(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
-	oldRoom, err := db.GetDB().GetRoom(room.ID)
-	if err != nil {
-		log.L.Errorf("[room] Room %s does not exist in the database: %v", id, err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-	changes.AddChange(context.Request().Context().Value("user").(string), Room, FindChanges(oldRoom, room, Room))
+	// oldRoom, err := db.GetDB().GetRoom(room.ID)
+	// if err != nil {
+	// 	log.L.Errorf("[room] Room %s does not exist in the database: %v", id, err.Error())
+	// 	return context.JSON(http.StatusBadRequest, err.Error())
+	// }
+	// changes.AddChange(context.Request().Context().Value("user").(string), Room, FindChanges(oldRoom, room, Room))
 
-	room, err = db.GetDB().UpdateRoom(id, room)
+	room, err := db.GetDB().UpdateRoom(id, room)
 	if err != nil {
 		log.L.Errorf("[room] Failed to update the room %s : %v", id, err.Error())
 
@@ -218,6 +218,36 @@ func UpdateRoom(context echo.Context) error {
 
 	log.L.Debugf("[room] Successfully updated the room %s!", room.ID)
 	return context.JSON(http.StatusOK, room)
+}
+
+// DeleteRoom removes a room from the database.
+func DeleteRoom(context echo.Context) error {
+	log.L.Debug("[room] Starting DeleteRoom...")
+
+	if !Dev {
+		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+		if err != nil {
+			log.L.Errorf("[room] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+		if !ok {
+			log.L.Warnf("[room] User %s is not allowed to delete a room.", context.Request().Context().Value("user").(string))
+			return context.JSON(http.StatusForbidden, alert)
+		}
+	}
+
+	id := context.Param("room")
+
+	log.L.Debugf("[room] Attempting to delete the room %s", id)
+
+	err := db.GetDB().DeleteRoom(id)
+	if err != nil {
+		log.L.Errorf("[room] Failed to delete the room %s : %v", id, err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	log.L.Debugf("[room] Successfully deleted the room %s!", id)
+	return context.JSON(http.StatusOK, id)
 }
 
 // GetRoomConfigurations returns a list of all the RoomConfigurations from the database.

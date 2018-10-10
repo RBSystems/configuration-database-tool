@@ -6,39 +6,33 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule, MatDialog, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule, MatMenuModule } from '@angular/material';
+import { MatInputModule, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule, MatMenuModule, MatSidenavModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { WalkthroughComponent } from './walkthrough/walkthrough.component';
-import { BuildingComponent } from './building/building.component';
 import { AppRouterModule } from './app-router.module';
 import { ApiService } from './services/api.service'
 import { Strings } from './services/strings.service'
 import { HttpModule } from '@angular/http';
-import { RoomComponent } from './room/room.component';
-import { DeviceComponent } from './device/device.component';
-import { ModalComponent } from './modal/modal.component';
-import { UIConfigComponent } from './uiconfig/uiconfig.component';
-import { PanelComponent } from './panel/panel.component';
-import { SummaryComponent } from './summary/summary.component';
 import { Defaults } from './services/defaults.service';
-import { DndComponent } from './dnd/dnd.component';
 import { DndModule } from 'ng2-dnd';
+import { HomeComponent } from './pages/home/home.component';
+import { BuildingComponent } from './components/building/building.component';
+import { BuildingModalComponent } from './modals/buildingmodal/buildingmodal.component';
+import { RoomComponent } from './components/room/room.component';
+import { RoomlistComponent } from './pages/roomlist/roomlist.component';
+import { RoomModalComponent } from './modals/roommodal/roommodal.component';
+import { RoomDetailComponent } from './pages/roomdetail/roomdetail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    WalkthroughComponent,
     BuildingComponent,
+    BuildingModalComponent,
     RoomComponent,
-    DeviceComponent,
-    UIConfigComponent,
-    PanelComponent,
-    SummaryComponent,
-    ModalComponent,
-    DndComponent
+    RoomlistComponent,
+    RoomModalComponent,
+    RoomDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +64,12 @@ import { DndModule } from 'ng2-dnd';
     MatTableModule,
     MatMenuModule,
     DndModule.forRoot(),
-    MatCardModule
+    MatCardModule,
+    MatSidenavModule
+  ],
+  entryComponents: [
+    BuildingModalComponent,
+    RoomModalComponent
   ],
   providers: [
     ApiService,

@@ -56,6 +56,10 @@ export class ApiService {
     return this.http.put(this.url + "/rooms/" + IDToEdit + "/update", toEdit, this.options).map(response => response.json());
   }
 
+  DeleteRoom(IDToDelete: string): Observable<any> {
+    return this.http.get(this.url + "/rooms/" + IDToDelete + "/delete", this.options).map(response => response.json());
+  }
+
   GetRoomConfigurations(): Observable<RoomConfiguration[]> {
     return this.http.get(this.url + "/roomconfigurations", this.options).map(response => response.json());
   }

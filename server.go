@@ -56,6 +56,7 @@ func main() {
 	secure.PUT("/uiconfig/:room/update", handlers.UpdateUIConfig)
 
 	secure.GET("/buildings/:building/delete", handlers.DeleteBuilding)
+	secure.GET("/rooms/:room/delete", handlers.DeleteRoom)
 
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)
