@@ -14,8 +14,8 @@
                     <mat-label class="display" *ngIf="IsADisplay(device)">{{device.name}}</mat-label>
                 </ng-container>
             </div>
-            <div class="row">
-                <a class="row" routerLink="/roomdetail/{{room._id}}">
+            <div class="row buttons">
+                <a class="row alerts" routerLink="/roomdetail/{{room._id}}">
                     <mat-icon class="device good">check_circle_outline</mat-icon>
                     <mat-label class="device count">{{deviceList.length}}</mat-label>
                     <mat-icon class="device bad">error_outline</mat-icon>
@@ -23,7 +23,7 @@
                     <mat-icon class="device alert">warning</mat-icon>
                     <mat-label class="device count">{{alertingDevices.length}}</mat-label>
                 </a>
-                <button mat-icon-button class="button edit" (click)="openDialog()"><mat-icon>more_horiz</mat-icon></button>
+                <button mat-icon-button class="button" (click)="openDialog()"><mat-icon>more_horiz</mat-icon></button>
             </div>
         </mat-card-content>
     </mat-card>

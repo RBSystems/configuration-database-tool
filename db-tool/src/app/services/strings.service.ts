@@ -33,6 +33,30 @@ export class Strings {
         "home": "Home"
     }
 
+    AddLink(link: string, title?: string) {
+        if(!this.Links.includes(link)) {
+            this.Links.push(link);
+        }
+        else {
+            this.RemoveLink(link);
+        }
+        if(title != null) {
+            this.LinkTitles[link] = title;
+        }
+    }
+
+    RemoveLink(link?: string) {
+        if(link == null && this.Links.length > 1) {
+            this.Links.pop()
+        }
+        else if(link != null && this.Links.includes(link)) {
+            let size = this.Links.length;
+            for(let i = size; i > this.Links.indexOf(link)+1; i--) {
+                this.Links.pop();
+            }
+        }
+    }
+
     Icons = [
         "tv",
         "videocam",
@@ -72,8 +96,12 @@ export class Strings {
     }
 
     ActionList = [
-        "Room Builder",
         "Room State",
-        "ELK"
+        "Room Builder"
     ]
+
+    UIConfig = {
+        true: "Sharing enabled",
+        false: "Sharing disabled"
+    }
 }

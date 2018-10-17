@@ -21,12 +21,12 @@
     </mat-toolbar>
 
     <nav mat-tab-nav-bar class="navbar" id="NavBar">
-        <a mat-tab-link *ngFor="let link of S.Links" routerLink="/{{link}}" (click)="activeLink = link" [active]="activeLink == link" matTooltip="{{S.HomeTips[link]}}" [matTooltipShowDelay]=S.VerySlow> {{S.LinkTitles[link]}} </a>
+        <a mat-tab-link *ngFor="let link of S.Links" routerLink="{{link}}" (click)="activeLink = link" [active]="activeLink == link" matTooltip="{{S.HomeTips[link]}}" [matTooltipShowDelay]=S.VerySlow>{{S.LinkTitles[link]}}</a>
     </nav>
 
     <body>
         <div class="wrapper">
-            <router-outlet></router-outlet>
+            <router-outlet (activate)="HandleRouteChange()"></router-outlet>
         </div>
     </body>
 

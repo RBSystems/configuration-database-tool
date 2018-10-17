@@ -3,6 +3,7 @@ import { RoomBuilderComponent } from '../components/roombuilder/roombuilder.comp
 import { RoomStateComponent } from '../components/roomstate/roomstate.component';
 import { DeviceComponent } from '../components/device/device.component';
 import { CompItem } from '../components/smee.component';
+import { DeviceListComponent } from '../components/devicelist/devicelist.component';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +15,8 @@ export class ComponentsService {
   ComponentMap = {
     "Room Builder": RoomBuilderComponent,
     "Room State": RoomStateComponent,
-    "ELK": RoomStateComponent,
-    "device": DeviceComponent
+    "device": DeviceComponent,
+    "deviceList": DeviceListComponent
   }
 
   getCompItem(action: string, data: any) {

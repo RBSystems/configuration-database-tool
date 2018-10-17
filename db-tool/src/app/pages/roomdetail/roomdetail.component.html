@@ -1,30 +1,45 @@
 <mat-drawer-container class="container" scrollable>
-    <mat-drawer mode="side" opened class="side">
-        <mat-accordion displayMode='flat' multi>
-            <mat-expansion-panel class="mat-elevation-z0" expanded>
-                <mat-expansion-panel-header>
-                    Room Actions
-                </mat-expansion-panel-header>
-                <mat-list>
-                    <mat-list-item *ngFor="let action of S.ActionList">
-                        <span (click)="loadComponent(action, room)" class="mat-h4 action">{{action}}</span>
-                    </mat-list-item>
-                </mat-list>
-            </mat-expansion-panel>
-            <mat-divider></mat-divider>
+    <mat-drawer #sideMenu mode="side" opened class="side">
+        <!-- <mat-accordion displayMode='flat' multi> -->
+        <!-- <mat-expansion-panel class="mat-elevation-z0" expanded> -->
+        <!-- <mat-expansion-panel-header> -->
+        <!-- Room Actions -->
+        <!-- </mat-expansion-panel-header> -->
+        <mat-list>
+            <mat-list-item *ngFor="let action of S.ActionList; let i = index;">
+                <span (click)="loadComponent(action, room)" class="action">{{action}}</span>
+                <mat-divider *ngIf="i < S.ActionList.length"></mat-divider>
+            </mat-list-item>
+            <mat-list-item>
+                <span (click)="loadComponent('deviceList', deviceList)" class="action">Devices</span>
+            </mat-list-item>
+        </mat-list>
+        <!-- </mat-expansion-panel> -->
+        <!-- <mat-divider></mat-divider>
             <mat-expansion-panel class="mat-elevation-z0" expanded>
                 <mat-expansion-panel-header>
                     Devices
                 </mat-expansion-panel-header>
                 <mat-list>
-                    <mat-list-item *ngFor="let device of deviceList">
-                        <span (click)="loadComponent('device', device)" class="mat-h4 action">{{device.name}}</span>
+                    <mat-list-item *ngFor="let device of deviceList; let i = index;">
+                        <span (click)="loadComponent('device', device)" class="action">{{device.name}}</span>
+                        <mat-divider *ngIf="i < deviceList.length-1"></mat-divider>
                     </mat-list-item>
+
                 </mat-list>
-            </mat-expansion-panel>
-        </mat-accordion>
+            </mat-expansion-panel> -->
+        <!-- </mat-accordion> -->
     </mat-drawer>
+
     <mat-drawer-content class="content">
-        <ng-template appDetail></ng-template>
+        <div class="column">
+            <button class="menu" (click)="sideMenu.toggle()"><mat-icon>menu</mat-icon></button>
+        </div>
+
+        <div class="content main">
+            <ng-template appDetail></ng-template>
+        </div>
+
+
     </mat-drawer-content>
 </mat-drawer-container>

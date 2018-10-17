@@ -1,0 +1,98 @@
+<div class="container">
+    <div class="row heading">
+        <h4 style="font-weight: 500;">Preset Information</h4>
+        <button mat-icon-button (click)="Close()"><mat-icon>close</mat-icon></button>
+    </div>
+    <section class="row">
+        <mat-form-field class="field">
+            <mat-label>Preset Name</mat-label>
+            <input matInput type="text" [(ngModel)]="data.preset.name" (ngModelChange)="UpdatePresetOnPanels()">
+        </mat-form-field>
+
+        <mat-form-field class="field">
+            <mat-label>UI Path</mat-label>
+            <mat-select matInput [(ngModel)]="uipath" (ngModelChange)="UpdateUIPathOnPanels()">
+                <mat-option [value]="'/blueberry'">Blueberry</mat-option>
+                <mat-option [value]="'/cherry'">Cherry</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-label>Main Icon:</mat-label>
+        <button mat-icon-button class="button"><mat-icon>{{data.preset.icon}}</mat-icon></button>
+    </section>
+
+    <mat-divider></mat-divider>
+
+    <div class="row heading">
+        <h4 style="font-weight: 500;">Displays</h4>
+        <mat-slide-toggle #sharing class="button" (change)="ToggleSharing($event.checked)" [checked]="data.panels[0].features.includes('share')" [disabled]="uipath == '/cherry'">{{S.UIConfig[data.panels[0].features.includes('share')]}}</mat-slide-toggle>
+    </div>
+
+    <!-- DISPLAYS -->
+    <section class="row checkboxes">
+        <mat-label class="label">Displays Controlled:</mat-label>
+        <div class="row displays">
+            <div *ngFor="let out of data.config.outputConfiguration" class="display">
+                <mat-checkbox *ngIf="DeviceHasRole(out.name, 'VideoOut')" [checked]="data.preset.displays.includes(out.name)" (change)="UpdatePresetDisplays(data.preset, out.name, $event.checked)">{{out.name}}</mat-checkbox>
+                <ng-container *ngIf="uipath === '/cherry'">
+                    <mat-label>Icon:</mat-label>
+                    <button mat-icon-button><mat-icon>{{out.icon}}</mat-icon></button>
+                </ng-container>
+            </div>
+        </div>
+    </section>
+
+    <!-- AUDIO DEVICES -->
+    <section class="row checkboxes">
+        <mat-label class="label">Audio Devices:</mat-label>
+        <div class="row displays">
+            <div *ngFor="let out of data.config.outputConfiguration" class="display">
+                <mat-checkbox *ngIf="DeviceHasRole(out.name, 'VideoOut')" [checked]="data.preset.audioDevices.includes(out.name)" (change)="UpdateAudioDevices(data.preset, out.name, $event.checked)">{{out.name}}</mat-checkbox>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHAREABLE DISPLAYS -->
+    <section class="row checkboxes" *ngIf="uipath === '/blueberry' && sharing.checked">
+        <mat-label class="label">Shareable Displays</mat-label>
+        <div class="row displays">
+            <div *ngFor="let out of data.config.outputConfiguration" class="display">
+                <mat-checkbox *ngIf="DeviceHasRole(out.name, 'VideoOut')" [checked]="data.preset.shareableDisplays.includes(out.name)" (change)="UpdateShareableDisplays(data.preset, out.name, $event.checked)">{{out.name}}</mat-checkbox>
+            </div>
+        </div>
+    </section>
+
+    <mat-divider></mat-divider>
+    <!-- INPUTS -->
+    <h4 style="font-weight: 500;">Inputs</h4>
+    <section class="row">
+        <ng-container *ngFor="let type of data.typeList">
+            <ng-container *ngIf="GetInputs(type) != null">
+                <mat-list>
+                    <h4 mat-subheader>{{type.display_name}}s</h4>
+                    <mat-list-item *ngFor="let i of GetInputs(type)">
+                        <mat-checkbox [checked]="data.preset.inputs.includes(i.name)" (change)="UpdatePresetInputs(data.preset, i.name, $event.checked)">{{i.name}}</mat-checkbox>
+                        <mat-label>Icon:</mat-label>
+                        <button mat-icon-button><mat-icon>{{i.icon}}</mat-icon></button>
+                    </mat-list-item>
+                </mat-list>
+            </ng-container>
+        </ng-container>
+    </section>
+
+    <mat-divider></mat-divider>
+    <!-- INDEPENDENT AUDIO DEVICES -->
+    <h4 style="font-weight: 500;">Independent Audio Devices</h4>
+    <section class="row">
+        <mat-list class="list">
+            <mat-list-item *ngIf="!RoomHasIndependentAudios()">No independent audio devices to choose from</mat-list-item>
+            <ng-container *ngFor="let m of data.config.outputConfiguration">
+                <mat-list-item *ngIf="DeviceHasRole(m.name, 'Microphone')">
+                    <mat-checkbox [checked]="data.preset.independentAudioDevices.includes(m.name)" (change)="UpdateIndependentAudioDevices(data.preset, m.name, $event.checked)">{{m.name}}</mat-checkbox>
+                    <mat-label>Icon:</mat-label>
+                    <button mat-icon-button><mat-icon>{{m.icon}}</mat-icon></button>
+                </mat-list-item>
+            </ng-container>
+        </mat-list>
+    </section>
+</div>

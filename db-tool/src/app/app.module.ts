@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule, MatMenuModule, MatSidenavModule } from '@angular/material';
+import { MatInputModule, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule, MatMenuModule, MatSidenavModule, MatButtonToggleModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { AppRouterModule } from './app-router.module';
@@ -27,6 +27,8 @@ import { ComponentsService } from './services/components.service';
 import { RoomBuilderComponent } from './components/roombuilder/roombuilder.component';
 import { RoomStateComponent } from './components/roomstate/roomstate.component';
 import { DeviceComponent } from './components/device/device.component';
+import { DeviceListComponent } from './components/devicelist/devicelist.component';
+import { PresetModalComponent } from './modals/presetmodal/presetmodal.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,9 @@ import { DeviceComponent } from './components/device/device.component';
     DetailDirective,
     RoomBuilderComponent,
     RoomStateComponent,
-    DeviceComponent
+    DeviceComponent,
+    DeviceListComponent,
+    PresetModalComponent
   ],
   imports: [
     BrowserModule,
@@ -74,14 +78,17 @@ import { DeviceComponent } from './components/device/device.component';
     MatMenuModule,
     DndModule.forRoot(),
     MatCardModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatButtonToggleModule
   ],
   entryComponents: [
     BuildingModalComponent,
     RoomModalComponent,
     RoomBuilderComponent,
     RoomStateComponent,
-    DeviceComponent
+    DeviceComponent,
+    DeviceListComponent,
+    PresetModalComponent
   ],
   providers: [
     ApiService,

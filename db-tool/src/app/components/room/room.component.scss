@@ -15,7 +15,7 @@
     align-content: space-between;
     align-items: center;
     &.buttons {
-        justify-content: flex-end;
+        justify-content: space-between;
     }
 }
 
@@ -39,10 +39,6 @@
         &:hover {
             color: $primary;
         }
-    }
-    &.edit {
-        justify-self: flex-end;
-        margin-left: 50px;
     }
 }
 

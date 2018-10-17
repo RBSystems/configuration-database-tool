@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
   Search() {
     this.filteredBuildings = [];
 
-    if(this.searchQuery == null) {
+    if(this.searchQuery == null || this.searchQuery.length == 0) {
       this.filteredBuildings = this.buildingList;
       return;
     }

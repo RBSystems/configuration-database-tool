@@ -1,16 +1,17 @@
-<div class="row">
-    <div class="column">
+<mat-drawer-container class="row drawer">
+    <mat-drawer opened mode="side" class="column">
+
         <button *ngIf="deviceTypeMap != null && deviceTypeMap.size > 0" mat-fab class="button menu" [matMenuTriggerFor]="classes"><mat-icon>add</mat-icon></button>
 
         <mat-menu #classes>
-            <div mat-menu-item dnd-draggable [dragEnabled]="true" [dropZones]="['Pi', 'NotPi']">
+            <div mat-menu-item>
                 <mat-icon>{{D.DefaultIcons["Pi3"]}}</mat-icon>
                 <span>Pi</span>
             </div>
-            <button mat-menu-item dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
-            <mat-icon>{{D.DefaultIcons["SonyXBR"]}}</mat-icon>
-            <span>TV</span>
-          </button>
+            <button mat-menu-item>
+                <mat-icon>{{D.DefaultIcons["SonyXBR"]}}</mat-icon>
+                <span>TV</span>
+              </button>
             <button mat-menu-item [matMenuTriggerFor]="projectors">Projector</button>
             <button mat-menu-item [matMenuTriggerFor]="inputs">Input</button>
             <button mat-menu-item [matMenuTriggerFor]="switchers">Video Switcher</button>
@@ -19,49 +20,138 @@
 
         <mat-menu #projectors>
             <ng-container *ngFor="let type of deviceTypeList">
-                <button mat-menu-item *ngIf="IsInThisMenu('projector', type)" dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
-                  <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
-                  <span>{{type.display_name}}</span>
-              </button>
+                <button mat-menu-item *ngIf="IsInThisMenu('projector', type)">
+                      <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                      <span>{{type.display_name}}</span>
+                  </button>
             </ng-container>
         </mat-menu>
 
         <mat-menu #inputs>
             <ng-container *ngFor="let type of deviceTypeList">
-                <button mat-menu-item *ngIf="IsInThisMenu('input', type)" dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
-                  <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
-                  <span>{{type.display_name}}</span>
-              </button>
+                <button mat-menu-item *ngIf="IsInThisMenu('input', type)">
+                      <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                      <span>{{type.display_name}}</span>
+                  </button>
             </ng-container>
         </mat-menu>
 
         <mat-menu #switchers>
             <ng-container *ngFor="let type of deviceTypeList">
-                <button mat-menu-item *ngIf="IsInThisMenu('switcher', type)" dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
-                  <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
-                  <span>{{type.display_name}}</span>
-              </button>
+                <button mat-menu-item *ngIf="IsInThisMenu('switcher', type)">
+                      <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                      <span>{{type.display_name}}</span>
+                  </button>
             </ng-container>
         </mat-menu>
 
         <mat-menu #other>
             <ng-container *ngFor="let type of deviceTypeList">
-                <button mat-menu-item *ngIf="IsInThisMenu('other', type)" dnd-draggable [dragEnabled]="true" [dropZones]="['NotPi']">
-                  <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
-                  <span>{{type.display_name}}</span>
-              </button>
+                <button mat-menu-item *ngIf="IsInThisMenu('other', type)">
+                      <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                      <span>{{type.display_name}}</span>
+                  </button>
             </ng-container>
         </mat-menu>
 
-        <button mat-stroked-button class="button template" [matMenuTriggerFor]="templates">Apply a Template</button>
+        <button mat-fab class="button template" [matMenuTriggerFor]="templates"><mat-icon>library_add</mat-icon></button>
         <mat-menu #templates>
             <button mat-menu-item *ngFor="let t of templateList" (click)="ApplyTemplate(t)">
-              <span>{{t._id}}</span>
-          </button>
+                  <span>{{t._id}}</span>
+              </button>
         </mat-menu>
-    </div>
 
+        <div class="searchbar devices">
+            <mat-icon class="searchbar icon">search</mat-icon>
+            <mat-form-field class="short">
+                <input matInput [(ngModel)]="deviceSearch" (ngModelChange)="SearchDevices()">
+            </mat-form-field>
+        </div>
+        <mat-list class="list">
+            <mat-list-item *ngFor="let device of filteredDevices" class="drag-container" dnd-draggable [dragEnabled]="true" [dropZones]="SetValidDropZones(device)" [dragData]="device">
+                <mat-icon mat-list-icon>{{D.DefaultIcons[device.type._id]}}</mat-icon>
+                <h5 mat-line class="mat-h5">{{device.name}}</h5>
+            </mat-list-item>
+        </mat-list>
+    </mat-drawer>
 
-    <div class="drop-container" dnd-droppable [dropZones]="['Pi']">
+    <mat-drawer-content>
+        <div class="row search">
+            <div class="searchbar">
+                <mat-icon class="searchbar icon">search</mat-icon>
+                <mat-form-field>
+                    <input matInput [(ngModel)]="presetSearch" (ngModelChange)="SearchPresets()">
+                </mat-form-field>
+            </div>
+            <button mat-raised-button class="button save">Save Changes</button>
+            <button mat-raised-button class="button clear">Clear All</button>
+        </div>
 
-    </div>
+        <div class="drop-container" dnd-droppable [dropZones]="['Pi']">
+            <div class="row presets">
+                <mat-card *ngFor="let preset of filteredPresets" class="uiconfig">
+                    <mat-card-header>
+                        <div mat-card-avatar [ngClass]="{'uipath-blueberry': GetPresetUIPath(preset.name) === '/blueberry', 'uipath-cherry': GetPresetUIPath(preset.name) === '/cherry'}"></div>
+                        <mat-card-title>{{preset.name}}</mat-card-title>
+                        <mat-card-subtitle>
+                            <ng-container *ngFor="let panel of uiconfig.panels">
+                                <ng-container *ngIf="panel.preset == preset.name">
+                                    {{panel.hostname.split("-")[2]}}
+                                    <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close sub">close</mat-icon></button>
+                                </ng-container>
+                            </ng-container>
+                        </mat-card-subtitle>
+                    </mat-card-header>
+
+                    <mat-divider></mat-divider>
+
+                    <mat-card-content class="row lists">
+                        <mat-list>
+                            <h3 mat-subheader>Displays</h3>
+                            <ng-container *ngFor="let display of uiconfig.outputConfiguration">
+                                <mat-list-item *ngIf="preset.displays.includes(display.name)">
+                                    <mat-icon mat-list-icon>{{display.icon}}</mat-icon>
+                                    <h4 mat-line class="mat-h4">{{display.name}}</h4>
+                                    <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close">close</mat-icon></button>
+                                </mat-list-item>
+                            </ng-container>
+
+                        </mat-list>
+                        <mat-list>
+                            <h3 mat-subheader>Inputs</h3>
+                            <ng-container *ngFor="let input of uiconfig.inputConfiguration">
+                                <mat-list-item *ngIf="preset.inputs.includes(input.name)">
+                                    <button mat-icon-button><mat-icon mat-list-icon>{{input.icon}}</mat-icon></button>
+                                    <mat-form-field class="display-name">
+                                        <mat-label>{{input.name}}</mat-label>
+                                        <input matInput matAutosize type="text" [(ngModel)]="GetDeviceByName(input.name).display_name">
+                                    </mat-form-field>
+
+                                    <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close">close</mat-icon></button>
+                                </mat-list-item>
+                            </ng-container>
+                        </mat-list>
+                        <mat-list *ngIf="preset.independentAudioDevices != null && preset.independentAudioDevices.length > 0">
+                            <h3 mat-subheader>Independent Audio Devices</h3>
+                            <ng-container *ngFor="let audio of preset.independentAudioDevices">
+                                <mat-list-item>
+                                    <mat-icon mat-list-icon>mic</mat-icon>
+                                    <h4 mat-line class="mat-h4">{{audio}}</h4>
+                                    <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close">close</mat-icon></button>
+                                </mat-list-item>
+                            </ng-container>
+                        </mat-list>
+                    </mat-card-content>
+                    <mat-divider></mat-divider>
+                    <mat-card-actions>
+                        <button mat-icon-button (click)="openDialog(preset)"><mat-icon>more_horiz</mat-icon></button>
+                        <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #edit="matButtonToggle">
+                            <mat-icon>{{edit.checked ? "lock_open" : "lock"}}</mat-icon>
+                        </mat-button-toggle>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+
+    </mat-drawer-content>
+</mat-drawer-container>
