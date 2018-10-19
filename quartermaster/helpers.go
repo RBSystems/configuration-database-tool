@@ -6,6 +6,20 @@ import (
 	"github.com/byuoitav/common/state/statedefinition"
 )
 
+func init() {
+	//I need a good name for this, but now is not the time for that
+	var TheCache map[string]BuildingState
+}
+
+type BuildingState struct {
+	BuildStats BuildingStatus
+	//Mutex MUTEX_TYPE
+	Rooms map[string]RoomStatus
+}
+
+type RoomState struct {
+}
+
 type BuildingStatus struct {
 	BuildingID        string
 	RoomCount         int
@@ -22,34 +36,42 @@ type RoomStatus struct {
 	DeviceStates        []statedefinition.StaticDevice
 }
 
-/*
-	Returns (# of Rooms, # of Rooms alerting) for each building
-*/
-func GetStatusAllBuildings(c db.DB) ([]BuildingStatus, error) {
-	var AllStatuses []BuildingStatus
+//Returns a map of Building IDs to BuildStatus structs
+func GetStatusAllBuildings(c db.DB) (map[string]BuildingStatus, error) {
+	var AllStatuses map[string]BuildingStatus
+	AllStatuses = make(map[string]BuildingStatus)
 	buildings, err := c.GetAllBuildings()
 	if err != nil {
 		log.L.Infof("We could not all the Building Statuses: %v", err)
 		return AllStatuses, err
 	}
 	for _, b := range buildings {
-		curr_b, err := GetStatusBuilding(c, b.ID)
-		AllStatuses = append(AllStatuses, curr_b)
+		AllStatuses[b.ID], err = GetStatusBuilding(c, b.ID)
 		if err != nil {
 			log.L.Infof("We could not get the device states from the %v: %v", b.ID, err)
 		}
 	}
-	return AllStatuses, err
+	return AllStatuses, nil
 }
 
 /*
 Notes to Me!
-4.) Ask Joe if I'm missing anything before we work on channel stuff
-4B.) Do that Stuff
-5.) Channel Stuff
+Channel Stuff
+1.) Make the Mad Map Structure (The Cache)
+	Key: Building ID --- Value: BUILDING STRUCT{
+												Building Stats
+												Mutex
+												Map --- Key: Room ID --- Value: ROOM STRUCT{
+																							Room Stats
+																							Device States
+																							}
+												}
+2.) Make sure that the mutex nonsense is correct
+3.) Initialize the cache and make sure that it gets all the info from the DB
+4.)
 */
 
-//Returns # of Rooms, # of Rooms alerting)
+//Returns a BuildingStatus struct
 func GetStatusBuilding(c db.DB, ID string) (BuildingStatus, error) {
 	var BuildingReport BuildingStatus
 	BuildingReport.BuildingID = ID
@@ -59,7 +81,7 @@ func GetStatusBuilding(c db.DB, ID string) (BuildingStatus, error) {
 		log.L.Infof("We could not get the device states for building %v: %v", ID, err)
 		return BuildingReport, err
 	}
-	//Then loop through, countint the rooms, and if
+	//Then loop through, counting the rooms, and if
 	var roomNames map[string]bool
 	roomNames = make(map[string]bool)
 	for _, deviceState := range DeviceStates {
@@ -78,7 +100,26 @@ func GetStatusBuilding(c db.DB, ID string) (BuildingStatus, error) {
 	return BuildingReport, nil
 }
 
-//Returns # Devices, # of Devices Alerting, #Alerts, All Device States
+//Returns a map of RoomIds to RoomStatus structs
+func GetStatusAllRoomsByBuilding(c db.DB, BuildingID string) (map[string]RoomStatus, error) {
+	var AllStatuses map[string]RoomStatus
+	AllStatuses = make(map[string]RoomStatus)
+	DeviceStates, err := c.GetDeviceStatesByBuilding(BuildingID)
+	if err != nil {
+		log.L.Infof("We could not get the device states for the rooms in building %v: %v", BuildingID, err)
+	}
+	for _, deviceState := range DeviceStates {
+		if _, exists := AllStatuses[deviceState.Room]; !exists {
+			AllStatuses[deviceState.Room], err = GetStatusRoom(c, deviceState.Room)
+			if err != nil {
+				log.L.Infof("We could not get the room status for %v: %v", deviceState.Room, err)
+			}
+		}
+	}
+	return AllStatuses, nil
+}
+
+//Returns a RoomStatus struct
 func GetStatusRoom(c db.DB, ID string) (RoomStatus, error) {
 	var RoomReport RoomStatus
 	RoomReport.RoomID = ID
