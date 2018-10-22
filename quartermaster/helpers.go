@@ -1,23 +1,17 @@
 package quartermaster
 
 import (
+	"sync"
+
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/state/statedefinition"
 )
 
-func init() {
-	//I need a good name for this, but now is not the time for that
-	var TheCache map[string]BuildingState
-}
-
 type BuildingState struct {
 	BuildStats BuildingStatus
-	//Mutex MUTEX_TYPE
-	Rooms map[string]RoomStatus
-}
-
-type RoomState struct {
+	Mutex      sync.Mutex
+	Rooms      map[string]RoomStatus
 }
 
 type BuildingStatus struct {
@@ -56,8 +50,8 @@ func GetStatusAllBuildings(c db.DB) (map[string]BuildingStatus, error) {
 
 /*
 Notes to Me!
-Channel Stuff
-1.) Make the Mad Map Structure (The Cache)
+Channel Stuff (Not actually that much channel stuff, it's more cache stuff (the cache being mini db 2.0))
+1.) Make the Mad Map Structure (The Cache)  Questions: Do I want it to be a singleton (Db)? Is this structure a smart one? How much should be private?
 	Key: Building ID --- Value: BUILDING STRUCT{
 												Building Stats
 												Mutex
@@ -68,10 +62,12 @@ Channel Stuff
 												}
 2.) Make sure that the mutex nonsense is correct
 3.) Initialize the cache and make sure that it gets all the info from the DB
-4.)
+4.) Change all of the Get functions to redirect to the cache so information will be pulled from there (Technically mutex time, but less complicated)
+5.) Write functions to the cache  (Mutex time!)
+6.) Update functions to the cache (Moooore Mutex time!)
 */
 
-//Returns a BuildingStatus struct
+//Returns a the specified BuildingStatus
 func GetStatusBuilding(c db.DB, ID string) (BuildingStatus, error) {
 	var BuildingReport BuildingStatus
 	BuildingReport.BuildingID = ID
@@ -100,7 +96,7 @@ func GetStatusBuilding(c db.DB, ID string) (BuildingStatus, error) {
 	return BuildingReport, nil
 }
 
-//Returns a map of RoomIds to RoomStatus structs
+//Returns a map of RoomIds from the specified building to RoomStatuses
 func GetStatusAllRoomsByBuilding(c db.DB, BuildingID string) (map[string]RoomStatus, error) {
 	var AllStatuses map[string]RoomStatus
 	AllStatuses = make(map[string]RoomStatus)
@@ -119,7 +115,7 @@ func GetStatusAllRoomsByBuilding(c db.DB, BuildingID string) (map[string]RoomSta
 	return AllStatuses, nil
 }
 
-//Returns a RoomStatus struct
+//Returns the RoomStatus for the ID Given
 func GetStatusRoom(c db.DB, ID string) (RoomStatus, error) {
 	var RoomReport RoomStatus
 	RoomReport.RoomID = ID
