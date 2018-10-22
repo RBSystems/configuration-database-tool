@@ -43,6 +43,10 @@ func main() {
 	secure.GET("/templates", handlers.GetAllTemplates)
 	secure.GET("/icons", handlers.GetIcons)
 	secure.GET("/uiconfig/:room", handlers.GetUIConfig)
+	secure.GET("/buildings/alerts", handlers.GetAllAlerts)
+	secure.GET("/buildings/:building/alerts", handlers.GetAlertsByBuilding)
+	secure.GET("/buildings/:building/rooms/alerts", handlers.GetAlertsByAllRooms)
+	secure.GET("/rooms/:room/alerts", handlers.GetAlertsByRoom)
 
 	secure.POST("/buildings/:building", handlers.AddBuilding)
 	secure.POST("/rooms/:room/add", handlers.AddRoom)
