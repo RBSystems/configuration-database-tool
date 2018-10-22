@@ -80,7 +80,8 @@ export class Defaults {
         "via-connect-pro": "VIA",
         "Pi3": "Pi",
         "SonyXBR": "Flatpanel",
-        "Computer": "PC"
+        "Computer": "PC",
+        "ADCP Sony VPL": "Projector"
     }
 
     DefaultDeviceNames = {

@@ -122,6 +122,12 @@ export class Device {
                 r.tags = [];
                 this.roles.push(r);
             })
+
+            if(baseType.tags != null) {
+                baseType.tags.forEach(tag => {
+                    this.tags.push(tag);
+                });
+            }
         }
     }
 }
@@ -158,7 +164,7 @@ export class Template {
     _id?: string;
     description?: string;
     uiconfig?: UIConfig;
-    devices?: Device[];
+    base_types?: string[];
 }
 
 export class UIConfig   {

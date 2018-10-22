@@ -4,11 +4,11 @@
         <button *ngIf="deviceTypeMap != null && deviceTypeMap.size > 0" mat-fab class="button menu" [matMenuTriggerFor]="classes"><mat-icon>add</mat-icon></button>
 
         <mat-menu #classes>
-            <div mat-menu-item>
+            <div mat-menu-item (click)="AddNewDevice('Pi3')">
                 <mat-icon>{{D.DefaultIcons["Pi3"]}}</mat-icon>
                 <span>Pi</span>
             </div>
-            <button mat-menu-item>
+            <button mat-menu-item (click)="AddNewDevice('SonyXBR')">
                 <mat-icon>{{D.DefaultIcons["SonyXBR"]}}</mat-icon>
                 <span>TV</span>
               </button>
@@ -54,10 +54,10 @@
             </ng-container>
         </mat-menu>
 
-        <button mat-fab class="button template" [matMenuTriggerFor]="templates"><mat-icon>library_add</mat-icon></button>
+        <button mat-fab *ngIf="deviceTypeMap != null && deviceTypeMap.size > 0" class="button template" [matMenuTriggerFor]="templates"><mat-icon>library_add</mat-icon></button>
         <mat-menu #templates>
             <button mat-menu-item *ngFor="let t of templateList" (click)="ApplyTemplate(t)">
-                  <span>{{t._id}}</span>
+                  <span>{{t._id}} - {{t.description}}</span>
               </button>
         </mat-menu>
 
@@ -66,90 +66,102 @@
             <mat-form-field class="short">
                 <input matInput [(ngModel)]="deviceSearch" (ngModelChange)="SearchDevices()">
             </mat-form-field>
+
         </div>
         <mat-list class="list">
-            <mat-list-item *ngFor="let device of filteredDevices" class="drag-container" dnd-draggable [dragEnabled]="true" [dropZones]="SetValidDropZones(device)" [dragData]="device">
-                <mat-icon mat-list-icon>{{D.DefaultIcons[device.type._id]}}</mat-icon>
-                <h5 mat-line class="mat-h5">{{device.name}}</h5>
-            </mat-list-item>
+            <ng-container *ngFor="let device of filteredDevices">
+                <mat-list-item *ngIf="device != null" class="drag-container" dnd-draggable [dragEnabled]="true" [dropZones]="SetValidDropZones(device)" [dragData]="device">
+                    <mat-icon mat-list-icon>{{D.DefaultIcons[device.type._id]}}</mat-icon>
+                    <h5 mat-line class="mat-h5">{{device.name}}</h5>
+                    <button mat-icon-button *ngIf="deviceEdit.checked" (click)="RemoveDeviceFromRoom(device)" class="button close"><mat-icon>close</mat-icon></button>
+                </mat-list-item>
+            </ng-container>
+
         </mat-list>
     </mat-drawer>
 
-    <mat-drawer-content>
+    <mat-drawer-content class="drop-container">
         <div class="row search">
             <div class="searchbar">
+                <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #deviceEdit="matButtonToggle" (change)="actions.focus">
+                    <mat-icon>{{deviceEdit.checked ? "lock_open" : "lock"}}</mat-icon>
+                </mat-button-toggle>
                 <mat-icon class="searchbar icon">search</mat-icon>
                 <mat-form-field>
                     <input matInput [(ngModel)]="presetSearch" (ngModelChange)="SearchPresets()">
                 </mat-form-field>
             </div>
-            <button mat-raised-button class="button save">Save Changes</button>
-            <button mat-raised-button class="button clear">Clear All</button>
+            <button mat-raised-button class="button save" [disabled]="deviceEdit.checked">Save Changes</button>
+            <button mat-raised-button class="button clear" [disabled]="!deviceEdit.checked" (click)="ClearAll()">Clear All</button>
         </div>
 
         <div class="drop-container" dnd-droppable [dropZones]="['Pi']">
             <div class="row presets">
-                <mat-card *ngFor="let preset of filteredPresets" class="uiconfig">
-                    <mat-card-header>
-                        <div mat-card-avatar [ngClass]="{'uipath-blueberry': GetPresetUIPath(preset.name) === '/blueberry', 'uipath-cherry': GetPresetUIPath(preset.name) === '/cherry'}"></div>
-                        <mat-card-title>{{preset.name}}</mat-card-title>
-                        <mat-card-subtitle>
-                            <ng-container *ngFor="let panel of uiconfig.panels">
-                                <ng-container *ngIf="panel.preset == preset.name">
-                                    {{panel.hostname.split("-")[2]}}
-                                    <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close sub">close</mat-icon></button>
+                <ng-container *ngFor="let preset of filteredPresets">
+                    <mat-card *ngIf="preset != null" class="uiconfig">
+                        <mat-card-header>
+                            <div mat-card-avatar [ngClass]="{'uipath-blueberry': GetPresetUIPath(preset.name) === '/blueberry', 'uipath-cherry': GetPresetUIPath(preset.name) === '/cherry'}"></div>
+                            <mat-card-title>{{preset.name}}</mat-card-title>
+                            <mat-card-subtitle>
+                                <ng-container *ngFor="let panel of uiconfig.panels">
+                                    <ng-container *ngIf="panel.preset == preset.name">
+                                        {{panel.hostname.split("-")[2]}}
+                                        <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close sub">close</mat-icon></button>
+                                    </ng-container>
                                 </ng-container>
-                            </ng-container>
-                        </mat-card-subtitle>
-                    </mat-card-header>
+                            </mat-card-subtitle>
+                        </mat-card-header>
 
-                    <mat-divider></mat-divider>
+                        <mat-divider></mat-divider>
 
-                    <mat-card-content class="row lists">
-                        <mat-list>
-                            <h3 mat-subheader>Displays</h3>
-                            <ng-container *ngFor="let display of uiconfig.outputConfiguration">
-                                <mat-list-item *ngIf="preset.displays.includes(display.name)">
-                                    <mat-icon mat-list-icon>{{display.icon}}</mat-icon>
-                                    <h4 mat-line class="mat-h4">{{display.name}}</h4>
-                                    <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close">close</mat-icon></button>
-                                </mat-list-item>
-                            </ng-container>
+                        <mat-card-content class="row lists">
+                            <mat-list *ngIf="preset.displays != null && preset.displays.length > 0">
+                                <h3 mat-subheader>Displays</h3>
+                                <ng-container *ngFor="let display of uiconfig.outputConfiguration">
+                                    <mat-list-item *ngIf="preset.displays.includes(display.name)">
+                                        <mat-icon class="pseudo-button" mat-list-icon (click)="ChangeIcon(display)">{{display.icon}}</mat-icon>
+                                        <h4 mat-line class="mat-h4">{{display.name}}</h4>
+                                        <button mat-icon-button *ngIf="edit.checked" (click)="RemoveFromPreset(preset, display.name)"><mat-icon class="button close">close</mat-icon></button>
+                                    </mat-list-item>
+                                </ng-container>
 
-                        </mat-list>
-                        <mat-list>
-                            <h3 mat-subheader>Inputs</h3>
-                            <ng-container *ngFor="let input of uiconfig.inputConfiguration">
-                                <mat-list-item *ngIf="preset.inputs.includes(input.name)">
-                                    <button mat-icon-button><mat-icon mat-list-icon>{{input.icon}}</mat-icon></button>
-                                    <mat-form-field class="display-name">
-                                        <mat-label>{{input.name}}</mat-label>
-                                        <input matInput matAutosize type="text" [(ngModel)]="GetDeviceByName(input.name).display_name">
-                                    </mat-form-field>
+                            </mat-list>
+                            <mat-list *ngIf="preset.inputs != null && preset.inputs.length > 0">
+                                <h3 mat-subheader>Inputs</h3>
+                                <ng-container *ngFor="let input of uiconfig.inputConfiguration">
+                                    <mat-list-item *ngIf="preset.inputs.includes(input.name)">
+                                        <button mat-icon-button (click)="ChangeIcon(input)"><mat-icon mat-list-icon>{{input.icon}}</mat-icon></button>
+                                        <mat-form-field class="display-name">
+                                            <mat-label>{{input.name}}</mat-label>
+                                            <input matInput matAutosize type="text" [(ngModel)]="GetDeviceByName(input.name).display_name">
+                                        </mat-form-field>
 
-                                    <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close">close</mat-icon></button>
-                                </mat-list-item>
-                            </ng-container>
-                        </mat-list>
-                        <mat-list *ngIf="preset.independentAudioDevices != null && preset.independentAudioDevices.length > 0">
-                            <h3 mat-subheader>Independent Audio Devices</h3>
-                            <ng-container *ngFor="let audio of preset.independentAudioDevices">
-                                <mat-list-item>
-                                    <mat-icon mat-list-icon>mic</mat-icon>
-                                    <h4 mat-line class="mat-h4">{{audio}}</h4>
-                                    <button mat-icon-button *ngIf="edit.checked"><mat-icon class="button close">close</mat-icon></button>
-                                </mat-list-item>
-                            </ng-container>
-                        </mat-list>
-                    </mat-card-content>
-                    <mat-divider></mat-divider>
-                    <mat-card-actions>
-                        <button mat-icon-button (click)="openDialog(preset)"><mat-icon>more_horiz</mat-icon></button>
-                        <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #edit="matButtonToggle">
-                            <mat-icon>{{edit.checked ? "lock_open" : "lock"}}</mat-icon>
-                        </mat-button-toggle>
-                    </mat-card-actions>
-                </mat-card>
+                                        <button mat-icon-button *ngIf="edit.checked" (click)="RemoveFromPreset(preset, input.name)"><mat-icon class="button close">close</mat-icon></button>
+                                    </mat-list-item>
+                                </ng-container>
+                            </mat-list>
+                            <mat-list *ngIf="preset.independentAudioDevices != null && preset.independentAudioDevices.length > 0">
+                                <h3 mat-subheader>Independent Audio Devices</h3>
+                                <ng-container *ngFor="let audio of uiconfig.outputConfiguration">
+                                    <mat-list-item *ngIf="preset.independentAudioDevices.includes(audio.name)">
+                                        <mat-icon class="pseudo-button" mat-list-icon (click)="ChangeIcon(audio)">{{audio.icon}}</mat-icon>
+                                        <h4 mat-line class="mat-h4">{{audio.name}}</h4>
+                                        <button mat-icon-button *ngIf="edit.checked" (click)="RemoveFromPreset(preset, audio.name)"><mat-icon class="button close">close</mat-icon></button>
+                                    </mat-list-item>
+                                </ng-container>
+                            </mat-list>
+                        </mat-card-content>
+                        <mat-divider></mat-divider>
+                        <mat-card-actions #actions>
+                            <button mat-icon-button (click)="openDialog(preset.name)"><mat-icon>more_horiz</mat-icon></button>
+                            <button mat-button *ngIf="edit.checked" (click)="RemovePreset(preset)" class="button close">REMOVE</button>
+                            <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #edit="matButtonToggle" [checked]="deviceEdit.checked">
+                                <mat-icon>{{edit.checked ? "lock_open" : "lock"}}</mat-icon>
+                            </mat-button-toggle>
+                        </mat-card-actions>
+                    </mat-card>
+                </ng-container>
+
             </div>
         </div>
 

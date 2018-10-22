@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { UIConfig, Panel, Preset, Device, IOConfiguration, DeviceType } from '../../objects';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { ApiService } from '../../services/api.service';
 import { Strings } from '../../services/strings.service';
+import { IconModalComponent } from '../iconmodal/iconmodal.component';
 
 export interface UIInfo {
   config: UIConfig;
@@ -21,9 +22,11 @@ export interface UIInfo {
 export class PresetModalComponent implements OnInit {
   uipath: string;
   InputTypeMap: Map<string, IOConfiguration[]> = new Map();
+  iconList: string[] = [];
+  newPresetName: string = "";
 
-  constructor(public dialogRef: MatDialogRef<PresetModalComponent>, @Inject(MAT_DIALOG_DATA) public data: UIInfo, public S: Strings, private api: ApiService) {
-    if(this.data.panels != null) {
+  constructor(public dialogRef: MatDialogRef<PresetModalComponent>, @Inject(MAT_DIALOG_DATA) public data: UIInfo, public S: Strings, private api: ApiService, public dialog: MatDialog) {
+    if(this.data.panels != null && this.data.panels.length > 0) {
       this.uipath = this.data.panels[0].uipath;
     }
     if(this.data.preset.shareableDisplays == null) {
@@ -32,6 +35,7 @@ export class PresetModalComponent implements OnInit {
     if(this.data.types != null) {
       this.CreateInputTypeMap();
     }
+    this.newPresetName = this.data.preset.name;
   }
 
   ngOnInit() {
@@ -42,7 +46,17 @@ export class PresetModalComponent implements OnInit {
   }
 
   Close() {
-    this.dialogRef.close();
+    this.dialogRef.close()
+  }
+
+  ChangeIcon(caller: any) {
+    let iconRef = this.dialog.open(IconModalComponent);
+
+    iconRef.afterClosed().subscribe(result => {
+      if(result != null) {
+        caller.icon = result;
+      }
+    });
   }
 
   RoomHasIndependentAudios(): boolean {
@@ -53,6 +67,26 @@ export class PresetModalComponent implements OnInit {
       }
     });
     return report;
+  }
+
+  ValidatePresetName(): boolean {
+    console.log(this.newPresetName)
+    let ok: boolean = true;
+    if(this.newPresetName != null && this.newPresetName != this.data.preset.name) {
+      console.log("hello")
+      for(let i = 0; i < this.data.config.presets.length; i++) {
+        if(this.data.config.presets[i].name == this.newPresetName) {
+          console.log(this.data.config.presets[i].name);
+          console.log(this.newPresetName);
+          if(this.data.preset.displays[0] != this.data.config.presets[i].displays[0]) {
+            console.log("hello again")
+            return false;
+          }
+        }
+      }
+    }
+    this.data.preset.name = this.newPresetName;
+    return ok;
   }
 
   UpdatePresetOnPanels() {

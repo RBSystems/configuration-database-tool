@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChildren, QueryList, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Room, Device, Template, RoomConfiguration, RoomSetup } from '../../objects';
+import { RoomComponent } from '../../components/room/room.component';
 
 @Component({
   selector: 'app-roomlist',
@@ -16,6 +17,8 @@ export class RoomlistComponent implements OnInit {
   buildingID: string;
 
   searchQuery: string;
+
+  @ViewChildren("rooms") rooms: QueryList<RoomComponent>;
 
   constructor(private route: ActivatedRoute, private api: ApiService) {
       this.route.params.subscribe(params => {
@@ -93,6 +96,8 @@ export class RoomlistComponent implements OnInit {
     newRoom.configuration._id = "Default";
 
     this.roomList.push(newRoom);
+
+    this.rooms.last.openDialog();
   }
 
   ///// API FUNCTIONS /////

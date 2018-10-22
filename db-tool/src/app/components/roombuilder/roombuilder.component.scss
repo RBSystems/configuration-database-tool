@@ -24,7 +24,7 @@ $sidewidth: 170px;
     align-items: center;
     align-content: center;
     justify-content: flex-start;
-    width: $sidewidth;
+    // width: $sidewidth;
 }
 
 .row {
@@ -125,6 +125,7 @@ $sidewidth: 170px;
 .uiconfig {
     // border: 1px solid red;
     margin: 10px;
+    cursor: default;
 }
 
 mat-drawer-container {
@@ -174,7 +175,7 @@ mat-list-item {
         border-radius: 0px;
         padding-left: 0px;
         padding-right: 0px;
-        width: $sidewidth;
+        // width: $sidewidth;
         margin-top: 40px;
     }
 }
@@ -185,4 +186,8 @@ mat-drawer-content {
 
 .short {
     width: 100px;
+}
+
+.pseudo-button {
+    cursor: pointer;
 }

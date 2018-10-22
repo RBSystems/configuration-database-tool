@@ -3,7 +3,7 @@
         <h4 style="font-weight: 500;">Preset Information</h4>
         <button mat-icon-button (click)="Close()"><mat-icon>close</mat-icon></button>
     </div>
-    <section class="row">
+    <section class="row info">
         <mat-form-field class="field">
             <mat-label>Preset Name</mat-label>
             <input matInput type="text" [(ngModel)]="data.preset.name" (ngModelChange)="UpdatePresetOnPanels()">
@@ -17,8 +17,8 @@
             </mat-select>
         </mat-form-field>
 
-        <mat-label>Main Icon:</mat-label>
-        <button mat-icon-button class="button"><mat-icon>{{data.preset.icon}}</mat-icon></button>
+        <mat-label class="label short">Main Icon:</mat-label>
+        <button mat-icon-button class="button" (click)="ChangeIcon(data.preset)"><mat-icon>{{data.preset.icon}}</mat-icon></button>
     </section>
 
     <mat-divider></mat-divider>
@@ -34,9 +34,9 @@
         <div class="row displays">
             <div *ngFor="let out of data.config.outputConfiguration" class="display">
                 <mat-checkbox *ngIf="DeviceHasRole(out.name, 'VideoOut')" [checked]="data.preset.displays.includes(out.name)" (change)="UpdatePresetDisplays(data.preset, out.name, $event.checked)">{{out.name}}</mat-checkbox>
-                <ng-container *ngIf="uipath === '/cherry'">
+                <ng-container *ngIf="DeviceHasRole(out.name, 'VideoOut') && uipath === '/cherry'">
                     <mat-label>Icon:</mat-label>
-                    <button mat-icon-button><mat-icon>{{out.icon}}</mat-icon></button>
+                    <button mat-icon-button (click)="ChangeIcon(out)"><mat-icon>{{out.icon}}</mat-icon></button>
                 </ng-container>
             </div>
         </div>
@@ -54,7 +54,7 @@
 
     <!-- SHAREABLE DISPLAYS -->
     <section class="row checkboxes" *ngIf="uipath === '/blueberry' && sharing.checked">
-        <mat-label class="label">Shareable Displays</mat-label>
+        <mat-label class="label">Shareable Displays:</mat-label>
         <div class="row displays">
             <div *ngFor="let out of data.config.outputConfiguration" class="display">
                 <mat-checkbox *ngIf="DeviceHasRole(out.name, 'VideoOut')" [checked]="data.preset.shareableDisplays.includes(out.name)" (change)="UpdateShareableDisplays(data.preset, out.name, $event.checked)">{{out.name}}</mat-checkbox>
@@ -73,7 +73,7 @@
                     <mat-list-item *ngFor="let i of GetInputs(type)">
                         <mat-checkbox [checked]="data.preset.inputs.includes(i.name)" (change)="UpdatePresetInputs(data.preset, i.name, $event.checked)">{{i.name}}</mat-checkbox>
                         <mat-label>Icon:</mat-label>
-                        <button mat-icon-button><mat-icon>{{i.icon}}</mat-icon></button>
+                        <button mat-icon-button (click)="ChangeIcon(i)"><mat-icon>{{i.icon}}</mat-icon></button>
                     </mat-list-item>
                 </mat-list>
             </ng-container>
@@ -90,7 +90,7 @@
                 <mat-list-item *ngIf="DeviceHasRole(m.name, 'Microphone')">
                     <mat-checkbox [checked]="data.preset.independentAudioDevices.includes(m.name)" (change)="UpdateIndependentAudioDevices(data.preset, m.name, $event.checked)">{{m.name}}</mat-checkbox>
                     <mat-label>Icon:</mat-label>
-                    <button mat-icon-button><mat-icon>{{m.icon}}</mat-icon></button>
+                    <button mat-icon-button (click)="ChangeIcon(m)"><mat-icon>{{m.icon}}</mat-icon></button>
                 </mat-list-item>
             </ng-container>
         </mat-list>

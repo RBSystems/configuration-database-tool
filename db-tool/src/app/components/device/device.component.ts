@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { SmeeComponent } from '../smee.component';
+import { Device } from '../../objects';
 
 @Component({
   selector: 'app-device',
@@ -9,10 +10,16 @@ import { SmeeComponent } from '../smee.component';
 })
 export class DeviceComponent implements OnInit, SmeeComponent {
   @Input() data;
+  @Input() device: Device;
+  @Input() deviceExists: boolean;
+  alerts: string[] = [];
 
   constructor(private api: ApiService) { }
 
   ngOnInit() {
   }
 
+  OpenDeviceModal() {
+
+  }
 }

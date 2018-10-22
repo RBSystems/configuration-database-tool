@@ -1,3 +1,70 @@
-<p>
-  devicelist works!
-</p>
+<div class="row">
+    <div class="searchbar">
+        <mat-icon class="searchbar icon">search</mat-icon>
+        <mat-form-field>
+            <input matInput [(ngModel)]="searchQuery" (ngModelChange)="Search()">
+        </mat-form-field>
+    </div>
+    <button *ngIf="deviceTypeMap != null && deviceTypeMap.size > 0" mat-fab class="button menu" [matMenuTriggerFor]="classes"><mat-icon>add</mat-icon></button>
+
+    <mat-menu #classes>
+        <div mat-menu-item (click)="AddNewDevice('Pi3')">
+            <mat-icon>{{D.DefaultIcons["Pi3"]}}</mat-icon>
+            <span>Pi</span>
+        </div>
+        <button mat-menu-item (click)="AddNewDevice('SonyXBR')">
+                <mat-icon>{{D.DefaultIcons["SonyXBR"]}}</mat-icon>
+                <span>TV</span>
+              </button>
+        <button mat-menu-item [matMenuTriggerFor]="projectors">Projector</button>
+        <button mat-menu-item [matMenuTriggerFor]="inputs">Input</button>
+        <button mat-menu-item [matMenuTriggerFor]="switchers">Video Switcher</button>
+        <button mat-menu-item [matMenuTriggerFor]="other">Other</button>
+    </mat-menu>
+
+    <mat-menu #projectors>
+        <ng-container *ngFor="let type of deviceTypeList">
+            <button mat-menu-item *ngIf="IsInThisMenu('projector', type)">
+                      <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                      <span>{{type.display_name}}</span>
+                  </button>
+        </ng-container>
+    </mat-menu>
+
+    <mat-menu #inputs>
+        <ng-container *ngFor="let type of deviceTypeList">
+            <button mat-menu-item *ngIf="IsInThisMenu('input', type)">
+                      <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                      <span>{{type.display_name}}</span>
+                  </button>
+        </ng-container>
+    </mat-menu>
+
+    <mat-menu #switchers>
+        <ng-container *ngFor="let type of deviceTypeList">
+            <button mat-menu-item *ngIf="IsInThisMenu('switcher', type)">
+                      <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                      <span>{{type.display_name}}</span>
+                  </button>
+        </ng-container>
+    </mat-menu>
+
+    <mat-menu #other>
+        <ng-container *ngFor="let type of deviceTypeList">
+            <button mat-menu-item *ngIf="IsInThisMenu('other', type)">
+                      <mat-icon>{{D.DefaultIcons[type._id]}}</mat-icon>
+                      <span>{{type.display_name}}</span>
+                  </button>
+        </ng-container>
+    </mat-menu>
+
+    <!-- <button mat-fab *ngIf="deviceTypeMap != null && deviceTypeMap.size > 0" class="button template" [matMenuTriggerFor]="templates"><mat-icon>library_add</mat-icon></button>
+    <mat-menu #templates>
+        <button mat-menu-item *ngFor="let t of templateList" (click)="ApplyTemplate(t)">
+                  <span>{{t._id}} - {{t.description}}</span>
+              </button>
+    </mat-menu> -->
+</div>
+<div class="container">
+    <app-device *ngFor="let d of filteredDevices" [device]="d" [deviceExists]="true"></app-device>
+</div>

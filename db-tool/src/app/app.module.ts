@@ -29,6 +29,7 @@ import { RoomStateComponent } from './components/roomstate/roomstate.component';
 import { DeviceComponent } from './components/device/device.component';
 import { DeviceListComponent } from './components/devicelist/devicelist.component';
 import { PresetModalComponent } from './modals/presetmodal/presetmodal.component';
+import { IconModalComponent } from './modals/iconmodal/iconmodal.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { PresetModalComponent } from './modals/presetmodal/presetmodal.component
     RoomStateComponent,
     DeviceComponent,
     DeviceListComponent,
-    PresetModalComponent
+    PresetModalComponent,
+    IconModalComponent
   ],
   imports: [
     BrowserModule,
@@ -88,7 +90,8 @@ import { PresetModalComponent } from './modals/presetmodal/presetmodal.component
     RoomStateComponent,
     DeviceComponent,
     DeviceListComponent,
-    PresetModalComponent
+    PresetModalComponent,
+    IconModalComponent
   ],
   providers: [
     ApiService,

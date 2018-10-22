@@ -1,3 +1,14 @@
-<p>
-  device works!
-</p>
+<div class="container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>{{device.name}}</mat-card-title>
+        </mat-card-header>
+        <div class="row buttons">
+            <a class="row alerts" routerLink="">
+                <mat-icon class="device" [class.good]="alerts.length == 0" [class.alert]="alerts.length != 0">{{alerts.length == 0 ? "check_circle_outline" : "warning"}}</mat-icon>
+                <mat-label class="device count">{{alerts.length}}</mat-label>
+            </a>
+            <button mat-icon-button class="button" (click)="OpenDeviceModal()"><mat-icon>more_horiz</mat-icon></button>
+        </div>
+    </mat-card>
+</div>

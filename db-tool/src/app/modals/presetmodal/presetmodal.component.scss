@@ -47,6 +47,9 @@
     &.heading {
         justify-content: space-between;
     }
+    &.info {
+        flex-flow: row nowrap;
+    }
 }
 
 .button {
@@ -64,7 +67,12 @@
 
 .label {
     margin-right: 2%;
-    width: 175px;
+    width: 215px;
+    &.short {
+        margin-right: 0px;
+        margin-left: 10px;
+        width: 110px;
+    }
 }
 
 .display {
