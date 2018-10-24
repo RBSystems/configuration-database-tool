@@ -1,5 +1,4 @@
 <div class="container">
-    <!-- <a routerLink="/roomlist/{{building._id}}"> -->
     <mat-card>
         <a routerLink="/roomlist/{{building._id}}">
             <mat-card-header>
@@ -17,9 +16,8 @@
                     <mat-icon class="room bad">error_outline</mat-icon>
                     <mat-label class="room count">{{errorRooms.length}}</mat-label>
                 </a>
-                <button mat-icon-button class="button edit" (click)="openDialog()"><mat-icon>more_horiz</mat-icon></button>
+                <button mat-icon-button class="button edit" (click)="OpenBuildingModal()"><mat-icon>more_horiz</mat-icon></button>
             </div>
         </mat-card-content>
     </mat-card>
-    <!-- </a> -->
 </div>

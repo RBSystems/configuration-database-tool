@@ -78,6 +78,10 @@ export class ApiService {
     return this.http.put(this.url + "/devices/" + IDToEdit + "/update", toEdit, this.options).map(response => response.json());
   }
 
+  DeleteDevice(IDToDelete: string): Observable<any> {
+    return this.http.get(this.url + "/devices/" + IDToDelete + "/delete", this.options).map(response => response.json());
+  }
+
   GetDeviceList(room: string): Observable<Device[]> {
     return this.http.get(this.url + "/rooms/" + room + "/devices", this.options).map(response => response.json());
   }

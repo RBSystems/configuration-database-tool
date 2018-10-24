@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { Building } from '../../objects';
-import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +12,7 @@ export class HomeComponent implements OnInit {
   searchQuery: string;
   filteredBuildings: Building[] = [];
 
-  constructor(private api: ApiService, public dialog: MatDialog) { }
+  constructor(private api: ApiService) { }
 
   ngOnInit() {
     this.GetBuildingList();

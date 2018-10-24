@@ -6,14 +6,17 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material';
 import { ApiService } from '../../services/api.service';
 
+export interface RoomData {
+  room: Room;
+  roomExists: boolean;
+}
+
 @Component({
   selector: 'app-roommodal',
   templateUrl: './roommodal.component.html',
   styleUrls: ['./roommodal.component.scss']
 })
 export class RoomModalComponent implements OnInit {
-  roomExists: boolean = true;
-
   configurationList: RoomConfiguration[] = [];
   designationList: string[] = [];
 
@@ -23,7 +26,7 @@ export class RoomModalComponent implements OnInit {
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(public dialogRef: MatDialogRef<RoomModalComponent>, @Inject(MAT_DIALOG_DATA) public data: Room, public S: Strings, private api: ApiService) { }
+  constructor(public dialogRef: MatDialogRef<RoomModalComponent>, @Inject(MAT_DIALOG_DATA) public data: RoomData, public S: Strings, private api: ApiService) { }
 
   ngOnInit() {
     this.GetRoomConfigurations();
@@ -31,7 +34,6 @@ export class RoomModalComponent implements OnInit {
   }
 
   ngOnChanges() {
-    // this.UpdateConfiguration();
   }
 
   close() {
@@ -40,11 +42,11 @@ export class RoomModalComponent implements OnInit {
 
   ///// API FUNCTIONS /////
   SubmitRoom() {
-    if(!this.roomExists) {
-      this.api.AddRoom(this.data).subscribe(
+    if(!this.data.roomExists) {
+      this.api.AddRoom(this.data.room).subscribe(
         success => {
           this.api.WriteTempChanges();
-          this.roomExists = true;
+          this.data.roomExists = true;
           this.dialogRef.close();
         },
         error => {
@@ -52,7 +54,7 @@ export class RoomModalComponent implements OnInit {
         });
     }
     else {
-      this.api.UpdateRoom(this.data._id, this.data).subscribe(
+      this.api.UpdateRoom(this.data.room._id, this.data.room).subscribe(
         success => {
           this.api.WriteTempChanges();
           this.dialogRef.close();
@@ -64,10 +66,10 @@ export class RoomModalComponent implements OnInit {
   }
 
   DeleteRoom() {
-    this.api.DeleteRoom(this.data._id).subscribe(
+    this.api.DeleteRoom(this.data.room._id).subscribe(
       success => {
         this.api.WriteTempChanges();
-        this.roomExists = false;
+        this.data.roomExists = false;
         this.dialogRef.close();
       },
       error => {
@@ -93,8 +95,8 @@ export class RoomModalComponent implements OnInit {
 
   ///// TAGS /////
   AddChip(event: MatChipInputEvent): void {
-    if(this.data.tags == null || this.data.tags.length == 0) {
-      this.data.tags = [];
+    if(this.data.room.tags == null || this.data.room.tags.length == 0) {
+      this.data.room.tags = [];
     }
 
     const input = event.input;
@@ -102,7 +104,7 @@ export class RoomModalComponent implements OnInit {
 
     // Add our tag
     if ((value || '').trim()) {
-      this.data.tags.push(value.trim());
+      this.data.room.tags.push(value.trim());
     }
 
     // Reset the input value
@@ -112,9 +114,9 @@ export class RoomModalComponent implements OnInit {
   }
 
   RemoveChip(tag: string): void {
-    let index_A = this.data.tags.indexOf(tag);
+    let index_A = this.data.room.tags.indexOf(tag);
     if (index_A >= 0) {
-      this.data.tags.splice(index_A, 1);
+      this.data.room.tags.splice(index_A, 1);
     }
   }
   /*-*/

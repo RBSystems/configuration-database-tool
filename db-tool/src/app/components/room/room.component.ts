@@ -6,6 +6,7 @@ import { Strings } from '../../services/strings.service';
 import { RoomModalComponent } from '../../modals/roommodal/roommodal.component';
 import { Defaults } from '../../services/defaults.service';
 import { SmeeComponent } from '../smee.component';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-room',
@@ -21,7 +22,7 @@ export class RoomComponent implements OnInit {
   okDevices: Device[] = [];
   alertingDevices: Device[] = [];
 
-  constructor(private api: ApiService, public dialog: MatDialog, public S: Strings, public D: Defaults) { }
+  constructor(private api: ApiService, public M: ModalService, public S: Strings, public D: Defaults) { }
 
   ngOnInit() {
   }
@@ -55,12 +56,8 @@ export class RoomComponent implements OnInit {
 
   ///// RESPONSE MESSAGE /////
   // openDialog opens a modal from the Modal Component.
-  openDialog() {
-    let dialogRef = this.dialog.open(RoomModalComponent, { data: this.room });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
+  OpenRoomModal() {
+    this.M.OpenRoomModal(this.room, this.roomExists);
   }
   /*-*/
 }

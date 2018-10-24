@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Room, Device, Template, RoomConfiguration, RoomSetup } from '../../objects';
 import { RoomComponent } from '../../components/room/room.component';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-roomlist',
@@ -18,9 +19,7 @@ export class RoomlistComponent implements OnInit {
 
   searchQuery: string;
 
-  @ViewChildren("rooms") rooms: QueryList<RoomComponent>;
-
-  constructor(private route: ActivatedRoute, private api: ApiService) {
+  constructor(private route: ActivatedRoute, private api: ApiService, private M: ModalService) {
       this.route.params.subscribe(params => {
         this.GetRoomList(params["buildingID"]);
         this.buildingID = params["buildingID"];
@@ -97,7 +96,7 @@ export class RoomlistComponent implements OnInit {
 
     this.roomList.push(newRoom);
 
-    this.rooms.last.openDialog();
+    this.M.OpenRoomModal(newRoom);
   }
 
   ///// API FUNCTIONS /////

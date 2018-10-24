@@ -111,4 +111,64 @@ export class Defaults {
         "non-controllable": "HDMI",
         "via-connect-pro": "VIA"
     }
+
+    ValidPortOptionRoles = {
+        "ADCP Sony VPL": [
+            "VideoIn",
+            "VideoSwitcher"
+        ],
+        "Aruba8PortNetworkSwitch": [
+            "NetworkDevice",
+            "AV-IP-Reciever",
+            "AV-IP-Transmitter"
+        ],
+        "Blu50": [
+            "Microphone"
+        ],
+        "Crestron RMC-3 Gateway": [
+            "GatedDevice"
+        ],
+        "DM-MD16x16": [
+            "VideoIn",
+            "VideoOut",
+            "VideoSwitcher"
+        ],
+        "FunnelGateway": [
+            "GatedDevice"
+        ],
+        "JAP3GRX": [
+            "VideoOut"
+        ],
+        "JAP3GTX": [
+            "VideoIn"
+        ],
+        "Kramer VS-44DT": [
+            "VideoIn",
+            "VideoOut",
+            "VideoSwitcher"
+        ],
+        "PulseEight8x8": [
+            "VideoIn",
+            "VideoOut",
+            "VideoSwitcher"
+        ],
+        "QSC-Core-110F": [
+            "Microphone"
+        ],
+        "ShureULXD": [
+            "Microphone"
+        ],
+        "SonyPHZ10": [
+            "VideoIn",
+            "VideoSwitcher"
+        ],
+        "SonyXBR": [
+            "VideoIn",
+            "VideoSwitcher"
+        ],
+        "SonyVPL": [
+            "VideoIn",
+            "VideoSwitcher"
+        ]
+    }
 }

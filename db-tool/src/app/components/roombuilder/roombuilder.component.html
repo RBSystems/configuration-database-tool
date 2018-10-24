@@ -153,7 +153,7 @@
                         </mat-card-content>
                         <mat-divider></mat-divider>
                         <mat-card-actions #actions>
-                            <button mat-icon-button (click)="openDialog(preset.name)"><mat-icon>more_horiz</mat-icon></button>
+                            <button mat-icon-button (click)="OpenPresetModal(preset.name)"><mat-icon>more_horiz</mat-icon></button>
                             <button mat-button *ngIf="edit.checked" (click)="RemovePreset(preset)" class="button close">REMOVE</button>
                             <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #edit="matButtonToggle" [checked]="deviceEdit.checked">
                                 <mat-icon>{{edit.checked ? "lock_open" : "lock"}}</mat-icon>

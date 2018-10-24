@@ -6,6 +6,7 @@ import { SmeeComponent } from '../smee.component';
 import { PresetModalComponent } from '../../modals/presetmodal/presetmodal.component';
 import { MatDialog, MAT_DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/material';
 import { IconModalComponent } from '../../modals/iconmodal/iconmodal.component';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-roombuilder',
@@ -29,7 +30,7 @@ export class RoomBuilderComponent implements OnInit, SmeeComponent {
   deviceSearch: string;
   filteredDevices: Device[] = [];
 
-  constructor(private api: ApiService, public D: Defaults, public dialog: MatDialog) {
+  constructor(private api: ApiService, public D: Defaults, public dialog: MatDialog, public M: ModalService) {
     
   }
 
@@ -311,7 +312,7 @@ export class RoomBuilderComponent implements OnInit, SmeeComponent {
 
   ///// RESPONSE MESSAGE /////
   // openDialog opens a modal from the Modal Component.
-  openDialog(presetID: string) {
+  OpenPresetModal(presetID: string) {
     let panels: Panel[] = [];
     this.uiconfig.panels.forEach(p => {
       if(p.preset == presetID) {
@@ -319,22 +320,11 @@ export class RoomBuilderComponent implements OnInit, SmeeComponent {
       }
     });
 
-    let dialogRef = this.dialog.open(PresetModalComponent, { data: { config: this.uiconfig, preset: this.GetPreset(presetID), panels: panels, devices: this.devicesInRoom, types: this.deviceTypeMap, typeList: this.deviceTypeList }});
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      console.log(this.uiconfig);
-    });
+    this.M.OpenPresetModal({ config: this.uiconfig, preset: this.GetPreset(presetID), panels: panels, devices: this.devicesInRoom, types: this.deviceTypeMap, typeList: this.deviceTypeList });
   }
 
   ChangeIcon(caller: any) {
-    let iconRef = this.dialog.open(IconModalComponent);
-
-    iconRef.afterClosed().subscribe(result => {
-      if(result != null) {
-        caller.icon = result;
-      }
-    });
+    caller.icon = this.M.OpenIconModal();
   }
   /*-*/
 

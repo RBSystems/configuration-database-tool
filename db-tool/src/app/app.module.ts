@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatStepperModule, MatToolbarModule, MatGridListModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule, MatMenuModule, MatSidenavModule, MatButtonToggleModule } from '@angular/material';
+import { MatInputModule, MatDialogModule, MatExpansionModule, MatDividerModule, MatListModule, MatChipsModule, MatIconModule, MatAutocompleteModule, MatToolbarModule, MatTooltipModule, MatCardModule, MatCheckboxModule, MatSlideToggleModule, MatRadioModule, MatTableModule, MatMenuModule, MatSidenavModule, MatButtonToggleModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { AppRouterModule } from './app-router.module';
@@ -30,6 +30,8 @@ import { DeviceComponent } from './components/device/device.component';
 import { DeviceListComponent } from './components/devicelist/devicelist.component';
 import { PresetModalComponent } from './modals/presetmodal/presetmodal.component';
 import { IconModalComponent } from './modals/iconmodal/iconmodal.component';
+import { ModalService } from './services/modal.service';
+import { DeviceModalComponent } from './modals/devicemodal/devicemodal.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,8 @@ import { IconModalComponent } from './modals/iconmodal/iconmodal.component';
     DeviceComponent,
     DeviceListComponent,
     PresetModalComponent,
-    IconModalComponent
+    IconModalComponent,
+    DeviceModalComponent
   ],
   imports: [
     BrowserModule,
@@ -67,11 +70,9 @@ import { IconModalComponent } from './modals/iconmodal/iconmodal.component';
     MatChipsModule,
     MatIconModule,
     MatAutocompleteModule,
-    MatStepperModule,
     ReactiveFormsModule,
     MatIconModule,
     MatToolbarModule,
-    MatGridListModule,
     MatTooltipModule,
     MatCheckboxModule,
     MatSlideToggleModule,
@@ -91,13 +92,15 @@ import { IconModalComponent } from './modals/iconmodal/iconmodal.component';
     DeviceComponent,
     DeviceListComponent,
     PresetModalComponent,
-    IconModalComponent
+    IconModalComponent,
+    DeviceModalComponent
   ],
   providers: [
     ApiService,
     Strings,
     Defaults,
-    ComponentsService
+    ComponentsService,
+    ModalService
   ],
   bootstrap: [AppComponent]
 })

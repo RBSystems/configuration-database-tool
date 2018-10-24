@@ -66,5 +66,5 @@
     </mat-menu> -->
 </div>
 <div class="container">
-    <app-device *ngFor="let d of filteredDevices" [device]="d" [deviceExists]="true"></app-device>
+    <app-device *ngFor="let d of filteredDevices" [device]="d" [deviceExists]="true" [devicesInRoom]="data" [deviceTypeList]="deviceTypeList" [deviceTypeMap]="deviceTypeMap"></app-device>
 </div>

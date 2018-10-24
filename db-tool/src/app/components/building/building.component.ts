@@ -7,6 +7,7 @@ import { Strings } from '../../services/strings.service';
 import { BuildingModalComponent } from '../../modals/buildingmodal/buildingmodal.component';
 import { HomeComponent } from '../../pages/home/home.component';
 import { SmeeComponent } from '../smee.component';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-building',
@@ -23,7 +24,7 @@ export class BuildingComponent implements OnInit, SmeeComponent{
   okRooms: Room[] = [];
   errorRooms: Room[] = [];
 
-  constructor(private api: ApiService, public dialog: MatDialog, public S: Strings, @Inject(forwardRef(() => HomeComponent)) public _parent:HomeComponent) { }
+  constructor(private api: ApiService, public M: ModalService, public S: Strings, @Inject(forwardRef(() => HomeComponent)) public _parent:HomeComponent) { }
 
   ngOnInit() {
   }
@@ -50,13 +51,8 @@ export class BuildingComponent implements OnInit, SmeeComponent{
 
   ///// RESPONSE MESSAGE /////
   // openDialog opens a modal from the Modal Component.
-  openDialog() {
-    let dialogRef = this.dialog.open(BuildingModalComponent, { data: this.building });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      this._parent.GetBuildingList();
-    });
+  OpenBuildingModal() {
+    this.M.OpenBuildingModal(this.building);
   }
   /*-*/
 }
