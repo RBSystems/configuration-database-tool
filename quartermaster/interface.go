@@ -1,13 +1,15 @@
 package quartermaster
 
-/*
 import (
 	"log"
 	"os"
 )
 
+//TODO make all endpoints that people want from the cache (regardless of what the underlying database is)
+//Also connect the http endpoints
 type Cache interface {
-	FillDeviceStatusCache(db CouchDB) error
+	FillDeviceStatusCache() error
+	GetDeviceStatusCache() map[string]BuildingState
 }
 
 var address string
@@ -34,4 +36,3 @@ func GetCache() Cache {
 
 	return cache
 }
-*/

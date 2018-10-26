@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/common/auth"
-	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/quartermaster"
 	"github.com/labstack/echo"
@@ -25,7 +24,7 @@ func GetAllAlerts(context echo.Context) error {
 		}
 	}
 
-	allStatuses, err := quartermaster.GetStatusAllBuildings(db.GetDB())
+	allStatuses, err := quartermaster.GetStatusAllBuildings()
 
 	if err != nil {
 		log.L.Errorf("Could not Get Status of all Buildings: %v", err)
@@ -51,7 +50,7 @@ func GetAlertsByBuilding(context echo.Context) error {
 	}
 
 	buildingID := context.Param("building")
-	buildingStatus, err := quartermaster.GetStatusBuilding(db.GetDB(), buildingID)
+	buildingStatus, err := quartermaster.GetStatusBuilding(buildingID)
 	if err != nil {
 		log.L.Errorf("Could not get status of building %v: %v", buildingID, err)
 		return context.JSON(http.StatusInternalServerError, err.Error())
@@ -76,7 +75,7 @@ func GetAlertsByAllRooms(context echo.Context) error {
 	}
 
 	buildingID := context.Param("building")
-	roomStatuses, err := quartermaster.GetStatusAllRoomsByBuilding(db.GetDB(), buildingID)
+	roomStatuses, err := quartermaster.GetStatusAllRoomsByBuilding(buildingID)
 	if err != nil {
 		log.L.Errorf("Could not get status of building %v: %v", buildingID, err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
@@ -99,7 +98,7 @@ func GetAlertsByRoom(context echo.Context) error {
 	}
 
 	roomID := context.Param("room")
-	roomStatus, err := quartermaster.GetStatusRoom(db.GetDB(), roomID)
+	roomStatus, err := quartermaster.GetStatusRoom(roomID)
 	if err != nil {
 		log.L.Errorf("Could not get status of room %v: %v", roomID, err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
