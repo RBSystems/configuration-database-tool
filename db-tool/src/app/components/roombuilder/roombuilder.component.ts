@@ -78,11 +78,20 @@ export class RoomBuilderComponent implements OnInit, SmeeComponent {
     if(dev == null) {
       return [];
     }
-    if(this.TypeHasRole(this.deviceTypeMap.get(dev.type._id), "ControlProcessor")) {
-      return ['Pi', 'NotPi'];
+
+    let type = this.deviceTypeMap.get(dev.type._id);
+
+    if(this.TypeHasRole(type, "ControlProcessor")) {
+      return ['Pi', 'UI'];
+    }
+    else if(this.TypeHasRole(type, "AudioIn") 
+    || this.TypeHasRole(type, "Microphone") 
+    || this.TypeHasRole(type, "VideoIn") 
+    || this.TypeHasRole(type, "VideoOut")) {
+      return ['UI'];
     }
     else {
-      return ['NotPi'];
+      return [];
     }
   }
 
@@ -163,10 +172,6 @@ export class RoomBuilderComponent implements OnInit, SmeeComponent {
           newPreset.independentAudioDevices.push(io.name);
         }
       }
-
-      if(this.TypeHasRole(type, "ControlProcessor")) {
-        
-      }
     }
 
     newDevices.forEach(d => {
@@ -215,8 +220,134 @@ export class RoomBuilderComponent implements OnInit, SmeeComponent {
     }
   }
 
-  AddToPreset(deviceName?: string, io?: IOConfiguration) {
+  AddToPreset(preset: Preset, device: Device) {
+    if(preset == null || device == null) {
+      return;
+    }
 
+    let type = this.deviceTypeMap.get(device.type._id);
+
+    // For CPs change the preset name on the panel to match.
+    if(this.TypeHasRole(type, "ControlProcessor")) {
+      let found: boolean = false;
+
+      this.uiconfig.panels.forEach(panel => {
+        if(panel.hostname == device._id) {
+          panel.preset = preset.name;
+          found = true;
+        }
+      });
+
+      if(!found) {
+        let panel = new Panel();
+        panel.hostname = device._id;
+        panel.preset = preset.name;
+      }
+    }
+
+    // Everything else gets added to the preset in its proper place.
+    if(this.TypeHasRole(type, "VideoOut") && this.TypeHasRole(type, "Microphone")) {
+      let io: IOConfiguration;
+
+      if(this.uiconfig.outputConfiguration == null) {
+        this.uiconfig.outputConfiguration = [];
+      }
+
+      this.uiconfig.outputConfiguration.forEach(out => {
+        if(out.name == device.name) {
+          io = out;
+        }
+      })
+
+      if(io == null) {
+        io = new IOConfiguration();
+        io.name = device.name;
+        io.icon = this.D.DefaultIcons[type._id];
+        this.uiconfig.outputConfiguration.push(io);
+      }
+
+      if(this.TypeHasRole(type, "VideoOut")) {
+        if(preset.displays == null) {
+          preset.displays = [];
+        }
+  
+        if(!preset.displays.includes(io.name)) {
+          preset.displays.push(io.name);
+          preset.displays = preset.displays.sort(this.stringSort);
+        }
+  
+        if(preset.audioDevices == null) {
+          preset.audioDevices = [];
+        }
+  
+        if(!preset.audioDevices.includes(io.name)) {
+          preset.audioDevices.push(io.name);
+          preset.audioDevices = preset.audioDevices.sort(this.stringSort);
+        }
+      }
+
+      if(this.TypeHasRole(type, "Microphone")) {
+        if(preset.independentAudioDevices == null) {
+          preset.independentAudioDevices = [];
+        }
+
+        if(!preset.independentAudioDevices.includes(io.name)) {
+          preset.independentAudioDevices.push(io.name);
+          preset.independentAudioDevices = preset.independentAudioDevices.sort(this.stringSort);
+        }
+      }
+    }
+
+    if(type.input) {
+       let io: IOConfiguration;
+       
+       if(this.uiconfig.inputConfiguration == null) {
+         this.uiconfig.inputConfiguration = [];
+       }
+
+       this.uiconfig.inputConfiguration.forEach(input => {
+          if(input.name == device.name) {
+            io = input;
+          }
+       });
+
+       if(io == null) {
+         io = new IOConfiguration();
+         io.name = device.name;
+         io.icon = this.D.DefaultIcons[type._id];
+         this.uiconfig.inputConfiguration.push(io);
+       }
+
+       if(preset.inputs == null) {
+         preset.inputs = [];
+       }
+
+       if(!preset.inputs.includes(io.name)) {
+         preset.inputs.push(io.name);
+         preset.inputs = preset.inputs.sort(this.stringSort);
+       }
+    }
+  }
+
+  AddNewPreset(pi: Device) {
+    for(let i = 0; i < this.uiconfig.panels.length; i++) {
+      if(this.uiconfig.panels[i].hostname == pi._id) {
+        return;
+      }
+    }
+
+    let preset = new Preset();
+    let panel = new Panel();
+
+    panel.hostname = pi._id;
+    panel.uipath = "/blueberry";
+    panel.preset = "Preset " + (this.uiconfig.presets.length+1);
+    panel.features = [];
+
+    preset.name = panel.preset;
+    
+    this.uiconfig.panels.push(panel);
+    this.uiconfig.presets.push(preset);
   }
 
   RemoveDeviceFromRoom(device: Device) {
@@ -277,7 +408,7 @@ export class RoomBuilderComponent implements OnInit, SmeeComponent {
           this.uiconfig.outputConfiguration = [];
           
           this.devicesInRoom.forEach(device => {
-            if(this.TypeHasRole(this.deviceTypeMap.get(device.type._id), "VideoOut") || this.TypeHasRole(this.deviceTypeMap[device.type._id], "Microphone")) {
+            if(this.TypeHasRole(this.deviceTypeMap.get(device.type._id), "VideoOut") || this.TypeHasRole(this.deviceTypeMap.get(device.type._id), "Microphone")) {
               let io = new IOConfiguration();
               io.name = device.name;
               io.icon = this.D.DefaultIcons[device.type._id];

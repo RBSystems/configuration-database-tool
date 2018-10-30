@@ -83,7 +83,7 @@
     <mat-drawer-content class="drop-container">
         <div class="row search">
             <div class="searchbar">
-                <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #deviceEdit="matButtonToggle" (change)="actions.focus">
+                <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #deviceEdit="matButtonToggle">
                     <mat-icon>{{deviceEdit.checked ? "lock_open" : "lock"}}</mat-icon>
                 </mat-button-toggle>
                 <mat-icon class="searchbar icon">search</mat-icon>
@@ -95,10 +95,10 @@
             <button mat-raised-button class="button clear" [disabled]="!deviceEdit.checked" (click)="ClearAll()">Clear All</button>
         </div>
 
-        <div class="drop-container" dnd-droppable [dropZones]="['Pi']">
+        <div class="drop-container" dnd-droppable [dropZones]="['Pi']" (onDropSuccess)="AddNewPreset($event.dragData)">
             <div class="row presets">
                 <ng-container *ngFor="let preset of filteredPresets">
-                    <mat-card *ngIf="preset != null" class="uiconfig">
+                    <mat-card *ngIf="preset != null" class="uiconfig" dnd-droppable [dropZones]="['UI']" (onDropSuccess)="AddToPreset(preset, $event.dragData)">
                         <mat-card-header>
                             <div mat-card-avatar [ngClass]="{'uipath-blueberry': GetPresetUIPath(preset.name) === '/blueberry', 'uipath-cherry': GetPresetUIPath(preset.name) === '/cherry'}"></div>
                             <mat-card-title>{{preset.name}}</mat-card-title>
@@ -155,7 +155,7 @@
                         <mat-card-actions #actions>
                             <button mat-icon-button (click)="OpenPresetModal(preset.name)"><mat-icon>more_horiz</mat-icon></button>
                             <button mat-button *ngIf="edit.checked" (click)="RemovePreset(preset)" class="button close">REMOVE</button>
-                            <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #edit="matButtonToggle" [checked]="deviceEdit.checked">
+                            <mat-button-toggle mat-icon-button value="true" class="mat-elevation-z0 button edit" #edit="matButtonToggle">
                                 <mat-icon>{{edit.checked ? "lock_open" : "lock"}}</mat-icon>
                             </mat-button-toggle>
                         </mat-card-actions>

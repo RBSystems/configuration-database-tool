@@ -55,6 +55,7 @@ $sidewidth: 170px;
         padding: 10px;
         justify-content: space-evenly;
         align-content: flex-start;
+        align-items: flex-start;
     }
     &.lists {
         flex-flow: row wrap;
@@ -153,7 +154,7 @@ mat-list-item {
 }
 
 .display-name {
-    width: 100px;
+    width: 110px;
 }
 
 .searchbar {
