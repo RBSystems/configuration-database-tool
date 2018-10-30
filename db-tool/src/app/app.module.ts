@@ -25,6 +25,8 @@ import { SummaryComponent } from './summary/summary.component';
 import { Defaults } from './defaults.service';
 import { DndComponent } from './dnd/dnd.component';
 import { DndModule } from 'ng2-dnd';
+import { TestUIComponent } from './test-ui/test-ui.component';
+import { TestApiService } from './test-api.service';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,8 @@ import { DndModule } from 'ng2-dnd';
     PanelComponent,
     SummaryComponent,
     ModalComponent,
-    DndComponent
+    DndComponent,
+    TestUIComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +78,8 @@ import { DndModule } from 'ng2-dnd';
   providers: [
     ApiService,
     Strings,
-    Defaults
+    Defaults,
+    TestApiService
   ],
   bootstrap: [AppComponent]
 })
