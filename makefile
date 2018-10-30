@@ -62,6 +62,7 @@ run: $(NAME)-bin $(NG1)-dist
 	./$(NAME)-bin
 
 deps: 
+	npm config set unsafe-perm true
 	$(NPM_INSTALL) -g @angular/cli
 	$(GOGET) -d -v
 ifneq "$(BRANCH)" "master"
