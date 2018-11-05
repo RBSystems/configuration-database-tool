@@ -29,14 +29,14 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func ServeWebsocket(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func ServeWebsocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("error: %v", err)
 		return
 	}
 
-	client := &Client{hub: hub, conn: conn, send: make(chan interface{}, 256)}
+	client := &Client{hub: M, conn: conn, send: make(chan interface{}, 256)}
 	client.hub.register <- client
 
 	go client.read()
@@ -44,7 +44,7 @@ func ServeWebsocket(hub *Hub, w http.ResponseWriter, r *http.Request) {
 }
 
 type Client struct {
-	hub *Hub
+	hub *Manager
 
 	// the websocket connection
 	conn *websocket.Conn

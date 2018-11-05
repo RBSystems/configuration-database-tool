@@ -8,8 +8,8 @@ import { Building, Room, RoomConfiguration, Device, DeviceType, Template, BulkUp
 
 @Injectable()
 export class ApiService {
-  // url: string = "http://localhost:9999";
-  url: string = '';
+  url: string = "http://localhost:9999";
+  // url: string = '';
   options: RequestOptions;
   headers: Headers;
   constructor(private http: Http, public dialog: MatDialog) {
@@ -130,5 +130,21 @@ export class ApiService {
     setTimeout(() => {
       this.ClearTempChanges();
     }, 2000);
+  }
+
+  GetState(buildingID: string, roomID: string): Observable<any> {
+    return this.http.get(this.url + "/buildings/" + buildingID + "/rooms/" + roomID, this.options).map(response => response.json());
+  }
+
+  SetState(buildingID: string, roomID: string, payload: string): Observable<any> {
+    return this.http.put(this.url + "/buildings/" + buildingID + "/rooms/" + roomID, payload, this.options).map(response => response.json());
+  }
+
+  SubscribeToRoom(buildingID: string, roomID: string): Observable<any> {
+    return this.http.get(this.url + "/buildings/" + buildingID + "/rooms/" + roomID + "/subscribe", this.options).map(response => response.json());
+  }
+
+  UnsubscribeToRoom(buildingID: string, roomID: string): Observable<any> {
+    return this.http.get(this.url + "/buildings/" + buildingID + "/rooms/" + roomID + "/unsubscribe", this.options).map(response => response.json());
   }
 }

@@ -10,7 +10,7 @@
         <!-- ROOM -->
         <mat-form-field class="a">
             <mat-label>Room</mat-label>
-            <mat-select matInput [(ngModel)]="room" [disabled]="building._id == null || roomList.length == 0">
+            <mat-select matInput [(ngModel)]="room" (ngModelChange)="UpdateRoomSubscription()" [disabled]="building._id == null || roomList.length == 0">
                 <mat-option *ngFor="let r of roomList" [value]="r">{{r._id}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -23,7 +23,12 @@
 
     <div class="test-row">
         <mat-form-field class="text">
+            <h4 class="mat-h4">API</h4>
             <textarea matInput matTextareaAutosize=true [(ngModel)]="message"></textarea>
         </mat-form-field>
+        <div class="text">
+            <h4 class="mat-h4">Events</h4>
+            <p *ngFor="let event of events">{{event}}</p>
+        </div>
     </div>
 </div>

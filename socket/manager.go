@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-type Hub struct {
+type Manager struct {
 	// registered clients
 	clients map[*Client]bool
 
@@ -26,11 +26,23 @@ type Hub struct {
 	unregister chan *Client
 }
 
-func NewHub() *Hub {
-	hub := &Hub{
-		broadcast:  make(chan interface{}),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
+var M *Manager
+
+func init() {
+	M = &Manager{
+		broadcast:  make(chan interface{}, 1000),
+		register:   make(chan *Client, 100),
+		unregister: make(chan *Client, 100),
+		clients:    make(map[*Client]bool),
+	}
+	go M.run()
+}
+
+func NewManager() *Manager {
+	hub := &Manager{
+		broadcast:  make(chan interface{}, 1000),
+		register:   make(chan *Client, 100),
+		unregister: make(chan *Client, 100),
 		clients:    make(map[*Client]bool),
 	}
 	go hub.run()
@@ -38,11 +50,11 @@ func NewHub() *Hub {
 	return hub
 }
 
-func (h *Hub) WriteToSockets(message interface{}) {
+func (h *Manager) WriteToSockets(message interface{}) {
 	h.broadcast <- message
 }
 
-func (h *Hub) GetStatus(context echo.Context) error {
+func (h *Manager) GetStatus(context echo.Context) error {
 	ret := status.NewStatus()
 	var err error
 	statusInfo := make(map[string]interface{})
@@ -84,7 +96,7 @@ func (h *Hub) GetStatus(context echo.Context) error {
 	return context.JSON(http.StatusOK, ret)
 }
 
-func (h *Hub) run() {
+func (h *Manager) run() {
 	for {
 		select {
 		case client := <-h.register:
