@@ -26,7 +26,6 @@ import { Defaults } from './defaults.service';
 import { DndComponent } from './dnd/dnd.component';
 import { DndModule } from 'ng2-dnd';
 import { TestUIComponent } from './test-ui/test-ui.component';
-import { TestApiService } from './test-api.service';
 import { SocketService } from './socket.service';
 
 @NgModule({
@@ -80,7 +79,6 @@ import { SocketService } from './socket.service';
     ApiService,
     Strings,
     Defaults,
-    TestApiService,
     SocketService
   ],
   bootstrap: [AppComponent]

@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/byuoitav/authmiddleware"
 	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
+	auth "github.com/byuoitav/common/auth/middleware"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/handlers"
 	"github.com/byuoitav/configuration-database-tool/socket"
@@ -36,13 +36,13 @@ func main() {
 		return nil
 	})
 
-	handlers.Dev = true
+	handlers.Dev = false
 
 	// Use the `secure` routing group to require authentication
-	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
+	// secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
 
 	// if !handlers.Dev {
-	// secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
+	secure := router.Group("", echo.WrapMiddleware(auth.AuthenticateCASUser))
 	// }
 
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
