@@ -101,10 +101,10 @@ func main() {
 	secure.Static("/uiconfig", "db-tool-dist")
 	secure.Static("/summary", "db-tool-dist")
 
-	// server := http.Server{
-	// 	Addr:           port,
-	// 	MaxHeaderBytes: 1024 * 10,
-	// }
+	server := http.Server{
+		Addr:           port,
+		MaxHeaderBytes: 1024 * 10,
+	}
 
-	router.StartAutoTLS(port)
+	router.StartServer(&server)
 }
