@@ -10,6 +10,7 @@ import (
 
 	"github.com/byuoitav/av-api/base"
 	"github.com/byuoitav/common/log"
+	"github.com/byuoitav/common/v2/auth"
 	"github.com/labstack/echo"
 )
 
@@ -36,6 +37,8 @@ func SetRoomState(context echo.Context) error {
 
 	req, err := http.NewRequest("PUT", url, bytes.NewReader(s))
 
+	auth.AddAuthToRequest(req)
+
 	client := http.Client{}
 	resp, err := client.Do(req)
 
@@ -57,7 +60,12 @@ func GetRoomState(context echo.Context) error {
 
 	url := fmt.Sprintf("http://%s/buildings/%s/rooms/%s", os.Getenv("AV_API_ADDRESS"), building, room)
 
-	resp, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+
+	auth.AddAuthToRequest(req)
+
+	client := http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		log.L.Errorf("failed to send get request : %s", err.Error())
 	}
