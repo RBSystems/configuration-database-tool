@@ -20,7 +20,7 @@ export class SocketService {
 
 
     public constructor() {
-	this.url = "ws://" + location.hostname + "/websocket";
+	this.url = "wss://" + location.hostname + ":9999/websocket";
 	this.socket = new $WebSocket(this.url, null, this.webSocketConfig); 
 	this.listener = new EventEmitter(); 
 
