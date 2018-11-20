@@ -1,13 +1,13 @@
 package quartermaster
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/state/statedefinition"
-	"github.com/byuoitav/common/structs"
 )
 
 func NewCache(address, username, password string) *CouchCache {
@@ -21,7 +21,7 @@ func NewCache(address, username, password string) *CouchCache {
 }
 
 //Returns a map of Building IDs to BuildStatus structs
-func (c *CouchCache) getStatusAllBuildings() (map[string]BuildingStatus, error) {
+func (c *CouchCache) fetchStatusAllBuildings() (map[string]BuildingStatus, error) {
 	d := db.GetDB()
 	var AllStatuses map[string]BuildingStatus
 	AllStatuses = make(map[string]BuildingStatus)
@@ -31,7 +31,7 @@ func (c *CouchCache) getStatusAllBuildings() (map[string]BuildingStatus, error) 
 		return AllStatuses, err
 	}
 	for _, b := range buildings {
-		AllStatuses[b.ID], err = c.getStatusBuilding(b.ID)
+		AllStatuses[b.ID], err = c.fetchStatusBuilding(b.ID)
 		if err != nil {
 			log.L.Infof("We could not get the device states from the %v: %v", b.ID, err)
 		}
@@ -39,7 +39,7 @@ func (c *CouchCache) getStatusAllBuildings() (map[string]BuildingStatus, error) 
 	return AllStatuses, nil
 }
 
-func (c *CouchCache) getStatusBuilding(ID string) (BuildingStatus, error) {
+func (c *CouchCache) fetchStatusBuilding(ID string) (BuildingStatus, error) {
 	d := db.GetDB()
 	var BuildingReport BuildingStatus
 	BuildingReport.BuildingID = ID
@@ -69,7 +69,7 @@ func (c *CouchCache) getStatusBuilding(ID string) (BuildingStatus, error) {
 }
 
 //Returns a map of RoomIds from the specified building to RoomStatuses
-func (c *CouchCache) getStatusAllRoomsByBuilding(BuildingID string) (map[string]RoomStatus, error) {
+func (c *CouchCache) fetchStatusAllRoomsByBuilding(BuildingID string) (map[string]RoomStatus, error) {
 	d := db.GetDB()
 	var AllStatuses map[string]RoomStatus
 	AllStatuses = make(map[string]RoomStatus)
@@ -79,7 +79,7 @@ func (c *CouchCache) getStatusAllRoomsByBuilding(BuildingID string) (map[string]
 	}
 	for _, deviceState := range DeviceStates {
 		if _, exists := AllStatuses[deviceState.Room]; !exists {
-			AllStatuses[deviceState.Room], err = c.getStatusRoom(deviceState.Room)
+			AllStatuses[deviceState.Room], err = c.fetchStatusRoom(deviceState.Room)
 			if err != nil {
 				log.L.Infof("We could not get the room status for %v: %v", deviceState.Room, err)
 			}
@@ -89,7 +89,7 @@ func (c *CouchCache) getStatusAllRoomsByBuilding(BuildingID string) (map[string]
 }
 
 //Returns the RoomStatus for the ID Given
-func (c *CouchCache) getStatusRoom(ID string) (RoomStatus, error) {
+func (c *CouchCache) fetchStatusRoom(ID string) (RoomStatus, error) {
 	d := db.GetDB()
 	var RoomReport RoomStatus
 	RoomReport.RoomID = ID
@@ -120,6 +120,8 @@ func (c *CouchCache) getStatusRoom(ID string) (RoomStatus, error) {
 	RoomReport.DeviceGoodCount = RoomReport.DeviceCount - RoomReport.DeviceAlertingCount
 	return RoomReport, nil
 }
+
+//Fills in the device status cache from the database
 func (c *CouchCache) fillDeviceStatusCache() error {
 	d := db.GetDB()
 	var cacheToFill = make(map[string]BuildingState)
@@ -132,12 +134,12 @@ func (c *CouchCache) fillDeviceStatusCache() error {
 	c.allBuildings = buildings
 	//For each building, get all the room statuses of that building, get the building status, package it all in a a building state and put that in our map
 	for _, b := range buildings {
-		buildingStats, err := c.getStatusBuilding(b.ID)
+		buildingStats, err := c.fetchStatusBuilding(b.ID)
 		if err != nil {
 			log.L.Infof("Couldn't get the building status for %v: %v", b.ID, err.Error())
 			return err
 		}
-		roomMap, err := c.getStatusAllRoomsByBuilding(b.ID)
+		roomMap, err := c.fetchStatusAllRoomsByBuilding(b.ID)
 		if err != nil {
 			log.L.Infof("Couldn't get the room map for %v: %v", b.ID, err.Error())
 		}
@@ -152,33 +154,26 @@ func (c *CouchCache) fillDeviceStatusCache() error {
 	return nil
 }
 
-func (c *CouchCache) GetDeviceStatusCache() map[string]BuildingState {
+/*
+	OUTWARD FACING FUNCTIONS
+*/
+
+func (c *CouchCache) GetAllBuildingsStatus() map[string]BuildingState {
 	for _, b := range c.allBuildings {
-		c.deviceStatusCache[b.id].Mutex.RLock()
+		c.deviceStatusCache[b.ID].Mutex.RLock()
 	}
 	cacheToReturn := c.deviceStatusCache
-	for _, b = range c.allBuildings {
-		c.deviceStatusCache[b.id].Mutex.RUnlock()
+	for _, b2 := range c.allBuildings {
+		c.deviceStatusCache[b2.ID].Mutex.RUnlock()
 	}
-	return c.deviceStatusCache
+	return cacheToReturn
 }
 
-func (c *CouchCache) GetAllBuildingsStatus() []structs.Building {
-	for _, b := range c.allBuildings {
-		c.deviceStatusCache[b.id].Mutex.RLock()
-	}
-	buildingsToReturn := c.allBuildings
-	for _, b = range c.allBuildings {
-		c.deviceStatusCache[b.id].Mutex.RUnlock()
-	}
-	return buildingsToReturn
-}
-
-func (c *CouchCache) GetBuildingStatus(BuildingID string) structs.Building {
+func (c *CouchCache) GetBuildingStatus(BuildingID string) BuildingStatus {
 	c.deviceStatusCache[BuildingID].Mutex.RLock()
 	buildingToReturn := c.deviceStatusCache[BuildingID].BuildingStats
 	c.deviceStatusCache[BuildingID].Mutex.RUnlock()
-	return buildingsToReturn
+	return buildingToReturn
 }
 
 func (c *CouchCache) GetAllRoomsStatusByBuilding(BuildingID string) map[string]RoomStatus {
@@ -199,14 +194,14 @@ func (c *CouchCache) GetRoomStatus(RoomID string) RoomStatus {
 func (c *CouchCache) UpdateRoomStatus(Room RoomStatus) error {
 	//Validate the Room
 	if len(Room.RoomID) == 0 {
-		log.L.Debug("Can't update the cache with an unnamed room")
-		return //AN ERROR HERE
+		log.L.Error("Can't update the cache with an unnamed room")
+		return fmt.Errorf("Can't update the cache with an unnamed room")
 	}
 	//TODO What else needs to be validated?
 
 	BuildingID := strings.Split(Room.RoomID, "-")[0]
 	c.deviceStatusCache[BuildingID].Mutex.Lock()
-	c.deviceStatusCache[BuildingID].Rooms[Room.RoomID] = RoomStatus
+	c.deviceStatusCache[BuildingID].Rooms[Room.RoomID] = Room
 	c.deviceStatusCache[BuildingID].Mutex.Unlock()
 	return nil
 }
@@ -214,15 +209,21 @@ func (c *CouchCache) UpdateRoomStatus(Room RoomStatus) error {
 func (c *CouchCache) UpdateDeviceStatus(Device statedefinition.StaticDevice) error {
 	//Validate the Device
 	if len(Device.DeviceID) == 0 {
-		log.L.Debug("Can't update the cache with an unnamed device")
-		return //AN ERROR HERE
+		log.L.Error("Can't update the cache with an unnamed device")
+		return fmt.Errorf("Can't update the cache with an unnamed device")
 	}
 	//TODO What else needs to be validated?
 
 	BuildingID := strings.Split(Device.DeviceID, "-")[0]
 	RoomID := strings.Split(Device.DeviceID, "-")[1]
-	c.deviceStatusCache[BuildingID].Mutex.Lock()
-	c.deviceStatusCache[BuildingID].Rooms[RoomID].DeviceStates[DeviceID] = Device
-	c.deviceStatusCache[BuildingID].Mutex.Unlock()
+	c.deviceStatusCache[BuildingID].Mutex.RLock()
+	for i, device := range c.deviceStatusCache[BuildingID].Rooms[RoomID].DeviceStates {
+		if device.DeviceID == Device.DeviceID {
+			c.deviceStatusCache[BuildingID].Mutex.Lock()
+			c.deviceStatusCache[BuildingID].Rooms[RoomID].DeviceStates[i] = Device
+			c.deviceStatusCache[BuildingID].Mutex.Unlock()
+		}
+	}
+	c.deviceStatusCache[BuildingID].Mutex.RUnlock()
 	return nil
 }

@@ -5,15 +5,13 @@ import (
 	"os"
 
 	"github.com/byuoitav/common/state/statedefinition"
-	"github.com/byuoitav/common/structs"
 )
 
 //TODO make all endpoints that people want from the cache (regardless of what the underlying database is)
 //Also connect the http endpoints
 type Cache interface {
-	GetDeviceStatusCache() map[string]BuildingState
-	GetAllBuildingsStatus() []structs.Building
-	GetBuildingStatus(BuildingID string) structs.Building
+	GetAllBuildingsStatus() map[string]BuildingState
+	GetBuildingStatus(BuildingID string) BuildingStatus
 	GetAllRoomsStatusByBuilding(BuildingID string) map[string]RoomStatus
 	GetRoomStatus(RoomID string) RoomStatus
 	UpdateRoomStatus(Room RoomStatus) error
