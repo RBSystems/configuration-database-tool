@@ -10,21 +10,13 @@ import (
 	"github.com/byuoitav/common/structs"
 )
 
-type CouchCache struct {
-	address           string
-	username          string
-	password          string
-	deviceStatusCache map[string]BuildingState
-	allBuildings      []structs.Building
-}
-
 func NewCache(address, username, password string) *CouchCache {
 	Cache := CouchCache{
 		address:  strings.Trim(address, "/"),
 		username: username,
 		password: password,
 	}
-	Cache.FillDeviceStatusCache()
+	Cache.fillDeviceStatusCache()
 	return &Cache
 }
 
@@ -128,17 +120,16 @@ func (c *CouchCache) getStatusRoom(ID string) (RoomStatus, error) {
 	RoomReport.DeviceGoodCount = RoomReport.DeviceCount - RoomReport.DeviceAlertingCount
 	return RoomReport, nil
 }
-func (c *CouchCache) FillDeviceStatusCache() error {
+func (c *CouchCache) fillDeviceStatusCache() error {
 	d := db.GetDB()
-	var cacheToFill map[string]BuildingState
-	cacheToFill = make(map[string]BuildingState)
+	var cacheToFill = make(map[string]BuildingState)
 
 	buildings, err := d.GetAllBuildings()
-	c.allBuildings = buildings
 	if err != nil {
 		log.L.Infof("We could not get the building list: %v", err.Error())
 		return err
 	}
+	c.allBuildings = buildings
 	//For each building, get all the room statuses of that building, get the building status, package it all in a a building state and put that in our map
 	for _, b := range buildings {
 		buildingStats, err := c.getStatusBuilding(b.ID)
@@ -152,7 +143,7 @@ func (c *CouchCache) FillDeviceStatusCache() error {
 		}
 		buildingState := BuildingState{
 			BuildingStats: buildingStats,
-			Mutex:         &sync.Mutex{},
+			Mutex:         &sync.RWMutex{},
 			Rooms:         roomMap,
 		}
 		cacheToFill[b.ID] = buildingState
@@ -162,9 +153,76 @@ func (c *CouchCache) FillDeviceStatusCache() error {
 }
 
 func (c *CouchCache) GetDeviceStatusCache() map[string]BuildingState {
+	for _, b := range c.allBuildings {
+		c.deviceStatusCache[b.id].Mutex.RLock()
+	}
+	cacheToReturn := c.deviceStatusCache
+	for _, b = range c.allBuildings {
+		c.deviceStatusCache[b.id].Mutex.RUnlock()
+	}
 	return c.deviceStatusCache
 }
 
-func (c *CouchCache) GetBuildings() []structs.Building {
-	return c.allBuildings
+func (c *CouchCache) GetAllBuildingsStatus() []structs.Building {
+	for _, b := range c.allBuildings {
+		c.deviceStatusCache[b.id].Mutex.RLock()
+	}
+	buildingsToReturn := c.allBuildings
+	for _, b = range c.allBuildings {
+		c.deviceStatusCache[b.id].Mutex.RUnlock()
+	}
+	return buildingsToReturn
+}
+
+func (c *CouchCache) GetBuildingStatus(BuildingID string) structs.Building {
+	c.deviceStatusCache[BuildingID].Mutex.RLock()
+	buildingToReturn := c.deviceStatusCache[BuildingID].BuildingStats
+	c.deviceStatusCache[BuildingID].Mutex.RUnlock()
+	return buildingsToReturn
+}
+
+func (c *CouchCache) GetAllRoomsStatusByBuilding(BuildingID string) map[string]RoomStatus {
+	c.deviceStatusCache[BuildingID].Mutex.RLock()
+	roomsToReturn := c.deviceStatusCache[BuildingID].Rooms
+	c.deviceStatusCache[BuildingID].Mutex.RUnlock()
+	return roomsToReturn
+}
+
+func (c *CouchCache) GetRoomStatus(RoomID string) RoomStatus {
+	BuildingID := strings.Split(RoomID, "-")[0]
+	c.deviceStatusCache[BuildingID].Mutex.RLock()
+	roomToReturn := c.deviceStatusCache[BuildingID].Rooms[RoomID]
+	c.deviceStatusCache[BuildingID].Mutex.RUnlock()
+	return roomToReturn
+}
+
+func (c *CouchCache) UpdateRoomStatus(Room RoomStatus) error {
+	//Validate the Room
+	if len(Room.RoomID) == 0 {
+		log.L.Debug("Can't update the cache with an unnamed room")
+		return //AN ERROR HERE
+	}
+	//TODO What else needs to be validated?
+
+	BuildingID := strings.Split(Room.RoomID, "-")[0]
+	c.deviceStatusCache[BuildingID].Mutex.Lock()
+	c.deviceStatusCache[BuildingID].Rooms[Room.RoomID] = RoomStatus
+	c.deviceStatusCache[BuildingID].Mutex.Unlock()
+	return nil
+}
+
+func (c *CouchCache) UpdateDeviceStatus(Device statedefinition.StaticDevice) error {
+	//Validate the Device
+	if len(Device.DeviceID) == 0 {
+		log.L.Debug("Can't update the cache with an unnamed device")
+		return //AN ERROR HERE
+	}
+	//TODO What else needs to be validated?
+
+	BuildingID := strings.Split(Device.DeviceID, "-")[0]
+	RoomID := strings.Split(Device.DeviceID, "-")[1]
+	c.deviceStatusCache[BuildingID].Mutex.Lock()
+	c.deviceStatusCache[BuildingID].Rooms[RoomID].DeviceStates[DeviceID] = Device
+	c.deviceStatusCache[BuildingID].Mutex.Unlock()
+	return nil
 }
