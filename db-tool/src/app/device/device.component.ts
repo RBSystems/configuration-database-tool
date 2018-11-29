@@ -108,6 +108,7 @@ export class DeviceComponent implements OnInit {
       if (this.addRoom != null && this.addRoom._id != null) {
         let id = this.addRoom._id.concat("-");
         if(this.addDevice.name != null) {
+          this.addDevice.name = this.addDevice.name.toUpperCase();
           id = id + this.addDevice.name;
         }
         this.addDevice._id = id;
@@ -123,6 +124,7 @@ export class DeviceComponent implements OnInit {
       if (this.editRoom != null && this.editRoom._id != null) {
         let id = this.editRoom._id.concat("-");
         if(this.editDevice.name != null) {
+          this.editDevice.name = this.editDevice.name.toUpperCase();
           id = id + this.editDevice.name;
         }
         this.editDevice._id = id;
