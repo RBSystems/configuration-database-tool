@@ -3,195 +3,222 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/structs"
+
 	"github.com/labstack/echo"
 )
 
-var alert = "This action is not allowed."
-
-// GetBuildings returns a list of all the buildings in the database.
-func GetBuildings(context echo.Context) error {
-	log.L.Debug("[bldg] Starting GetBuildings...")
-
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[bldg] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[bldg] User %s is not allowed to get all buildings.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
-
-	log.L.Debug("[bldg] Attempting to get all buildings")
-
-	buildings, err := db.GetDB().GetAllBuildings()
-	if err != nil {
-		log.L.Errorf("[bldg] Failed to get all buildings : %v", err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	log.L.Debug("[bldg] Successfully got all buildings!")
-	return context.JSON(http.StatusOK, buildings)
-}
-
-// AddBuilding adds a new building to the database.
+// AddBuilding adds a single building to the database.
 func AddBuilding(context echo.Context) error {
-	log.L.Debug("[bldg] Starting AddBuilding...")
-
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-		if err != nil {
-			log.L.Errorf("[bldg] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[bldg] User %s is not allowed to add a building.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
-
-	id := context.Param("building")
-
-	log.L.Debugf("[bldg] Attempting to add the building %s", id)
+	log.L.Debugf("%s Starting AddBuilding...", buildingTag)
 
 	var building structs.Building
-	context.Bind(&building)
-	if building.ID != id && len(building.ID) > 0 {
-		log.L.Error("[bldg] Invalid body. Param ID: %s - Body ID: %s", id, building.ID)
-		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
+
+	// get information from the context
+	buildingID := context.Param("building")
+	if len(buildingID) < 1 {
+		msg := "Invalid building ID in URL"
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
 	}
 
-	// changes.AddNew(context.Request().Context().Value("user").(string), Building, building.ID)
-
-	building, err := db.GetDB().CreateBuilding(building)
+	err := context.Bind(&building)
 	if err != nil {
-		log.L.Errorf("[bldg] Failed to add the building %s : %v", id, err.Error())
+		msg := fmt.Sprintf("failed to bind body from request to add the building %s : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
+	}
 
-		if strings.Contains(err.Error(), "already exists") {
-			return context.JSON(http.StatusConflict, fmt.Sprintf("Failed to add the building %s because it already exists.", id))
+	// check to see if the URL ID and the body building ID match
+	if buildingID != building.ID {
+		msg := fmt.Sprintf("Mismatched IDs -- URL ID: %s, Body ID: %s", buildingID, building.ID)
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
+	}
+
+	// send the body to the database
+	building, err = db.GetDB().CreateBuilding(building)
+	if err != nil {
+		msg := fmt.Sprintf("failed to add the building %s to the database : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusInternalServerError, msg)
+	}
+
+	log.L.Debugf("%s Finished adding the building %s to the database", buildingTag, building.ID)
+	return context.JSON(http.StatusOK, nil)
+}
+
+// AddBuildings adds multiple buildings to the database.
+func AddBuildings(context echo.Context) error {
+	log.L.Debugf("%s Starting AddBuildings...", buildingTag)
+
+	var buildings []structs.Building
+
+	// get information from the context
+	err := context.Bind(&buildings)
+	if err != nil {
+		msg := fmt.Sprintf("failed to bind body from request to add multiple buildings : %s", err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
+	}
+	if len(buildings) < 1 {
+		msg := "No buildings were given to add"
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
+	}
+
+	// send the body to the database, record the errors and return them.
+	var errors []string
+
+	for _, b := range buildings {
+		_, err = db.GetDB().CreateBuilding(b)
+		if err != nil {
+			msg := fmt.Sprintf("failed to create the building %s during mass creation : %s", b.ID, err.Error())
+			log.L.Error("%s %s", buildingTag, msg)
+			errors = append(errors, err.Error())
 		}
+	}
 
+	log.L.Debugf("%s Finished adding the buildings to the database", buildingTag)
+	return context.JSON(http.StatusOK, errors)
+}
+
+// GetBuilding returns a single building from the database based on the given building ID.
+func GetBuilding(context echo.Context) error {
+	log.L.Debugf("%s Starting GetBuilding...", buildingTag)
+
+	// get information from the context
+	buildingID := context.Param("building")
+	if len(buildingID) < 1 {
+		msg := "Invalid building ID in URL"
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
+	}
+
+	// get the information from the database and return it
+	building, err := db.GetDB().GetBuilding(buildingID)
+	if err != nil {
+		msg := fmt.Sprintf("failed to get the building %s from the database : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	// Increment the counter on the ServerStatus
-	SS.BuildingsCreated++
-
-	log.L.Debugf("[bldg] Successfully added the building %s!", building.ID)
+	log.L.Debugf("%s Finished getting the building %s from the database", buildingTag, building.ID)
 	return context.JSON(http.StatusOK, building)
 }
 
-// GetBuildingByID returns a specific building based on the given ID.
-func GetBuildingByID(context echo.Context) error {
-	log.L.Debug("[bldg] Starting GetBuildingByID...")
+// GetBuildings returns a list of all buildings in the database.
+func GetBuildings(context echo.Context) error {
+	log.L.Debugf("%s Starting GetBuildings...", buildingTag)
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[bldg] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[bldg] User %s is not allowed to get a building by ID.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
-
-	id := context.Param("building")
-
-	log.L.Debugf("[bldg] Attempting to get the building %s", id)
-
-	building, err := db.GetDB().GetBuilding(id)
+	// get the information from the database and return it
+	buildings, err := db.GetDB().GetAllBuildings()
 	if err != nil {
-		log.L.Errorf("[bldg] Failed to get the building %s : %v", id, err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
+		msg := fmt.Sprintf("failed to get all buildings from the database : %s", err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusInternalServerError, msg)
 	}
 
-	log.L.Debugf("[bldg] Successfully got the building %s!", building.ID)
-	return context.JSON(http.StatusOK, building)
+	log.L.Debugf("%s Finished getting the buildings from the database", buildingTag)
+	return context.JSON(http.StatusOK, buildings)
 }
 
-// UpdateBuilding updates a building in the database.
+// UpdateBuilding updates a single building in the database based on the given building ID.
 func UpdateBuilding(context echo.Context) error {
-	log.L.Debug("[bldg] Starting UpdateBuilding...")
-
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-		if err != nil {
-			log.L.Errorf("[bldg] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[bldg] User %s is not allowed to update a building.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
-
-	id := context.Param("building")
-
-	log.L.Debugf("[bldg] Attempting to update the building %s", id)
+	log.L.Debugf("%s Starting UpdateBuilding...", buildingTag)
 
 	var building structs.Building
-	context.Bind(&building)
-	if len(building.ID) == 0 {
-		log.L.Error("[bldg] Invalid body. Param ID: %s - Body ID: %s", id, building.ID)
-		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
+
+	// get information from the context
+	buildingID := context.Param("building")
+	if len(buildingID) < 1 {
+		msg := "Invalid building ID in URL"
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
 	}
 
-	// oldBuilding, err := db.GetDB().GetBuilding(building.ID)
-	// if err != nil {
-	// 	log.L.Errorf("[bldg] Building %s does not exist in the database: %v", id, err.Error())
-	// 	return context.JSON(http.StatusBadRequest, err.Error())
-	// }
-	// changes.AddChange(context.Request().Context().Value("user").(string), Building, FindChanges(oldBuilding, building, Building))
-
-	building, err := db.GetDB().UpdateBuilding(id, building)
+	err := context.Bind(&building)
 	if err != nil {
-		log.L.Errorf("[bldg] Failed to update the building %s : %v", id, err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
+		msg := fmt.Sprintf("failed to bind body from request to update the building %s : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
 	}
 
-	// Increment the counter on the ServerStatus
-	SS.BuildingsUpdated++
+	// send the body to the database
+	building, err = db.GetDB().UpdateBuilding(buildingID, building)
+	if err != nil {
+		msg := fmt.Sprintf("failed to update the building %s in the database : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusInternalServerError, msg)
+	}
 
-	log.L.Debugf("[bldg] Successfully updated the building %s!", building.ID)
-	return context.JSON(http.StatusOK, building)
+	log.L.Debugf("%s Finished updating the building %s in the database", buildingTag, building.ID)
+	return context.JSON(http.StatusOK, nil)
 }
 
-// DeleteBuilding removes a building from the database.
-func DeleteBuilding(context echo.Context) error {
-	log.L.Debug("[bldg] Starting DeleteBuilding...")
+// UpdateBuildings updates multiple buildings in the database.
+func UpdateBuildings(context echo.Context) error {
+	log.L.Debugf("%s Starting UpdateBuildings...", buildingTag)
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-		if err != nil {
-			log.L.Errorf("[bldg] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[bldg] User %s is not allowed to delete a building.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	var buildings []structs.Building
 
-	id := context.Param("building")
-
-	log.L.Debugf("[bldg] Attempting to delete the building %s", id)
-
-	err := db.GetDB().DeleteBuilding(id)
+	// get information from the context
+	err := context.Bind(&buildings)
 	if err != nil {
-		log.L.Errorf("[bldg] Failed to delete the building %s : %v", id, err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
+		msg := fmt.Sprintf("failed to bind body from request to update multiple buildings : %s", err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
+	}
+	if len(buildings) < 1 {
+		msg := "No buildings were given to update"
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
 	}
 
-	log.L.Debugf("[bldg] Successfully deleted the building %s!", id)
-	return context.JSON(http.StatusOK, id)
+	// send the body to the database, record the errors and return them.
+	var errors []string
+
+	for _, b := range buildings {
+		_, err = db.GetDB().UpdateBuilding(b.ID, b)
+		if err != nil {
+			msg := fmt.Sprintf("failed to update the building %s during mass updating : %s", b.ID, err.Error())
+			log.L.Error("%s %s", buildingTag, msg)
+			errors = append(errors, err.Error())
+		}
+	}
+
+	log.L.Debugf("%s Finished updating the buildings in the database", buildingTag)
+	return context.JSON(http.StatusOK, errors)
+}
+
+// DeleteBuilding deletes a single building from the database based on the given building ID.
+func DeleteBuilding(context echo.Context) error {
+	log.L.Debugf("%s Starting DeleteBuilding...", buildingTag)
+
+	// get information from the context
+	buildingID := context.Param("building")
+	if len(buildingID) < 1 {
+		msg := "Invalid building ID in URL"
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusBadRequest, msg)
+	}
+
+	// delete the information from the database
+	err := db.GetDB().DeleteBuilding(buildingID)
+	if err != nil {
+		msg := fmt.Sprintf("failed to delete the building %s from the database : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", buildingTag, msg)
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	log.L.Debugf("%s Finished deleting the building %s from the database", buildingTag, buildingID)
+	return context.JSON(http.StatusOK, nil)
+}
+
+// DeleteBuildings deletes multiple buildings from the database.
+func DeleteBuildings(context echo.Context) error {
+	return context.JSON(http.StatusOK, nil)
 }

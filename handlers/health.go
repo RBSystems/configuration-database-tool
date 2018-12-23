@@ -6,9 +6,17 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/log"
 	"github.com/labstack/echo"
+)
+
+const (
+	buildingTag = "[buildings]"
+	roomTag     = "[rooms]"
+	deviceTag   = "[devices]"
+	configTag   = "[uiconfigs]"
+	optionsTag  = "[options]"
+	alertTag    = "[alerts]"
 )
 
 // Status returns the health status of the application.
@@ -48,38 +56,4 @@ type ServerStatus struct {
 	UIConfigsCreated int    `json:"uiconfigs_created"`
 	UIConfigsUpdated int    `json:"uiconfigs_updated"`
 	Message          string `json:"message"`
-}
-
-// Dev tracks if the server is being used for development or not at the moment.
-var Dev bool
-
-// SetDev allows the server to be set into a "development" state, or takes it out of said state.
-func SetDev(context echo.Context) error {
-	state := context.Param("state")
-
-	var msg string
-	if state == "true" {
-		Dev = true
-		msg = "Development state = true"
-	} else {
-		Dev = false
-		msg = "Development state = false"
-	}
-
-	return context.JSON(http.StatusOK, msg)
-}
-
-// HasAdminRights verifies whether or not the user has administrative rights.
-func HasAdminRights(context echo.Context) error {
-	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "admin")
-	if err != nil {
-		log.L.Errorf("[health] Failed to verify admin role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-	if !ok {
-		log.L.Warnf("[health] User %s does not have admin rights.", context.Request().Context().Value("user").(string))
-		return context.JSON(http.StatusForbidden, alert)
-	}
-
-	return context.JSON(http.StatusOK, ok)
 }

@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/quartermaster"
@@ -12,18 +11,6 @@ import (
 
 func GetAllAlerts(context echo.Context) error {
 	log.L.Debug("Getting all alerts for all buildings")
-
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[device] User %s is not allowed to get all devices in a room.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
 
 	allStatuses, err := quartermaster.GetStatusAllBuildings(db.GetDB())
 
@@ -38,18 +25,6 @@ func GetAllAlerts(context echo.Context) error {
 func GetAlertsByBuilding(context echo.Context) error {
 	log.L.Debug("Getting alerts by Building")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[device] User %s is not allowed to get all devices in a room.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
-
 	buildingID := context.Param("building")
 	buildingStatus, err := quartermaster.GetStatusBuilding(db.GetDB(), buildingID)
 	if err != nil {
@@ -60,20 +35,8 @@ func GetAlertsByBuilding(context echo.Context) error {
 	return context.JSON(http.StatusOK, buildingStatus)
 }
 
-func GetAlertsByAllRooms(context echo.Context) error {
+func GetAlertsForAllRoomsInABuilding(context echo.Context) error {
 	log.L.Debug("Getting all the room alerts for building")
-
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[device] User %s is not allowed to get all devices in a room.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
 
 	buildingID := context.Param("building")
 	roomStatuses, err := quartermaster.GetStatusAllRoomsByBuilding(db.GetDB(), buildingID)
@@ -86,17 +49,6 @@ func GetAlertsByAllRooms(context echo.Context) error {
 
 func GetAlertsByRoom(context echo.Context) error {
 	log.L.Debug("Getting all alerts for a room")
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[device] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[device] User %s is not allowed to get all devices in a room.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
 
 	roomID := context.Param("room")
 	roomStatus, err := quartermaster.GetStatusRoom(db.GetDB(), roomID)
