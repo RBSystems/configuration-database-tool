@@ -7,273 +7,223 @@ import (
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/configuration-database-tool/helpers"
+
 	"github.com/labstack/echo"
 )
 
-// AddRoom adds a room to the database.
+// AddRoom adds a room to the database
 func AddRoom(context echo.Context) error {
-	log.L.Debugf("%s Starting AddRoom...", roomTag)
-
-	var room structs.Room
+	log.L.Debugf("%s Starting AddRoom...", helpers.RoomsTag)
 
 	// get information from the context
 	roomID := context.Param("room")
-	if len(roomID) < 1 {
-		msg := "Invalid room ID in URL"
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
+	username := getUsernameString(context)
 
+	var room structs.Room
 	err := context.Bind(&room)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to add the room %s : %s", roomID, err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for %s : %s", roomID, err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// check to see if the URL ID and the body room ID match
-	if roomID != room.ID {
-		msg := fmt.Sprintf("Mismatched IDs -- URL ID: %s, Body ID: %s", roomID, room.ID)
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+	// call helper function
+	result, ne := helpers.DoRoomDatabaseAction(room, roomID, username, helpers.AddAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.RoomsTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
 	}
 
-	// send the body to the database
-	room, err = db.GetDB().CreateRoom(room)
-	if err != nil {
-		msg := fmt.Sprintf("failed to add the room %s to the database : %s", roomID, err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
-	}
-
-	log.L.Debugf("%s Finished adding the room %s to the database", roomTag, room.ID)
-	return context.JSON(http.StatusOK, nil)
+	log.L.Debugf("%s The room %s was successfully created!", helpers.RoomsTag, roomID)
+	return context.JSON(http.StatusOK, result)
 }
 
-// AddRooms adds multiple rooms to the database.
-func AddRooms(context echo.Context) error {
-	log.L.Debugf("%s Starting AddRooms...", roomTag)
+// AddMultipleRooms adds a set of rooms to the database
+func AddMultipleRooms(context echo.Context) error {
+	log.L.Debugf("%s Starting AddMultipleRooms...", helpers.RoomsTag)
+
+	// get information from the context
+	username := getUsernameString(context)
 
 	var rooms []structs.Room
 
-	// get information from the context
 	err := context.Bind(&rooms)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to add multiple rooms : %s", err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-	if len(rooms) < 1 {
-		msg := "No rooms were given to add"
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for multiple rooms : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// send the body to the database, record the errors and return them.
-	var errors []string
-
+	var results []helpers.DBResponse
+	// call helper function as we iterate
 	for _, r := range rooms {
-		_, err = db.GetDB().CreateRoom(r)
-		if err != nil {
-			msg := fmt.Sprintf("failed to create the room %s during mass creation : %s", r.ID, err.Error())
-			log.L.Error("%s %s", roomTag, msg)
-			errors = append(errors, err.Error())
+		res, ne := helpers.DoRoomDatabaseAction(r, r.ID, username, helpers.AddAction)
+		if ne != nil {
+			log.L.Errorf("%s %s", helpers.RoomsTag, ne.Error())
 		}
+		results = append(results, res)
 	}
 
-	log.L.Debugf("%s Finished adding the rooms to the database", roomTag)
-	return context.JSON(http.StatusOK, errors)
+	log.L.Debugf("%s The rooms were successfully created!", helpers.RoomsTag)
+	return context.JSON(http.StatusOK, results)
 }
 
-// GetRoom gets a single room from the database.
+// GetRoom gets a room from the database based on the given ID
 func GetRoom(context echo.Context) error {
-	log.L.Debugf("%s Starting GetRoom...", roomTag)
+	log.L.Debugf("%s Starting GetRoom...", helpers.RoomsTag)
 
 	// get information from the context
 	roomID := context.Param("room")
-	if len(roomID) < 1 {
-		msg := "Invalid room ID in URL"
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
 
-	// get the information from the database and return it
 	room, err := db.GetDB().GetRoom(roomID)
 	if err != nil {
-		msg := fmt.Sprintf("failed to get the room %s from the database : %s", roomID, err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		msg := fmt.Sprintf("failed to get the room %s : %s", roomID, err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
-	log.L.Debugf("%s Finished getting the room %s from the database", roomTag, room.ID)
+	log.L.Debugf("%s Successfully found the room %s!", helpers.RoomsTag, roomID)
 	return context.JSON(http.StatusOK, room)
 }
 
-// GetRooms gets all rooms from the database.
-func GetRooms(context echo.Context) error {
-	log.L.Debugf("%s Starting GetRooms...", roomTag)
+// GetAllRooms gets all rooms from the database
+func GetAllRooms(context echo.Context) error {
+	log.L.Debugf("%s Starting GetAllRooms...", helpers.RoomsTag)
 
-	// get the information from the database and return it
 	rooms, err := db.GetDB().GetAllRooms()
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all rooms from the database : %s", err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get all rooms : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	log.L.Debugf("%s Finished getting the rooms from the database", roomTag)
+	log.L.Debugf("%s Successfully got all rooms!", helpers.RoomsTag)
 	return context.JSON(http.StatusOK, rooms)
 }
 
-// GetRoomsByBuilding gets all rooms in a room based on the given room ID.
+// GetRoomsByBuilding gets all rooms in a single building from the database, based on a given building ID
 func GetRoomsByBuilding(context echo.Context) error {
-	log.L.Debugf("%s Starting GetRoomsByBuilding...", roomTag)
+	log.L.Debugf("%s Starting GetRoomsByBuilding...", helpers.RoomsTag)
+
+	// get information from the context
+	buildingID := context.Param("building")
+
+	rooms, err := db.GetDB().GetRoomsByBuilding(buildingID)
+	if err != nil {
+		msg := fmt.Sprintf("failed to get all of the rooms in the building %s : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+
+	log.L.Debugf("%s Successfully got all rooms in the building %s", helpers.RoomsTag, buildingID)
+	return context.JSON(http.StatusOK, rooms)
+}
+
+// UpdateRoom updates a room in the database
+func UpdateRoom(context echo.Context) error {
+	log.L.Debugf("%s Starting UpdateRoom...", helpers.RoomsTag)
 
 	// get information from the context
 	roomID := context.Param("room")
-	if len(roomID) < 1 {
-		msg := "Invalid room ID in URL"
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
-	// get the information from the database and return it
-	rooms, err := db.GetDB().GetRoomsByBuilding(roomID)
-	if err != nil {
-		msg := fmt.Sprintf("failed to get all rooms in the room %s from the database : %s", roomID, err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
-	}
-
-	log.L.Debugf("%s Finished getting all the rooms in the room %s from the database", roomTag, roomID)
-	return context.JSON(http.StatusOK, rooms)
-}
-
-// UpdateRoom updates a room in the database.
-func UpdateRoom(context echo.Context) error {
-	log.L.Debugf("%s Starting UpdateRoom...", roomTag)
+	username := getUsernameString(context)
 
 	var room structs.Room
-
-	// get information from the context
-	roomID := context.Param("room")
-	if len(roomID) < 1 {
-		msg := "Invalid room ID in URL"
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
 	err := context.Bind(&room)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to update the room %s : %s", roomID, err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for %s : %s", roomID, err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// send the body to the database
-	room, err = db.GetDB().UpdateRoom(roomID, room)
-	if err != nil {
-		msg := fmt.Sprintf("failed to update the room %s in the database : %s", roomID, err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+	// call the helper function
+	result, ne := helpers.DoRoomDatabaseAction(room, roomID, username, helpers.UpdateAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.RoomsTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
 	}
 
-	log.L.Debugf("%s Finished updating the room %s in the database", roomTag, room.ID)
-	return context.JSON(http.StatusOK, nil)
+	log.L.Debugf("%s The room %s was successfully updated!", helpers.RoomsTag, roomID)
+	return context.JSON(http.StatusOK, result)
 }
 
-// UpdateRooms updates multiple rooms in the database.
-func UpdateRooms(context echo.Context) error {
-	log.L.Debugf("%s Starting UpdateRooms...", roomTag)
-
-	var rooms []structs.Room
+// UpdateMultipleRooms updates a set of rooms in the database
+func UpdateMultipleRooms(context echo.Context) error {
+	log.L.Debugf("%s Starting UpdateMultipleRooms...", helpers.RoomsTag)
 
 	// get information from the context
+	username := getUsernameString(context)
+
+	var rooms map[string]structs.Room
+
 	err := context.Bind(&rooms)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to update multiple rooms : %s", err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-	if len(rooms) < 1 {
-		msg := "No rooms were given to update"
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for multiple buildings : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// send the body to the database, record the errors and return them.
-	var errors []string
-
-	for _, r := range rooms {
-		_, err = db.GetDB().UpdateRoom(r.ID, r)
-		if err != nil {
-			msg := fmt.Sprintf("failed to update the room %s during mass updating : %s", r.ID, err.Error())
-			log.L.Error("%s %s", roomTag, msg)
-			errors = append(errors, err.Error())
+	var results []helpers.DBResponse
+	// call helper function as we iterate
+	for id, room := range rooms {
+		res, ne := helpers.DoRoomDatabaseAction(room, id, username, helpers.UpdateAction)
+		if ne != nil {
+			log.L.Errorf("%s %s", helpers.BuildingsTag, ne.Error())
 		}
+		results = append(results, res)
 	}
 
-	log.L.Debugf("%s Finished updating the rooms in the database", roomTag)
-	return context.JSON(http.StatusOK, errors)
+	log.L.Debugf("%s The rooms were successfully updated!", helpers.RoomsTag)
+	return context.JSON(http.StatusOK, results)
 }
 
-// DeleteRoom deletes a room from the database.
+// DeleteRoom deletes a room from the database based on the given ID
 func DeleteRoom(context echo.Context) error {
-	log.L.Debugf("%s Starting DeleteRoom...", roomTag)
+	log.L.Debugf("%s Starting DeleteRoom...", helpers.RoomsTag)
 
 	// get information from the context
 	roomID := context.Param("room")
-	if len(roomID) < 1 {
-		msg := "Invalid room ID in URL"
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+	username := getUsernameString(context)
+
+	room := structs.Room{ID: roomID}
+
+	// call helper function
+	result, ne := helpers.DoRoomDatabaseAction(room, roomID, username, helpers.DeleteAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.RoomsTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
 	}
 
-	// delete the information from the database
-	err := db.GetDB().DeleteRoom(roomID)
-	if err != nil {
-		msg := fmt.Sprintf("failed to delete the room %s from the database : %s", roomID, err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	log.L.Debugf("%s Finished deleting the room %s from the database", roomTag, roomID)
-	return context.JSON(http.StatusOK, nil)
+	log.L.Debugf("%s The room %s was successfully deleted!", helpers.RoomsTag, roomID)
+	return context.JSON(http.StatusOK, result)
 }
 
-// DeleteRooms deletes multiple rooms from the database.
-func DeleteRooms(context echo.Context) error {
-	return context.JSON(http.StatusOK, nil)
-}
-
-// GetRoomConfigurations returns a list of all the room configurations listed in the database.
+// GetRoomConfigurations returns a list of possible room configurations
 func GetRoomConfigurations(context echo.Context) error {
-	log.L.Debugf("%s Starting GetRoomConfigurations...", roomTag)
+	log.L.Debugf("%s Starting GetRoomConfigurations...", helpers.RoomsTag)
 
-	// get the information from the database and return it
 	configurations, err := db.GetDB().GetAllRoomConfigurations()
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all configurations from the database : %s", err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get all room configurations : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
-	log.L.Debugf("%s Finished getting the configurations from the database", roomTag)
+	log.L.Debugf("%s Successfully got all room configurations!", helpers.RoomsTag)
 	return context.JSON(http.StatusOK, configurations)
 }
 
-// GetRoomDesignations returns a list of all the RoomDesignations from the database.
+// GetRoomDesignations returns a list of possible room designations
 func GetRoomDesignations(context echo.Context) error {
-	log.L.Debugf("%s Starting GetRoomDesignations...", roomTag)
+	log.L.Debugf("%s Starting GetRoomDesignations...", helpers.RoomsTag)
 
-	// get information from the database and return it
 	designations, err := db.GetDB().GetRoomDesignations()
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all room designations from the database : %s", err.Error())
-		log.L.Errorf("%s %s", roomTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get all room designations : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.RoomsTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
-	log.L.Debugf("%s Finished getting all room designations from the database", roomTag)
+	log.L.Debugf("%s Successfully got all room designations!", helpers.RoomsTag)
 	return context.JSON(http.StatusOK, designations)
 }

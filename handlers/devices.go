@@ -6,312 +6,256 @@ import (
 
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
-
 	"github.com/byuoitav/common/structs"
+	"github.com/byuoitav/configuration-database-tool/helpers"
+
 	"github.com/labstack/echo"
 )
 
-// AddDevice adds a single device to the database.
+// AddDevice adds a device to the database
 func AddDevice(context echo.Context) error {
-	log.L.Debugf("%s Starting AddDevice...", deviceTag)
-
-	var device structs.Device
+	log.L.Debugf("%s Starting AddDevice...", helpers.DevicesTag)
 
 	// get information from the context
 	deviceID := context.Param("device")
-	if len(deviceID) < 1 {
-		msg := "Invalid device ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
+	username := getUsernameString(context)
 
+	var device structs.Device
 	err := context.Bind(&device)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to add the device %s : %s", deviceID, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for %s : %s", deviceID, err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// check to see if the URL ID and the body device ID match
-	if deviceID != device.ID {
-		msg := fmt.Sprintf("Mismatched IDs -- URL ID: %s, Body ID: %s", deviceID, device.ID)
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+	// call helper function
+	result, ne := helpers.DoDeviceDatabaseAction(device, deviceID, username, helpers.AddAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.DevicesTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
 	}
 
-	// send the body to the database
-	device, err = db.GetDB().CreateDevice(device)
-	if err != nil {
-		msg := fmt.Sprintf("failed to add the device %s to the database : %s", deviceID, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
-	}
-
-	log.L.Debugf("%s Finished adding the device %s to the database", deviceTag, device.ID)
-	return context.JSON(http.StatusOK, nil)
+	log.L.Debugf("%s The device %s was successfully created!", helpers.DevicesTag, deviceID)
+	return context.JSON(http.StatusOK, result)
 }
 
-// AddDevices adds multiple devices to the database.
-func AddDevices(context echo.Context) error {
-	log.L.Debugf("%s Starting AddDevices...", deviceTag)
+// AddMultipleDevices adds a set of devices to the database
+func AddMultipleDevices(context echo.Context) error {
+	log.L.Debugf("%s Starting AddMultipleDevices...", helpers.DevicesTag)
+
+	// get information from the context
+	username := getUsernameString(context)
 
 	var devices []structs.Device
 
-	// get information from the context
 	err := context.Bind(&devices)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to add multiple devices : %s", err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-	if len(devices) < 1 {
-		msg := "No devices were given to add"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for multiple devices : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// send the body to the database, record the errors and return them.
-	results := db.GetDB().CreateBulkDevices(devices)
+	responses := db.GetDB().CreateBulkDevices(devices)
 
-	log.L.Debugf("%s Finished adding the devices to the database", deviceTag)
+	results := helpers.RecordBulkDeviceChanges(responses, username)
+
+	log.L.Debugf("%s Finished attempting to add multiple devices", helpers.DevicesTag)
 	return context.JSON(http.StatusOK, results)
 }
 
-// GetDevice returns a single device from the database based on the given device ID.
+// GetDevice gets a device from the database based on the given ID
 func GetDevice(context echo.Context) error {
-	log.L.Debugf("%s Starting GetDevice...", deviceTag)
+	log.L.Debugf("%s Starting GetDevice...")
 
 	// get information from the context
 	deviceID := context.Param("device")
-	if len(deviceID) < 1 {
-		msg := "Invalid device ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
 
-	// get the information from the database and return it
 	device, err := db.GetDB().GetDevice(deviceID)
 	if err != nil {
-		msg := fmt.Sprintf("failed to get the device %s from the database : %s", deviceID, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		msg := fmt.Sprintf("failed to get the device %s : %s", deviceID, err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
-	log.L.Debugf("%s Finished getting the device %s from the database", deviceTag, device.ID)
+	log.L.Debugf("%s Successfully found the device %s!", helpers.DevicesTag, deviceID)
 	return context.JSON(http.StatusOK, device)
 }
 
-// GetDevices returns a list of all devices in the database.
-func GetDevices(context echo.Context) error {
-	log.L.Debugf("%s Starting GetDevices...", deviceTag)
+// GetAllDevices gets all devices from the database
+func GetAllDevices(context echo.Context) error {
+	log.L.Debugf("%s Starting GetAllDevices...", helpers.DevicesTag)
 
-	// get the information from the database and return it
 	devices, err := db.GetDB().GetAllDevices()
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all devices from the database : %s", err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get all devices : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	log.L.Debugf("%s Finished getting the devices from the database", deviceTag)
+	log.L.Debugf("%s Successfully got all devices!", helpers.DevicesTag)
 	return context.JSON(http.StatusOK, devices)
 }
 
-// UpdateDevice updates a single device in the database based on the given device ID.
-func UpdateDevice(context echo.Context) error {
-	log.L.Debugf("%s Starting UpdateDevice...", deviceTag)
-
-	var device structs.Device
-
-	// get information from the context
-	deviceID := context.Param("device")
-	if len(deviceID) < 1 {
-		msg := "Invalid device ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
-	err := context.Bind(&device)
-	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to update the device %s : %s", deviceID, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
-	// send the body to the database
-	device, err = db.GetDB().UpdateDevice(deviceID, device)
-	if err != nil {
-		msg := fmt.Sprintf("failed to update the device %s in the database : %s", deviceID, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
-	}
-
-	log.L.Debugf("%s Finished updating the device %s in the database", deviceTag, device.ID)
-	return context.JSON(http.StatusOK, nil)
-}
-
-// UpdateDevices updates multiple devices in the database.
-func UpdateDevices(context echo.Context) error {
-	log.L.Debugf("%s Starting UpdateDevices...", deviceTag)
-
-	var devices []structs.Device
-
-	// get information from the context
-	err := context.Bind(&devices)
-	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to update multiple devices : %s", err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-	if len(devices) < 1 {
-		msg := "No devices were given to update"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
-	// send the body to the database, record the errors and return them.
-	var errors []string
-
-	for _, d := range devices {
-		_, err = db.GetDB().UpdateDevice(d.ID, d)
-		if err != nil {
-			msg := fmt.Sprintf("failed to update the device %s during mass updating : %s", d.ID, err.Error())
-			log.L.Error("%s %s", deviceTag, msg)
-			errors = append(errors, err.Error())
-		}
-	}
-
-	log.L.Debugf("%s Finished updating the devices in the database", deviceTag)
-	return context.JSON(http.StatusOK, errors)
-}
-
-// DeleteDevice deletes a single device from the database based on the given device ID.
-func DeleteDevice(context echo.Context) error {
-	log.L.Debugf("%s Starting DeleteDevice...", deviceTag)
-
-	// get information from the context
-	deviceID := context.Param("device")
-	if len(deviceID) < 1 {
-		msg := "Invalid device ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
-	// delete the information from the database
-	err := db.GetDB().DeleteDevice(deviceID)
-	if err != nil {
-		msg := fmt.Sprintf("failed to delete the device %s from the database : %s", deviceID, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	log.L.Debugf("%s Finished deleting the device %s from the database", deviceTag, deviceID)
-	return context.JSON(http.StatusOK, nil)
-}
-
-// DeleteDevices deletes multiple devices from the database.
-func DeleteDevices(context echo.Context) error {
-	return context.JSON(http.StatusOK, nil)
-}
-
-// GetDevicesByRoom returns a list of all devices in a single room.
+// GetDevicesByRoom gets all devices in a room based on the given room ID
 func GetDevicesByRoom(context echo.Context) error {
-	log.L.Debugf("%s Starting GetDevicesByRoom...", deviceTag)
+	log.L.Debugf("%s Starting GetDevicesByRoom...", helpers.DevicesTag)
 
 	// get information from the context
 	roomID := context.Param("room")
-	if len(roomID) < 1 {
-		msg := "Invalid room ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
 
-	// get the information from the database and return it
 	devices, err := db.GetDB().GetDevicesByRoom(roomID)
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all devices in %s from the database : %s", roomID, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get all devices in the room %s : %s", roomID, err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	log.L.Debugf("%s Finished getting the devices in %s from the database", deviceTag, roomID)
+	log.L.Debugf("%s Successfully got all the devices in the room %s!", helpers.DevicesTag, roomID)
 	return context.JSON(http.StatusOK, devices)
 }
 
-// GetDevicesByRoomAndRole returns a list of all devices in a room that have the given role.
+// GetDevicesByRoomAndRole gets all devices in a room based on the given room ID and role ID
 func GetDevicesByRoomAndRole(context echo.Context) error {
-	log.L.Debugf("%s Starting GetDevicesByRoomAndRole...", deviceTag)
+	log.L.Debugf("%s Starting GetDevicesByRoomAndRole...", helpers.DevicesTag)
 
 	// get information from the context
 	roomID := context.Param("room")
-	if len(roomID) < 1 {
-		msg := "Invalid room ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
+	roleID := context.Param("role")
 
-	role := context.Param("role")
-	if len(role) < 1 {
-		msg := "Invalid role ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
-	// get the information from the database and return it
-	devices, err := db.GetDB().GetDevicesByRoomAndRole(roomID, role)
+	devices, err := db.GetDB().GetDevicesByRoomAndRole(roomID, roleID)
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all devices in %s with the role %s from the database : %s", roomID, role, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get all devices in the room %s with the role %s : %s", roomID, roleID, err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	log.L.Debugf("%s Finished getting the devices in %s with the role %s from the database", deviceTag, roomID, role)
+	log.L.Debugf("%s Successfully got all the devices in the room %s with the role %s!", helpers.DevicesTag, roomID, roleID)
 	return context.JSON(http.StatusOK, devices)
 }
 
-// GetDevicesByRoleAndType returns a list of all devices that have a given role and type.
-func GetDevicesByRoleAndType(context echo.Context) error {
-	log.L.Debugf("%s Starting GetDevicesByRoleAndType...", deviceTag)
+// GetDevicesByTypeAndRole gets all devices of a given type that also have the given role
+func GetDevicesByTypeAndRole(context echo.Context) error {
+	log.L.Debugf("%s Starting GetDevicesByTypeAndRole...", helpers.DevicesTag)
 
 	// get information from the context
-	role := context.Param("role")
-	if len(role) < 1 {
-		msg := "Invalid role ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
 	typeID := context.Param("type")
-	if len(typeID) < 1 {
-		msg := "Invalid type ID in URL"
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
+	roleID := context.Param("role")
 
-	// get the information from the database and return it
-	devices, err := db.GetDB().GetDevicesByRoleAndType(role, typeID)
+	devices, err := db.GetDB().GetDevicesByRoleAndType(roleID, typeID)
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all devices of type %s with the role %s from the database : %s", typeID, role, err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get all devices with the role %s of the type %s : %s", roleID, typeID, err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	log.L.Debugf("%s Finished getting the devices of type %s with the role %s from the database", deviceTag, typeID, role)
+	log.L.Debugf("%s Successfully got all devices with the role %s of the type %s!", helpers.DevicesTag, roleID, typeID)
 	return context.JSON(http.StatusOK, devices)
 }
 
-// GetDeviceTypes returns a list of all device types in the database.
-func GetDeviceTypes(context echo.Context) error {
-	log.L.Debugf("%s Starting GetDeviceTypes...", deviceTag)
+// UpdateDevice updates a device in the database
+func UpdateDevice(context echo.Context) error {
+	log.L.Debugf("%s Starting UpdateDevice...")
 
-	// get the information from the database and return it
-	deviceTypes, err := db.GetDB().GetAllDeviceTypes()
+	// get information from the context
+	deviceID := context.Param("room")
+	username := getUsernameString(context)
+
+	var device structs.Device
+	err := context.Bind(&device)
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all device types from the database : %s", err.Error())
-		log.L.Errorf("%s %s", deviceTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to bind request body for %s : %s", deviceID, err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	log.L.Debugf("%s Finished getting all device types from the database", deviceTag)
-	return context.JSON(http.StatusOK, deviceTypes)
+	// call the helper function
+	result, ne := helpers.DoDeviceDatabaseAction(device, deviceID, username, helpers.UpdateAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.DevicesTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
+	}
+
+	log.L.Debugf("%s The device %s was successfully updated!", helpers.DevicesTag, deviceID)
+	return context.JSON(http.StatusOK, result)
+}
+
+// UpdateMultipleDevices updates a set of devices in the database
+func UpdateMultipleDevices(context echo.Context) error {
+	log.L.Debugf("%s Starting UpdateMultipleDevices...")
+
+	// get information from the context
+	username := getUsernameString(context)
+
+	var devices map[string]structs.Device
+
+	err := context.Bind(&devices)
+	if err != nil {
+		msg := fmt.Sprintf("failed to bind request body for multiple devices : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
+	}
+
+	var results []helpers.DBResponse
+	// call helper function as we iterate
+	for id, device := range devices {
+		res, ne := helpers.DoDeviceDatabaseAction(device, id, username, helpers.UpdateAction)
+		if ne != nil {
+			log.L.Errorf("%s %s", helpers.DevicesTag, ne.Error())
+		}
+		results = append(results, res)
+	}
+
+	log.L.Debugf("%s The devices were successfully updated!", helpers.DevicesTag)
+	return context.JSON(http.StatusOK, results)
+}
+
+// DeleteDevice deletes a device from the database based on the given ID
+func DeleteDevice(context echo.Context) error {
+	log.L.Debugf("%s Starting DeleteDevice...")
+
+	// get information from the context
+	deviceID := context.Param("device")
+	username := getUsernameString(context)
+
+	device := structs.Device{ID: deviceID}
+
+	// call helper function
+	result, ne := helpers.DoDeviceDatabaseAction(device, deviceID, username, helpers.DeleteAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.DevicesTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
+	}
+
+	log.L.Debugf("%s The device %s was successfully deleted!", helpers.DevicesTag, deviceID)
+	return context.JSON(http.StatusOK, result)
+}
+
+// GetDeviceTypes gets a list of possible device types
+func GetDeviceTypes(context echo.Context) error {
+	log.L.Debugf("%s Starting GetDeviceTypes...", helpers.DevicesTag)
+
+	types, err := db.GetDB().GetAllDeviceTypes()
+	if err != nil {
+		msg := fmt.Sprintf("failed to get all device types : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+
+	log.L.Debugf("%s Successfully got all device types!", helpers.DevicesTag)
+	return context.JSON(http.StatusOK, types)
+}
+
+// GetDeviceRoles gets a list of possible device roles
+func GetDeviceRoles(context echo.Context) error {
+	log.L.Debugf("%s Starting GetDeviceRoles...", helpers.DevicesTag)
+
+	roles, err := db.GetDB().GetDeviceRoles()
+	if err != nil {
+		msg := fmt.Sprintf("failed to get all device roles : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.DevicesTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+
+	log.L.Debugf("%s Successfully got all device roles!", helpers.DevicesTag)
+	return context.JSON(http.StatusOK, roles)
 }

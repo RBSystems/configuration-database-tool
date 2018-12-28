@@ -6,53 +6,36 @@ import (
 
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
+	"github.com/byuoitav/configuration-database-tool/helpers"
 	"github.com/labstack/echo"
 )
 
-// GetAllTemplates returns a list of all templates from the database.
-func GetAllTemplates(context echo.Context) error {
-	log.L.Debugf("%s Starting GetAllTemplates...", optionsTag)
-
-	// get information from the database and return it
-	templates, err := db.GetDB().GetAllTemplates()
-	if err != nil {
-		msg := fmt.Sprintf("failed to get all templates from the database : %s", err.Error())
-		log.L.Errorf("%s %s", optionsTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
-	}
-
-	log.L.Debugf("%s Finished getting all templates from the database", optionsTag)
-	return context.JSON(http.StatusOK, templates)
-}
-
-// GetIcons returns the list of possible icons from the database.
+// GetIcons gets a list of possible icons to use
 func GetIcons(context echo.Context) error {
-	log.L.Debugf("%s Starting GetIcons...", optionsTag)
+	log.L.Debugf("%s Starting GetIcons...", helpers.OptionsTag)
 
-	// get information from the database and return it
-	icons, err := db.GetDB().GetIcons()
+	iconList, err := db.GetDB().GetIcons()
 	if err != nil {
 		msg := fmt.Sprintf("failed to get icons from the database : %s", err.Error())
-		log.L.Errorf("%s %s", optionsTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		log.L.Errorf("%s %s", helpers.OptionsTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
-	log.L.Debugf("%s Finished getting icons from the database", optionsTag)
-	return context.JSON(http.StatusOK, icons)
+	log.L.Debugf("%s Successfully got the icons from the database!", helpers.OptionsTag)
+	return context.JSON(http.StatusOK, iconList)
 }
 
-// GetDeviceRoles returns a list of all device roles in the database.
-func GetDeviceRoles(context echo.Context) error {
-	log.L.Debugf("%s Starting GetDeviceRoles...", optionsTag)
+// GetTemplates gets a list of possible templates to use
+func GetTemplates(context echo.Context) error {
+	log.L.Debugf("%s Starting GetTemplates...", helpers.OptionsTag)
 
-	// get information from the database and return it
-	roles, err := db.GetDB().GetDeviceRoles()
+	templateList, err := db.GetDB().GetAllTemplates()
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all device roles from the database : %s", err.Error())
-		log.L.Errorf("%s %s", optionsTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get templates from the database : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.OptionsTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
-	log.L.Debugf("%s Finished getting all device roles from the database", optionsTag)
-	return context.JSON(http.StatusOK, roles)
+	log.L.Debugf("%s Successfully got the templates from the database!", helpers.OptionsTag)
+	return context.JSON(http.StatusOK, templateList)
 }

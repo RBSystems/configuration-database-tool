@@ -4,95 +4,99 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/common"
-
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/v2/auth"
 	"github.com/byuoitav/configuration-database-tool/handlers"
-	"github.com/jessemillar/health"
-	"github.com/labstack/echo"
+	figure "github.com/common-nighthawk/go-figure"
 )
 
 func main() {
+	figure.NewFigure("SMEE", "univers", true).Print()
+
 	port := ":9999"
 	router := common.NewRouter()
+
+	router.PUT("/log-level/:level", log.SetLogLevel)
+	router.GET("/log-level", log.GetLogLevel)
 
 	write := router.Group("", auth.AuthorizeRequest("write-state", "room", auth.LookupResourceFromAddress))
 	read := router.Group("", auth.AuthorizeRequest("read-state", "room", auth.LookupResourceFromAddress))
 
-	// Health Endpoints
-	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
-	router.GET("/status", handlers.Status)
-
 	// Building Endpoints
 	write.POST("/buildings/:building", handlers.AddBuilding)
-	write.POST("/buildings/", handlers.AddBuildings)
+	write.POST("/buildings", handlers.AddMultipleBuildings)
 	read.GET("/buildings/:building", handlers.GetBuilding)
-	read.GET("/buildings", handlers.GetBuildings)
+	read.GET("/buildings", handlers.GetAllBuildings)
 	write.PUT("/buildings/:building/update", handlers.UpdateBuilding)
-	write.PUT("/buildings/update", handlers.UpdateBuildings)
+	write.PUT("/buildings/update", handlers.UpdateMultipleBuildings)
 	write.GET("/buildings/:building/delete", handlers.DeleteBuilding)
-	write.GET("/buildings/delete", handlers.DeleteBuildings)
 
 	// Room Endpoints
 	write.POST("/rooms/:room", handlers.AddRoom)
-	write.POST("/rooms", handlers.AddRooms)
+	write.POST("/rooms", handlers.AddMultipleRooms)
 	read.GET("/rooms/:room", handlers.GetRoom)
-	read.GET("/rooms", handlers.GetRooms)
-	read.GET("/rooms/:building", handlers.GetRoomsByBuilding)
+	read.GET("/rooms", handlers.GetAllRooms)
+	read.GET("/buildings/:building/rooms", handlers.GetRoomsByBuilding)
 	write.PUT("/rooms/:room/update", handlers.UpdateRoom)
-	write.PUT("/rooms/update", handlers.UpdateRooms)
+	write.PUT("/rooms/update", handlers.UpdateMultipleRooms)
 	write.GET("/rooms/:room/delete", handlers.DeleteRoom)
-	write.GET("/rooms/delete", handlers.DeleteRooms)
 	read.GET("/rooms/configurations", handlers.GetRoomConfigurations)
 	read.GET("/rooms/designations", handlers.GetRoomDesignations)
 
 	// Device Endpoints
 	write.POST("/devices/:device", handlers.AddDevice)
-	write.POST("/devices", handlers.AddDevices)
+	write.POST("/devices", handlers.AddMultipleDevices)
 	read.GET("/devices/:device", handlers.GetDevice)
-	read.GET("/devices", handlers.GetDevices)
+	read.GET("/devices", handlers.GetAllDevices)
+	read.GET("/rooms/:room/devices", handlers.GetDevicesByRoom)
+	read.GET("/rooms/:room/devices/roles/:role", handlers.GetDevicesByRoomAndRole)
+	read.GET("/devices/types/:type/roles/:role", handlers.GetDevicesByTypeAndRole)
 	write.PUT("/devices/:device/update", handlers.UpdateDevice)
-	write.PUT("/devices/update", handlers.UpdateDevices)
+	write.PUT("/devices/update", handlers.UpdateMultipleDevices)
 	write.GET("/devices/:device/delete", handlers.DeleteDevice)
-	write.GET("/devices/delete", handlers.DeleteDevices)
-	read.GET("/devices/:room", handlers.GetDevicesByRoom)
-	read.GET("/devices/:room/roles/:role", handlers.GetDevicesByRoomAndRole)
-	read.GET("/devices/roles/:role/types/:type", handlers.GetDevicesByRoleAndType)
 	read.GET("/devices/types", handlers.GetDeviceTypes)
+	read.GET("/devices/roles", handlers.GetDeviceRoles)
 
-	// UI Config Endpoints
-	write.POST("/uiconfigs/:room", handlers.AddUIConfig)
-	write.POST("/uiconfigs", handlers.AddUIConfigs)
-	read.GET("/uiconfigs/:room", handlers.GetUIConfig)
-	read.GET("/uiconfigs", handlers.GetUIConfigs)
-	write.PUT("/uiconfigs/:room/update", handlers.UpdateUIConfig)
-	write.PUT("/uiconfigs/update", handlers.UpdateUIConfigs)
-	write.GET("/uiconfigs/:room/delete", handlers.DeleteUIConfig)
-	write.GET("/uiconfigs/delete", handlers.DeleteUIConfigs)
-
-	// Options Endpoints
-	read.GET("/options/templates", handlers.GetAllTemplates)
-	read.GET("/options/icons", handlers.GetIcons)
-	read.GET("/options/roles", handlers.GetDeviceRoles)
+	// UIConfig Endpoints
+	write.POST("/uiconfigs/:config", handlers.AddUIConfig)
+	write.POST("/uiconfigs", handlers.AddMultipleUIConfigs)
+	read.GET("/uiconfigs/:config", handlers.GetUIConfig)
+	read.GET("/uiconfigs", handlers.GetAllUIConfigs)
+	write.PUT("/uiconfigs/:config/update", handlers.UpdateUIConfig)
+	write.PUT("/uiconfigs/update", handlers.UpdateMultipleUIConfigs)
+	write.GET("/uiconfigs/:config/delete", handlers.DeleteUIConfig)
 
 	// Alert Endpoints
-	read.GET("/alerts/buildings/:building", handlers.GetAlertsByBuilding)
-	read.GET("/alerts/buildings/:building/rooms", handlers.GetAlertsForAllRoomsInABuilding)
-	read.GET("/alerts/rooms/:room", handlers.GetAlertsByRoom)
+	read.GET("/alerts", handlers.GetAllAlerts)
+	read.GET("/rooms/:room/alerts", handlers.GetAlertsByRoom)
+	read.GET("/buildings/:building/alerts", handlers.GetAlertsByBuilding)
+	read.GET("/buildings/:building/rooms/alerts", handlers.GetAlertsPerRoomByBuilding)
 
-	// Log Level Endpoints
-	router.PUT("/log-level/:level", log.SetLogLevel)
-	router.GET("/log-level", log.GetLogLevel)
+	// Options Endpoints
+	read.GET("/options/icons", handlers.GetIcons)
+	read.GET("/options/templates", handlers.GetTemplates)
 
-	// Webpage Endpoints
-	router.Static("/", "db-tool-dist")
-	router.Static("/home", "db-tool-dist")
-	router.Static("/walkthrough", "db-tool-dist")
-	router.Static("/building", "db-tool-dist")
-	router.Static("/room", "db-tool-dist")
-	router.Static("/device", "db-tool-dist")
-	router.Static("/uiconfig", "db-tool-dist")
-	router.Static("/summary", "db-tool-dist")
+	// Metrics Endpoints
+	read.GET("/metrics/added/buildings", handlers.GetAddedBuildings)
+	read.GET("/metrics/added/rooms", handlers.GetAddedRooms)
+	read.GET("/metrics/added/devices", handlers.GetAddedDevices)
+	read.GET("/metrics/added/uiconfigs", handlers.GetAddedUIConfigs)
+	read.GET("/metrics/added", handlers.GetAllAdditions)
+	read.GET("/metrics/updated/buildings", handlers.GetUpdatedBuildings)
+	read.GET("/metrics/updated/rooms", handlers.GetUpdatedRooms)
+	read.GET("/metrics/updated/devices", handlers.GetUpdatedDevices)
+	read.GET("/metrics/updated/uiconfigs", handlers.GetUpdatedUIConfigs)
+	read.GET("/metrics/updated", handlers.GetAllUpdates)
+	read.GET("/metrics/deleted/buildings", handlers.GetDeletedBuildings)
+	read.GET("/metrics/deleted/rooms", handlers.GetDeletedRooms)
+	read.GET("/metrics/deleted/devices", handlers.GetDeletedDevices)
+	read.GET("/metrics/deleted/uiconfigs", handlers.GetDeletedUIConfigs)
+	read.GET("/metrics/deleted", handlers.GetAllDeletions)
+	read.GET("/metrics", handlers.GetFullChangesList)
+
+	// Auth Endpoints
+	read.GET("/users/current/username", handlers.GetUsername)
+	read.GET("/users/current/permissions", handlers.GetUserPermissions)
 
 	server := http.Server{
 		Addr:           port,

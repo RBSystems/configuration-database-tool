@@ -7,218 +7,173 @@ import (
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/structs"
-
+	"github.com/byuoitav/configuration-database-tool/helpers"
 	"github.com/labstack/echo"
 )
 
-// AddBuilding adds a single building to the database.
+// AddBuilding adds a building to the database
 func AddBuilding(context echo.Context) error {
-	log.L.Debugf("%s Starting AddBuilding...", buildingTag)
-
-	var building structs.Building
+	log.L.Debugf("%s Starting AddBuilding...", helpers.BuildingsTag)
 
 	// get information from the context
 	buildingID := context.Param("building")
-	if len(buildingID) < 1 {
-		msg := "Invalid building ID in URL"
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
+	username := getUsernameString(context)
 
+	var building structs.Building
 	err := context.Bind(&building)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to add the building %s : %s", buildingID, err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for %s : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", helpers.BuildingsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// check to see if the URL ID and the body building ID match
-	if buildingID != building.ID {
-		msg := fmt.Sprintf("Mismatched IDs -- URL ID: %s, Body ID: %s", buildingID, building.ID)
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+	// call helper function
+	result, ne := helpers.DoBuildingDatabaseAction(building, buildingID, username, helpers.AddAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.BuildingsTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
 	}
 
-	// send the body to the database
-	building, err = db.GetDB().CreateBuilding(building)
-	if err != nil {
-		msg := fmt.Sprintf("failed to add the building %s to the database : %s", buildingID, err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
-	}
-
-	log.L.Debugf("%s Finished adding the building %s to the database", buildingTag, building.ID)
-	return context.JSON(http.StatusOK, nil)
+	log.L.Debugf("%s The building %s was successfully created!", helpers.BuildingsTag, buildingID)
+	return context.JSON(http.StatusOK, result)
 }
 
-// AddBuildings adds multiple buildings to the database.
-func AddBuildings(context echo.Context) error {
-	log.L.Debugf("%s Starting AddBuildings...", buildingTag)
+// AddMultipleBuildings adds a set of buildings to the database
+func AddMultipleBuildings(context echo.Context) error {
+	log.L.Debugf("%s Starting AddMultipleBuildings...", helpers.BuildingsTag)
+
+	// get information from the context
+	username := getUsernameString(context)
 
 	var buildings []structs.Building
 
-	// get information from the context
 	err := context.Bind(&buildings)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to add multiple buildings : %s", err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-	if len(buildings) < 1 {
-		msg := "No buildings were given to add"
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for multiple buildings : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.BuildingsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// send the body to the database, record the errors and return them.
-	var errors []string
-
+	var results []helpers.DBResponse
+	// call helper function as we iterate
 	for _, b := range buildings {
-		_, err = db.GetDB().CreateBuilding(b)
-		if err != nil {
-			msg := fmt.Sprintf("failed to create the building %s during mass creation : %s", b.ID, err.Error())
-			log.L.Error("%s %s", buildingTag, msg)
-			errors = append(errors, err.Error())
+		res, ne := helpers.DoBuildingDatabaseAction(b, b.ID, username, helpers.AddAction)
+		if ne != nil {
+			log.L.Errorf("%s %s", helpers.BuildingsTag, ne.Error())
 		}
+		results = append(results, res)
 	}
 
-	log.L.Debugf("%s Finished adding the buildings to the database", buildingTag)
-	return context.JSON(http.StatusOK, errors)
+	log.L.Debugf("%s The buildings were successfully created!", helpers.BuildingsTag)
+	return context.JSON(http.StatusOK, results)
 }
 
-// GetBuilding returns a single building from the database based on the given building ID.
+// GetBuilding gets a building from the database based on the given ID
 func GetBuilding(context echo.Context) error {
-	log.L.Debugf("%s Starting GetBuilding...", buildingTag)
-
+	log.L.Debugf("%s Starting GetBuilding...", helpers.BuildingsTag)
 	// get information from the context
 	buildingID := context.Param("building")
-	if len(buildingID) < 1 {
-		msg := "Invalid building ID in URL"
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
 
-	// get the information from the database and return it
 	building, err := db.GetDB().GetBuilding(buildingID)
 	if err != nil {
-		msg := fmt.Sprintf("failed to get the building %s from the database : %s", buildingID, err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusInternalServerError, err.Error())
+		msg := fmt.Sprintf("failed to get the building %s : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", helpers.BuildingsTag, msg)
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
-	log.L.Debugf("%s Finished getting the building %s from the database", buildingTag, building.ID)
+	log.L.Debugf("%s Successfully found the building %s!", helpers.BuildingsTag, buildingID)
 	return context.JSON(http.StatusOK, building)
 }
 
-// GetBuildings returns a list of all buildings in the database.
-func GetBuildings(context echo.Context) error {
-	log.L.Debugf("%s Starting GetBuildings...", buildingTag)
+// GetAllBuildings gets all buildings from the database
+func GetAllBuildings(context echo.Context) error {
+	log.L.Debugf("%s Starting GetAllBuildings...", helpers.BuildingsTag)
 
-	// get the information from the database and return it
 	buildings, err := db.GetDB().GetAllBuildings()
 	if err != nil {
-		msg := fmt.Sprintf("failed to get all buildings from the database : %s", err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+		msg := fmt.Sprintf("failed to get all buildings : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.BuildingsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	log.L.Debugf("%s Finished getting the buildings from the database", buildingTag)
+	log.L.Debugf("%s Successfully got all buildings!", helpers.BuildingsTag)
 	return context.JSON(http.StatusOK, buildings)
 }
 
-// UpdateBuilding updates a single building in the database based on the given building ID.
+// UpdateBuilding updates a building in the database
 func UpdateBuilding(context echo.Context) error {
-	log.L.Debugf("%s Starting UpdateBuilding...", buildingTag)
+	log.L.Debugf("%s Starting UpdateBuilding...", helpers.BuildingsTag)
+
+	// get information from the context
+	buildingID := context.Param("building")
+	username := getUsernameString(context)
 
 	var building structs.Building
-
-	// get information from the context
-	buildingID := context.Param("building")
-	if len(buildingID) < 1 {
-		msg := "Invalid building ID in URL"
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-
 	err := context.Bind(&building)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to update the building %s : %s", buildingID, err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for %s : %s", buildingID, err.Error())
+		log.L.Errorf("%s %s", helpers.BuildingsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// send the body to the database
-	building, err = db.GetDB().UpdateBuilding(buildingID, building)
-	if err != nil {
-		msg := fmt.Sprintf("failed to update the building %s in the database : %s", buildingID, err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusInternalServerError, msg)
+	// call helper function
+	result, ne := helpers.DoBuildingDatabaseAction(building, buildingID, username, helpers.UpdateAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.BuildingsTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
 	}
 
-	log.L.Debugf("%s Finished updating the building %s in the database", buildingTag, building.ID)
-	return context.JSON(http.StatusOK, nil)
+	log.L.Debugf("%s The building %s was successfully updated!", helpers.BuildingsTag, buildingID)
+	return context.JSON(http.StatusOK, result)
 }
 
-// UpdateBuildings updates multiple buildings in the database.
-func UpdateBuildings(context echo.Context) error {
-	log.L.Debugf("%s Starting UpdateBuildings...", buildingTag)
-
-	var buildings []structs.Building
+// UpdateMultipleBuildings updates a set of buildings in the database
+func UpdateMultipleBuildings(context echo.Context) error {
+	log.L.Debugf("%s Starting UpdateMultipleBuildings...", helpers.BuildingsTag)
 
 	// get information from the context
+	username := getUsernameString(context)
+
+	var buildings map[string]structs.Building
+
 	err := context.Bind(&buildings)
 	if err != nil {
-		msg := fmt.Sprintf("failed to bind body from request to update multiple buildings : %s", err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
-	}
-	if len(buildings) < 1 {
-		msg := "No buildings were given to update"
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+		msg := fmt.Sprintf("failed to bind request body for multiple buildings : %s", err.Error())
+		log.L.Errorf("%s %s", helpers.BuildingsTag, msg)
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	// send the body to the database, record the errors and return them.
-	var errors []string
-
-	for _, b := range buildings {
-		_, err = db.GetDB().UpdateBuilding(b.ID, b)
-		if err != nil {
-			msg := fmt.Sprintf("failed to update the building %s during mass updating : %s", b.ID, err.Error())
-			log.L.Error("%s %s", buildingTag, msg)
-			errors = append(errors, err.Error())
+	var results []helpers.DBResponse
+	// call helper function as we iterate
+	for id, building := range buildings {
+		res, ne := helpers.DoBuildingDatabaseAction(building, id, username, helpers.UpdateAction)
+		if ne != nil {
+			log.L.Errorf("%s %s", helpers.BuildingsTag, ne.Error())
 		}
+		results = append(results, res)
 	}
 
-	log.L.Debugf("%s Finished updating the buildings in the database", buildingTag)
-	return context.JSON(http.StatusOK, errors)
+	log.L.Debugf("%s The buildings were successfully updated!", helpers.BuildingsTag)
+	return context.JSON(http.StatusOK, results)
 }
 
-// DeleteBuilding deletes a single building from the database based on the given building ID.
+// DeleteBuilding deletes a building from the database based on the given ID
 func DeleteBuilding(context echo.Context) error {
-	log.L.Debugf("%s Starting DeleteBuilding...", buildingTag)
+	log.L.Debugf("%s Starting DeleteBuilding...", helpers.BuildingsTag)
 
 	// get information from the context
 	buildingID := context.Param("building")
-	if len(buildingID) < 1 {
-		msg := "Invalid building ID in URL"
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusBadRequest, msg)
+	username := getUsernameString(context)
+
+	building := structs.Building{ID: buildingID}
+
+	// call helper function
+	result, ne := helpers.DoBuildingDatabaseAction(building, buildingID, username, helpers.DeleteAction)
+	if ne != nil {
+		log.L.Errorf("%s %s", helpers.BuildingsTag, ne.Error())
+		return context.JSON(http.StatusInternalServerError, result)
 	}
 
-	// delete the information from the database
-	err := db.GetDB().DeleteBuilding(buildingID)
-	if err != nil {
-		msg := fmt.Sprintf("failed to delete the building %s from the database : %s", buildingID, err.Error())
-		log.L.Errorf("%s %s", buildingTag, msg)
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	log.L.Debugf("%s Finished deleting the building %s from the database", buildingTag, buildingID)
-	return context.JSON(http.StatusOK, nil)
-}
-
-// DeleteBuildings deletes multiple buildings from the database.
-func DeleteBuildings(context echo.Context) error {
-	return context.JSON(http.StatusOK, nil)
+	log.L.Debugf("%s The building %s was successfully deleted!", helpers.BuildingsTag, buildingID)
+	return context.JSON(http.StatusOK, result)
 }
