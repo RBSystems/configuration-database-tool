@@ -93,7 +93,7 @@ func GetAllBuildings(context echo.Context) error {
 	if err != nil {
 		msg := fmt.Sprintf("failed to get all buildings : %s", err.Error())
 		log.L.Errorf("%s %s", helpers.BuildingsTag, msg)
-		return context.JSON(http.StatusBadRequest, err)
+		return context.JSON(http.StatusInternalServerError, err)
 	}
 
 	log.L.Debugf("%s Successfully got all buildings!", helpers.BuildingsTag)

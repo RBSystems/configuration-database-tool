@@ -7,6 +7,7 @@ import (
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/v2/auth"
 	"github.com/byuoitav/configuration-database-tool/handlers"
+	"github.com/byuoitav/configuration-database-tool/websockets"
 	figure "github.com/common-nighthawk/go-figure"
 )
 
@@ -70,7 +71,6 @@ func main() {
 	read.GET("/alerts", handlers.GetAllAlerts)
 	read.GET("/rooms/:room/alerts", handlers.GetAlertsByRoom)
 	read.GET("/buildings/:building/alerts", handlers.GetAlertsByBuilding)
-	read.GET("/buildings/:building/rooms/alerts", handlers.GetAlertsPerRoomByBuilding)
 
 	// Options Endpoints
 	read.GET("/options/icons", handlers.GetIcons)
@@ -97,6 +97,9 @@ func main() {
 	// Auth Endpoints
 	read.GET("/users/current/username", handlers.GetUsername)
 	read.GET("/users/current/permissions", handlers.GetUserPermissions)
+
+	// Websocket Endpoints
+	router.GET("/ws", websockets.UpgradeToWebsocket(websockets.SocketManager()))
 
 	server := http.Server{
 		Addr:           port,

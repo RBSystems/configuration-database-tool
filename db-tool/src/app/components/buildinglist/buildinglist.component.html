@@ -1,0 +1,13 @@
+<!-- <div class="base" [ngClass]="api?.theme + '-theme'"> -->
+<div class="row">
+    <div class="searchbar">
+        <mat-icon class="searchbar icon">search</mat-icon>
+        <mat-form-field>
+            <input matInput [(ngModel)]="searchQuery" (ngModelChange)="Search()">
+        </mat-form-field>
+    </div>
+</div>
+<div class="container">
+    <building *ngFor="let b of filteredBuildings" [building]="b" [buildingExists]="true"></building>
+</div>
+<!-- </div> -->
