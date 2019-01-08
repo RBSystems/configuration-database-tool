@@ -197,6 +197,8 @@ export class UIConfigComponent implements OnInit {
       }
       
     });
+
+    this.currentTemplate.uiconfig = this.config;
   }
 
   IOIsInList(nameToCheck: string, listToCheck: IOConfiguration[]): boolean {

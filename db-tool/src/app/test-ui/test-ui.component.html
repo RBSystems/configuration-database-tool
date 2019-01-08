@@ -1,0 +1,34 @@
+<div class="sum-container">
+    <div class="test-row">
+        <!-- BUILDING -->
+        <mat-form-field class="a">
+            <mat-label>Building</mat-label>
+            <mat-select matInput [(ngModel)]="building" (selectionChange)="GetRoomList()">
+                <mat-option *ngFor="let b of buildingList" [value]="b">{{b._id}} ({{b.name}})</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- ROOM -->
+        <mat-form-field class="a">
+            <mat-label>Room</mat-label>
+            <mat-select matInput [(ngModel)]="room" (ngModelChange)="UpdateRoomSubscription()" [disabled]="building._id == null || roomList.length == 0">
+                <mat-option *ngFor="let r of roomList" [value]="r">{{r._id}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="test-row">
+        <button mat-raised-button (click)="GetState()">Get State</button>
+        <button mat-raised-button (click)="SetState()">Set State</button>
+    </div>
+
+    <div class="test-row">
+        <mat-form-field class="text">
+            <h4 class="mat-h4">API</h4>
+            <textarea matInput matTextareaAutosize=true [(ngModel)]="message"></textarea>
+        </mat-form-field>
+        <div class="text">
+            <h4 class="mat-h4">Events</h4>
+            <p *ngFor="let event of events">{{event}}</p>
+        </div>
+    </div>
+</div>

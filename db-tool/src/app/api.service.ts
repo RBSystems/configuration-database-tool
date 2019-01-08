@@ -82,6 +82,9 @@ export class ApiService {
     return this.http.post(this.url + "/devices/bulk/add", devices, this.options).map(response => response.json());
   }
 
+  ResolveDNSAddress(deviceID: string): Observable<string> {
+    return this.http.get(this.url+"/devices/"+deviceID+"/address", this.options).map(response => response.json());
+  }
 
   ///// OPTIONS FUNCTIONS /////
   GetDeviceRolesList(): Observable<Role[]> {
@@ -130,5 +133,21 @@ export class ApiService {
     setTimeout(() => {
       this.ClearTempChanges();
     }, 2000);
+  }
+
+  GetState(buildingID: string, roomID: string): Observable<any> {
+    return this.http.get(this.url + "/buildings/" + buildingID + "/rooms/" + roomID, this.options).map(response => response.json());
+  }
+
+  SetState(buildingID: string, roomID: string, payload: string): Observable<any> {
+    return this.http.put(this.url + "/buildings/" + buildingID + "/rooms/" + roomID, payload, this.options).map(response => response.json());
+  }
+
+  SubscribeToRoom(buildingID: string, roomID: string): Observable<any> {
+    return this.http.get(this.url + "/buildings/" + buildingID + "/rooms/" + roomID + "/subscribe", this.options).map(response => response.json());
+  }
+
+  UnsubscribeToRoom(buildingID: string, roomID: string): Observable<any> {
+    return this.http.get(this.url + "/buildings/" + buildingID + "/rooms/" + roomID + "/unsubscribe", this.options).map(response => response.json());
   }
 }

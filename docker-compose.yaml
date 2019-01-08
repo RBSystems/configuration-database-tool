@@ -13,6 +13,10 @@ services:
             - LDAP_SEARCH_SCOPE=$LDAP_SEARCH_SCOPE
             - JWT_SIGNING_TOKEN=$JWT_SIGNING_TOKEN
             - LDAP_URL=$LDAP_URL
+            - BYPASS_AUTH=$BYPASS_AUTH
+            - ENDPOINT_ACCESS_KEY=$ENDPOINT_ACCESS_KEY
+            - ENDPOINT_USERNAME=$ENDPOINT_USERNAME
+            - HUB_ADDRESS=$HUB_ADDRESS
         network_mode: "host"
         restart: always
         tty: true

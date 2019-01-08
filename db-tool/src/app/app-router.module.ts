@@ -10,6 +10,7 @@ import { WalkthroughComponent } from './walkthrough/walkthrough.component';
 import { UIConfigComponent } from './uiconfig/uiconfig.component';
 import { SummaryComponent } from './summary/summary.component';
 import { DndComponent } from './dnd/dnd.component';
+import { TestUIComponent } from './test-ui/test-ui.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -21,7 +22,8 @@ const routes: Routes = [
   { path: 'uiconfig', component: UIConfigComponent },
   { path: 'summary', component: SummaryComponent },
   { path: 'modal', component: ModalComponent},
-  { path: 'dnd', component: DndComponent}
+  { path: 'dnd', component: DndComponent},
+  { path: 'test-ui', component: TestUIComponent}
 ]
 
 @NgModule({

@@ -54,7 +54,8 @@
                 <!-- ADDRESS -->
                 <mat-form-field class="a" matTooltip="{{S.DeviceTips['address']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Address</mat-label>
-                    <input matInput type="text" [(ngModel)]="addDevice.address">
+                    <input matInput type="text" [(ngModel)]="addDevice.address" (blur)="GetRawIPAddress(true)">
+                    <mat-hint *ngIf="this.addDeviceAddress != '0.0.0.0'">{{this.addDeviceAddress}}</mat-hint>
                 </mat-form-field>
                 <!-- TAGS -->
                 <mat-form-field class="device-chip-list">
@@ -191,7 +192,8 @@
                 <!-- ADDRESS -->
                 <mat-form-field class="a" matTooltip="{{S.DeviceTips['address']}}" [matTooltipShowDelay]=S.Slow [matTooltipPosition]="S.positions['left']">
                     <mat-label>Address</mat-label>
-                    <input matInput type="text" [(ngModel)]="editDevice.address">
+                    <input matInput type="text" [(ngModel)]="editDevice.address" (blur)="GetRawIPAddress(false)">
+                    <mat-hint *ngIf="this.editDeviceAddress != '0.0.0.0'">{{this.editDeviceAddress}}</mat-hint>
                 </mat-form-field>
                 <!-- TAGS -->
                 <mat-form-field class="device-chip-list">
