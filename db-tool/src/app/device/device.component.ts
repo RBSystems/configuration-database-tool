@@ -28,6 +28,9 @@ export class DeviceComponent implements OnInit {
 
   IDToUpdate: string;
 
+  addDeviceAddress: string;
+  editDeviceAddress: string;
+
   addBuildingList: Building[] = [];
   editBuildingList: Building[] = [];
   editRoomList: Room[] = [];
@@ -100,6 +103,7 @@ export class DeviceComponent implements OnInit {
     this.editDevice.type._id = this.editType._id;
     this.SetSourceAndDestinationLists();
     this.UpdateMissingPorts(this.editDevice);
+    this.GetRawIPAddress(false);
   }
 
   // UpdateID fills in the ID with the roomID and also updates it when the name is changed since the ID is a read only field. It also updates the address.
@@ -116,6 +120,7 @@ export class DeviceComponent implements OnInit {
         // Update device address
         if(this.addDevice.address == null || this.addDevice.address.includes(this.addRoom._id)) {
           this.addDevice.address = this.addDevice._id + ".byu.edu"
+          this.GetRawIPAddress(true);
         }
       }
     }
@@ -132,8 +137,22 @@ export class DeviceComponent implements OnInit {
         // Update device address
         if(this.editDevice.address == null || this.editDevice.address.includes(this.editRoom._id)) {
           this.editDevice.address = this.editDevice._id + ".byu.edu"
+          this.GetRawIPAddress(false);
         }
       }
+    }
+  }
+
+  GetRawIPAddress(add: boolean) {
+    if(add) {
+      this.api.ResolveDNSAddress(this.addDevice.address).subscribe(resp => {
+        this.addDeviceAddress = resp;
+      })
+    }
+    else {
+      this.api.ResolveDNSAddress(this.editDevice.address).subscribe(resp => {
+        this.editDeviceAddress = resp;
+      })
     }
   }
 
@@ -358,6 +377,10 @@ export class DeviceComponent implements OnInit {
 
   // UpdateMissingPorts fills in any missing ports that are on the DeviceType but not on the Device itself.
   UpdateMissingPorts(device: Device) {
+    if(device.ports == null || device.ports.length == 0) {
+      return
+    }
+
     let type = this.deviceTypeMap.get(device.type._id);
 
     let newPorts: Port[] = [];
