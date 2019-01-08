@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 
@@ -272,4 +273,22 @@ func GetDevicesByRoleAndType(context echo.Context) error {
 
 	log.L.Debugf("[device] Successfully got all devices with the role %s and the type %s!", role, typeID)
 	return context.JSON(http.StatusOK, devices)
+}
+
+// ResolveDNSAddress takes a hostname and returns the actual IP address if it exists.
+func ResolveDNSAddress(context echo.Context) error {
+	hostname := context.Param("device")
+
+	addresses, err := net.LookupHost(hostname)
+	if err != nil {
+		log.L.Errorf("[device] failed to look up raw IP address for %s : %s", hostname, err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	address := ""
+	if len(addresses) >= 1 {
+		address = addresses[0]
+	}
+
+	return context.JSON(http.StatusOK, address)
 }

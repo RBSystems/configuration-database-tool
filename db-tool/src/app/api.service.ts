@@ -82,6 +82,9 @@ export class ApiService {
     return this.http.post(this.url + "/devices/bulk/add", devices, this.options).map(response => response.json());
   }
 
+  ResolveDNSAddress(deviceID: string): Observable<string> {
+    return this.http.get(this.url+"/devices/"+deviceID+"/address", this.options).map(response => response.json());
+  }
 
   ///// OPTIONS FUNCTIONS /////
   GetDeviceRolesList(): Observable<Role[]> {

@@ -70,6 +70,7 @@ func main() {
 	secure.GET("/roles/:role/types/:type", handlers.GetDevicesByRoleAndType)
 	secure.POST("/devices/bulk/add", handlers.AddDevicesInBulk)
 	secure.PUT("/devices/:device/update", handlers.UpdateDevice)
+	secure.GET("/devices/:device/address", handlers.ResolveDNSAddress)
 
 	secure.GET("/roomconfigurations", handlers.GetRoomConfigurations)
 	secure.GET("/roomdesignations", handlers.GetRoomDesignations)
