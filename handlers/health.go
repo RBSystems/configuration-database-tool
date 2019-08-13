@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -13,20 +11,18 @@ import (
 
 // Status returns the health status of the application.
 func Status(context echo.Context) error {
-	SS.StartTime = Start.Format(time.UnixDate)
+	// SS.StartTime = Start.Format(time.UnixDate)
 
-	SS.Uptime = time.Since(Start).Round(time.Second).String()
+	// SS.Uptime = time.Since(Start).Round(time.Second).String()
 
-	SS.Message = fmt.Sprintf("Today's the day! The sun is shining, the tank is clean, and we are getting out of... *gasp* the tank is clean. THE TANK IS CLEAN!!")
+	// SS.Message = fmt.Sprintf("Today's the day! The sun is shining, the tank is clean, and we are getting out of... *gasp* the tank is clean. THE TANK IS CLEAN!!")
 
-	b, err := json.MarshalIndent(SS, "", "    ")
-	if err != nil {
-		log.L.Warnf("[health] Failed to marshal the ServerStatus : %v", err.Error())
-	} else {
-		log.L.Info(string(b))
-	}
+	// b, err := json.MarshalIndent(SS, "", "    ")
+	// if err != nil {
+	// 	log.L.Warnf("[health] Failed to marshal the ServerStatus : %v", err.Error())
+	// }
 
-	return context.JSONPretty(http.StatusOK, SS, "    ")
+	return context.String(http.StatusOK, "ok")
 }
 
 // SS is a variable representing a ServerStatus object.

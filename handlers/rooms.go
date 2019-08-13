@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 
@@ -17,17 +16,17 @@ import (
 func GetRoomsByBuilding(context echo.Context) error {
 	log.L.Debug("[room] Starting GetRoomsByBuilding...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[room] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[room] User %s is not allowed to get all rooms in a room.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	// 	if err != nil {
+	// 		log.L.Errorf("[room] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[room] User %s is not allowed to get all rooms in a room.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	buildingID := context.Param("building")
 
@@ -48,17 +47,17 @@ func GetRoomsByBuilding(context echo.Context) error {
 func GetRoomByID(context echo.Context) error {
 	log.L.Debug("[room] Starting GetRoomByID...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[room] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[room] User %s is not allowed to get a room by ID.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	// 	if err != nil {
+	// 		log.L.Errorf("[room] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[room] User %s is not allowed to get a room by ID.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	id := context.Param("room")
 
@@ -78,17 +77,17 @@ func GetRoomByID(context echo.Context) error {
 func GetAllRooms(context echo.Context) error {
 	log.L.Debug("[room] Starting GetAllRooms...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[room] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[room] User %s is not allowed to get all rooms.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	// 	if err != nil {
+	// 		log.L.Errorf("[room] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[room] User %s is not allowed to get all rooms.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	log.L.Debug("[room] Attempting to get all rooms")
 
@@ -106,17 +105,17 @@ func GetAllRooms(context echo.Context) error {
 func AddRoom(context echo.Context) error {
 	log.L.Debug("[room] Starting AddRoom...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-		if err != nil {
-			log.L.Errorf("[room] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[room] User %s is not allowed to add a room.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	// 	if err != nil {
+	// 		log.L.Errorf("[room] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[room] User %s is not allowed to add a room.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	id := context.Param("room")
 
@@ -136,7 +135,7 @@ func AddRoom(context echo.Context) error {
 
 	log.L.Debugf("Adding the room %s", room.ID)
 
-	changes.AddNew(context.Request().Context().Value("user").(string), Room, room.ID)
+	// changes.AddNew(context.Request().Context().Value("user").(string), Room, room.ID)
 
 	room, err = db.GetDB().CreateRoom(room)
 	if err != nil {
@@ -162,7 +161,7 @@ func AddRoom(context echo.Context) error {
 	}
 
 	// Increment the counter on the ServerStatus
-	SS.RoomsCreated++
+	// SS.RoomsCreated++
 
 	log.L.Debugf("[room] Successfully added the room %s!", room.ID)
 	return context.JSON(http.StatusOK, room)
@@ -172,17 +171,17 @@ func AddRoom(context echo.Context) error {
 func UpdateRoom(context echo.Context) error {
 	log.L.Debug("[room] Starting UpdateRoom...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-		if err != nil {
-			log.L.Errorf("[room] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[room] User %s is not allowed to update a room.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	// 	if err != nil {
+	// 		log.L.Errorf("[room] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[room] User %s is not allowed to update a room.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	id := context.Param("room")
 
@@ -195,14 +194,14 @@ func UpdateRoom(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, "Invalid body. Resource address and id must match")
 	}
 
-	oldRoom, err := db.GetDB().GetRoom(room.ID)
-	if err != nil {
-		log.L.Errorf("[room] Room %s does not exist in the database: %v", id, err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-	changes.AddChange(context.Request().Context().Value("user").(string), Room, FindChanges(oldRoom, room, Room))
+	// oldRoom, err := db.GetDB().GetRoom(room.ID)
+	// if err != nil {
+	// 	log.L.Errorf("[room] Room %s does not exist in the database: %v", id, err.Error())
+	// 	return context.JSON(http.StatusBadRequest, err.Error())
+	// }
+	// changes.AddChange(context.Request().Context().Value("user").(string), Room, FindChanges(oldRoom, room, Room))
 
-	room, err = db.GetDB().UpdateRoom(id, room)
+	room, err := db.GetDB().UpdateRoom(id, room)
 	if err != nil {
 		log.L.Errorf("[room] Failed to update the room %s : %v", id, err.Error())
 
@@ -214,7 +213,7 @@ func UpdateRoom(context echo.Context) error {
 	}
 
 	// Increment the counter on the ServerStatus
-	SS.RoomsUpdated++
+	// SS.RoomsUpdated++
 
 	log.L.Debugf("[room] Successfully updated the room %s!", room.ID)
 	return context.JSON(http.StatusOK, room)
@@ -224,17 +223,17 @@ func UpdateRoom(context echo.Context) error {
 func GetRoomConfigurations(context echo.Context) error {
 	log.L.Debug("[room] Starting GetRoomConfigurations...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[room] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[room] User %s is not allowed to get all room configurations.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	// 	if err != nil {
+	// 		log.L.Errorf("[room] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[room] User %s is not allowed to get all room configurations.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	log.L.Debug("[room] Attempting to get all room configurations")
 

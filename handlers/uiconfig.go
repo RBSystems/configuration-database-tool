@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/byuoitav/common/auth"
 	"github.com/byuoitav/common/db"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/structs"
@@ -14,17 +13,17 @@ import (
 func GetUIConfig(context echo.Context) error {
 	log.L.Debug("[uiconfig] Starting GetUIConfig...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
-		if err != nil {
-			log.L.Errorf("[uiconfig] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[uiconfig] User %s is not allowed to get a UI Config.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "read")
+	// 	if err != nil {
+	// 		log.L.Errorf("[uiconfig] Failed to verify read role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[uiconfig] User %s is not allowed to get a UI Config.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	var config structs.UIConfig
 
@@ -46,17 +45,17 @@ func GetUIConfig(context echo.Context) error {
 func AddUIConfig(context echo.Context) error {
 	log.L.Debug("[uiconfig] Starting AddUIConfig...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-		if err != nil {
-			log.L.Errorf("[uiconfig] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[uiconfig] User %s is not allowed to add a UI Config.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	// 	if err != nil {
+	// 		log.L.Errorf("[uiconfig] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[uiconfig] User %s is not allowed to add a UI Config.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	var config structs.UIConfig
 
@@ -66,7 +65,7 @@ func AddUIConfig(context echo.Context) error {
 
 	context.Bind(&config)
 
-	changes.AddNew(context.Request().Context().Value("user").(string), UIConfig, roomID)
+	// changes.AddNew(context.Request().Context().Value("user").(string), UIConfig, roomID)
 
 	config, err := db.GetDB().CreateUIConfig(roomID, config)
 	if err != nil {
@@ -82,17 +81,17 @@ func AddUIConfig(context echo.Context) error {
 func UpdateUIConfig(context echo.Context) error {
 	log.L.Debug("[uiconfig] Starting UpdateUIConfig...")
 
-	if !Dev {
-		ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
-		if err != nil {
-			log.L.Errorf("[uiconfig] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
-			return context.JSON(http.StatusInternalServerError, err.Error())
-		}
-		if !ok {
-			log.L.Warnf("[uiconfig] User %s is not allowed to update a UI Config.", context.Request().Context().Value("user").(string))
-			return context.JSON(http.StatusForbidden, alert)
-		}
-	}
+	// if !Dev {
+	// 	ok, err := auth.VerifyRoleForUser(context.Request().Context().Value("user").(string), "write")
+	// 	if err != nil {
+	// 		log.L.Errorf("[uiconfig] Failed to verify write role for %s : %v", context.Request().Context().Value("user").(string), err.Error())
+	// 		return context.JSON(http.StatusInternalServerError, err.Error())
+	// 	}
+	// 	if !ok {
+	// 		log.L.Warnf("[uiconfig] User %s is not allowed to update a UI Config.", context.Request().Context().Value("user").(string))
+	// 		return context.JSON(http.StatusForbidden, alert)
+	// 	}
+	// }
 
 	var config structs.UIConfig
 
@@ -102,14 +101,14 @@ func UpdateUIConfig(context echo.Context) error {
 
 	context.Bind(&config)
 
-	oldConfig, err := db.GetDB().GetUIConfig(roomID)
-	if err != nil {
-		log.L.Errorf("[uiconfig] UIConfig for %s does not exist in the database: %v", roomID, err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-	changes.AddChange(context.Request().Context().Value("user").(string), UIConfig, FindChanges(oldConfig, config, UIConfig))
+	// oldConfig, err := db.GetDB().GetUIConfig(roomID)
+	// if err != nil {
+	// 	log.L.Errorf("[uiconfig] UIConfig for %s does not exist in the database: %v", roomID, err.Error())
+	// 	return context.JSON(http.StatusBadRequest, err.Error())
+	// }
+	// changes.AddChange(context.Request().Context().Value("user").(string), UIConfig, FindChanges(oldConfig, config, UIConfig))
 
-	config, err = db.GetDB().UpdateUIConfig(roomID, config)
+	config, err := db.GetDB().UpdateUIConfig(roomID, config)
 	if err != nil {
 		log.L.Errorf("[uiconfig] Problem updating UI Config for %s : %v", roomID, err.Error())
 		return context.JSON(http.StatusBadRequest, err)
