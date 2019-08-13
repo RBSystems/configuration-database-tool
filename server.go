@@ -25,7 +25,7 @@ func main() {
 
 	go handlers.WriteEventsToSocket()
 
-	port := ":9999"
+	port := ":9900"
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
 	router.Use(middleware.CORS())
