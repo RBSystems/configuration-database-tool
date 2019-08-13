@@ -6,7 +6,7 @@ import (
 
 	"github.com/byuoitav/central-event-system/hub/base"
 	"github.com/byuoitav/central-event-system/messenger"
-	auth "github.com/byuoitav/common/auth/middleware"
+	"github.com/byuoitav/common/v2/auth"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/configuration-database-tool/handlers"
 	"github.com/byuoitav/configuration-database-tool/socket"
