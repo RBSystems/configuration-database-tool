@@ -1,0 +1,26 @@
+{
+	"name": "configuration-database-tool",
+	"port": "9900",
+	"env-vars": [
+		"BYPASS_AUTH",
+		"COOKIE_DOMAIN",
+		"DB_ADDRESS",
+		"DB_PASSWORD",
+		"DB_USERNAME",
+		"ENDPOINT_ACCESS_KEY",
+		"ENDPOINT_AUTHORIZATION_URL",
+		"ENDPOINT_USERNAME",
+		"HUB_ADDRESS",
+		"JWT_SIGNING_TOKEN",
+		"LDAP_PASSWORD",
+		"LDAP_SEARCH_SCOPE",
+		"LDAP_URL",
+		"LDAP_USERNAME",
+		"LOG_LEVEL",
+		"NET_ID",
+		"RESPONDER_GROUP",
+		"ROOM_SYSTEM",
+		"STOP_REPLICATION",
+		"SYSTEM_ID"
+	]
+}

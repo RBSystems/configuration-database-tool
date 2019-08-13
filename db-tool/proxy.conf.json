@@ -1,0 +1,74 @@
+{
+    "/buildings": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/rooms": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/roomconfigurations": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/roomdesignations": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/devices": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/deviceroles": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/devicetypes": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/uiconfig": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/templates": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/icons": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/auth": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/changes": {
+        "target": "http://localhost:9900",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    }
+}
