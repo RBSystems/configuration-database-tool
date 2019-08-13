@@ -3,7 +3,7 @@ services:
     configuration-database-tool:
         image: byuoitav/configuration-database-tool:master
         ports:
-            - "9999:9999"
+            - "9900:9900"
         environment:
             - DB_ADDRESS=$DB_ADDRESS
             - DB_USERNAME=$DB_USERNAME

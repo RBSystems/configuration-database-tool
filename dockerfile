@@ -12,4 +12,4 @@ COPY db-tool-dist db-tool-dist
 
 ENTRYPOINT ./${name}-bin
 
-EXPOSE 9999
+EXPOSE 9900

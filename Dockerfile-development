@@ -11,4 +11,4 @@ RUN go install -v
 
 CMD ["/go/bin/configuration-database-tool"]
 
-EXPOSE 9999
+EXPOSE 9900
